@@ -69,7 +69,8 @@ namespace NLWestStandings
 
                 app.MapRazorComponents<App>()
                     .AddInteractiveServerRenderMode()
-                    .AddInteractiveWebAssemblyRenderMode();
+                    .AddInteractiveWebAssemblyRenderMode()
+                    .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
 
                 app.Run();
 
