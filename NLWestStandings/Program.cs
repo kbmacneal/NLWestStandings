@@ -40,6 +40,8 @@ namespace NLWestStandings
                 builder.Services.AddSingleton<StandingsService>();
                 builder.Services.AddSingleton<IHostedService>(p => p.GetRequiredService<StandingsService>());
 
+                builder.Services.AddSerilog();
+
                 var app = builder.Build();
 
                 app.UseSerilogRequestLogging();
