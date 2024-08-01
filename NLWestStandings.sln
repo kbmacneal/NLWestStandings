@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLWestStandings", "NLWestStandings\NLWestStandings.csproj", "{CEEA722E-77A8-431E-966D-1EB15E611EE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLWestStandings.Client", "NLWestStandings.Client\NLWestStandings.Client.csproj", "{B64A6A3F-E269-4279-8BBD-070C7EB5FDA7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEEA722E-77A8-431E-966D-1EB15E611EE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEEA722E-77A8-431E-966D-1EB15E611EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEEA722E-77A8-431E-966D-1EB15E611EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEEA722E-77A8-431E-966D-1EB15E611EE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B64A6A3F-E269-4279-8BBD-070C7EB5FDA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B64A6A3F-E269-4279-8BBD-070C7EB5FDA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B64A6A3F-E269-4279-8BBD-070C7EB5FDA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B64A6A3F-E269-4279-8BBD-070C7EB5FDA7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98D22AC1-3F14-48B5-963F-73FB7B544D74}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,18 @@
+﻿@page "/"
+@rendermode InteractiveWebAssembly
+@using Microsoft.AspNetCore.SignalR.Client
+@using NLWestStandings.Classes
+@inject NavigationManager NavigationManager
+
+<PageTitle>Home</PageTitle>
+
+@code {
+    private HubConnection hubConnection;
+
+    private IEnumerable<Teamrecord>? teamrecords { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        NavigationManager.NavigateTo("/standings");
+    }
+}

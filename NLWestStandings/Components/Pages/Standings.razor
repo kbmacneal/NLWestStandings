@@ -1,0 +1,51 @@
+﻿@page "/standings"
+
+@using Microsoft.AspNetCore.SignalR.Client
+@using NLWestStandings.Classes
+@inject NavigationManager NavigationManager
+@rendermode InteractiveAuto
+
+<PageTitle>Home</PageTitle>
+
+<MudTable Items="@teamrecords">
+    <HeaderContent>
+        <MudTh>Rank</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Wins</MudTh>
+        <MudTh>Losses</MudTh>
+        <MudTh>GB</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
+        <MudTd DataLabel="Name">@context.team.name</MudTd>
+        <MudTd DataLabel="Wins">@context.wins</MudTd>
+        <MudTd DataLabel="Losses">@context.losses</MudTd>
+        <MudTd DataLabel="GB">@context.gamesBack</MudTd>
+    </RowTemplate>
+</MudTable>
+
+
+
+@code {
+    private HubConnection hubConnection;
+
+    private IEnumerable<Teamrecord>? teamrecords { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string baseUrl = NavigationManager.BaseUri;
+
+        hubConnection = new HubConnectionBuilder()
+        .WithUrl(baseUrl + "standings")
+        .Build();
+
+
+        hubConnection.On("broadcast", async (string message) =>
+        {
+            teamrecords = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord>>(message);
+            await InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+}
