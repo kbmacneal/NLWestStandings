@@ -3,7 +3,7 @@ using NLWestStandings.MLB;
 
 namespace NLWestStandings.Classes
 {
-    public class StandingsHub(IServiceProvider services) : Hub
+    public class StandingsHub(IServiceProvider services, ILogger<StandingsHub> logger) : Hub
     {
         public async Task SendMessage(string message)
         {

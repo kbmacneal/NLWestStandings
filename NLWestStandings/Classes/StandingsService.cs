@@ -5,7 +5,7 @@ using NLWestStandings.MLB;
 
 namespace NLWestStandings.Classes
 {
-    public class StandingsService(IHubContext<StandingsHub> context, IServiceProvider services) : BackgroundService
+    public class StandingsService(IHubContext<StandingsHub> context, IServiceProvider services, ILogger<StandingsService> logger) : BackgroundService
     {
         public IEnumerable<Teamrecord>? _teams { get; set; } = null;
         public Logos? _logos { get; set; } = null;
@@ -25,7 +25,9 @@ namespace NLWestStandings.Classes
 
                     await context.Clients.All.SendAsync("broadcast", System.Text.Json.JsonSerializer.Serialize(_teams), stoppingToken);
 
-                    await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+                    logger.LogInformation("Standings refreshed");
+
+                    await Task.Delay(TimeSpan.FromHours(6), stoppingToken);
                 }
             }
            

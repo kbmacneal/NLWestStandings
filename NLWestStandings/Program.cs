@@ -2,64 +2,85 @@ using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
 using NLWestStandings.Classes;
 using NLWestStandings.Components;
+using Serilog;
 
 namespace NLWestStandings
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            builder.Services.AddRazorComponents()
-                .AddInteractiveServerComponents()
-                .AddInteractiveWebAssemblyComponents();
-
-            builder.Services.AddMudServices();
-
-            builder.Services.AddSignalR(options =>
+            try
             {
-                options.EnableDetailedErrors = true;
-            });
+                var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddResponseCompression(opts =>
-            {
-                opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-                    ["application/octet-stream"]);
-            });
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.Async(e=>e.Console())
+                    .CreateLogger();
 
-            builder.Services.AddSingleton<StandingsService>();
-            builder.Services.AddSingleton<IHostedService>(p => p.GetRequiredService<StandingsService>());
+                // Add services to the container.
+                builder.Services.AddRazorComponents()
+                    .AddInteractiveServerComponents()
+                    .AddInteractiveWebAssemblyComponents();
 
-            var app = builder.Build();
+                builder.Services.AddMudServices();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseWebAssemblyDebugging();
+                builder.Services.AddSignalR(options =>
+                {
+                    options.EnableDetailedErrors = true;
+                });
+
+                builder.Services.AddResponseCompression(opts =>
+                {
+                    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                        ["application/octet-stream"]);
+                });
+
+                builder.Services.AddSingleton<StandingsService>();
+                builder.Services.AddSingleton<IHostedService>(p => p.GetRequiredService<StandingsService>());
+
+                var app = builder.Build();
+
+                app.UseSerilogRequestLogging();
+
+                // Configure the HTTP request pipeline.
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseWebAssemblyDebugging();
+                }
+                else
+                {
+                    app.UseExceptionHandler("/Error");
+                    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                    app.UseHsts();
+                }
+
+                app.UseResponseCompression();
+
+                app.MapHub<StandingsHub>("/broadcaststandings");
+
+                app.UseHttpsRedirection();
+
+                app.UseStaticFiles();
+                app.UseAntiforgery();
+
+                app.MapRazorComponents<App>()
+                    .AddInteractiveServerRenderMode()
+                    .AddInteractiveWebAssemblyRenderMode();
+
+                app.Run();
+
             }
-            else
+            catch (Exception ex)
             {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                Log.Error(ex, "Something went wrong");
+            }
+            finally
+            {
+                await Log.CloseAndFlushAsync();
             }
 
-            app.UseResponseCompression();
-
-            app.MapHub<StandingsHub>("/broadcaststandings");
-
-            app.UseHttpsRedirection();
-
-            app.UseStaticFiles();
-            app.UseAntiforgery();
-
-            app.MapRazorComponents<App>()
-                .AddInteractiveServerRenderMode()
-                .AddInteractiveWebAssemblyRenderMode();
-
-            app.Run();
         }
     }
 }
