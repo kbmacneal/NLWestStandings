@@ -1,12 +1,18 @@
 ﻿using Flurl.Http;
 using Microsoft.AspNetCore.SignalR;
+using NLWestStandings.Client.Classes;
+using NLWestStandings.MLB;
 
 namespace NLWestStandings.Classes
 {
     public class StandingsService(IHubContext<StandingsHub> context, IServiceProvider services) : BackgroundService
     {
+        public IEnumerable<Teamrecord>? _teams { get; set; } = null;
+        public Logos? _logos { get; set; } = null;
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logos = await GetLogoLinks();
+
             using(var scope = services.CreateScope())
             {
                 //var hub = scope.ServiceProvider.GetRequiredService<StandingsHub>();
@@ -15,13 +21,11 @@ namespace NLWestStandings.Classes
                 {
                     var t = await GetStandingsAsync();
 
-                    var nlwest = t.records.First(e => e.division.id == 203).teamRecords;
+                    _teams = t.records.First(e => e.division.id == 203).teamRecords;
 
-                    await context.Clients.All.SendAsync("broadcast", System.Text.Json.JsonSerializer.Serialize(nlwest), stoppingToken);
+                    await context.Clients.All.SendAsync("broadcast", System.Text.Json.JsonSerializer.Serialize(_teams), stoppingToken);
 
-                    Console.WriteLine("broadcasted");
-
-                    await Task.Delay(TimeSpan.FromSeconds(20), stoppingToken);
+                    await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
                 }
             }
            
@@ -32,7 +36,15 @@ namespace NLWestStandings.Classes
             var standings = await "https://statsapi.mlb.com/api/v1/standings?leagueId=104"
                 .GetJsonAsync<Standing>();
 
-            return standings;
+            return standings;///api/v1/teams/119
+        }
+
+        private async Task<Logos> GetLogoLinks()
+        {
+                var logos = await "https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/teams"
+                    .GetJsonAsync<Logos>();
+
+                return logos;
         }
     }
 }

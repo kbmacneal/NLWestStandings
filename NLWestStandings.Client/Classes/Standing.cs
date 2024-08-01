@@ -1,4 +1,8 @@
-﻿namespace NLWestStandings.Classes
+﻿using NLWestStandings.Client.Classes;
+using System.Text.Json.Serialization;
+using static MudBlazor.Colors;
+
+namespace NLWestStandings.MLB
 {
     public class Standing
     {
@@ -79,6 +83,9 @@
         public int id { get; set; }
         public string name { get; set; }
         public string link { get; set; }
+
+        [JsonIgnore]
+        public string logo_href { get; set; }
     }
 
     public class Streak

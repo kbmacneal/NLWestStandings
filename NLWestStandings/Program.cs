@@ -18,7 +18,10 @@ namespace NLWestStandings
 
             builder.Services.AddMudServices();
 
-            builder.Services.AddSignalR();
+            builder.Services.AddSignalR(options =>
+            {
+                options.EnableDetailedErrors = true;
+            });
 
             builder.Services.AddResponseCompression(opts =>
             {
@@ -26,7 +29,8 @@ namespace NLWestStandings
                     ["application/octet-stream"]);
             });
 
-            builder.Services.AddHostedService<StandingsService>();
+            builder.Services.AddSingleton<StandingsService>();
+            builder.Services.AddSingleton<IHostedService>(p => p.GetRequiredService<StandingsService>());
 
             var app = builder.Build();
 
@@ -44,7 +48,7 @@ namespace NLWestStandings
 
             app.UseResponseCompression();
 
-            app.MapHub<StandingsHub>("/standings");
+            app.MapHub<StandingsHub>("/broadcaststandings");
 
             app.UseHttpsRedirection();
 

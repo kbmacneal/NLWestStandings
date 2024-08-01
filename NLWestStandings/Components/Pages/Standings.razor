@@ -1,51 +1,67 @@
 ﻿@page "/standings"
 
+
 @using Microsoft.AspNetCore.SignalR.Client
-@using NLWestStandings.Classes
-@inject NavigationManager NavigationManager
+@using NLWestStandings.Client.Classes
+@using NLWestStandings.MLB
 @rendermode InteractiveAuto
+@inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
 
 <MudTable Items="@teamrecords">
     <HeaderContent>
         <MudTh>Rank</MudTh>
-        <MudTh>Name</MudTh>
+        <MudTh>Team</MudTh>
         <MudTh>Wins</MudTh>
         <MudTh>Losses</MudTh>
         <MudTh>GB</MudTh>
+        <MudTh>WC GB</MudTh>
+        <MudTh>Winning %</MudTh>
+        <MudTh>Run Diff</MudTh>
+        <MudTh>Streak</MudTh>
+        <MudTh>Magic #</MudTh>
     </HeaderContent>
     <RowTemplate>
+        
         <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
-        <MudTd DataLabel="Name">@context.team.name</MudTd>
+        <MudTd> <MudImage Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href"></MudImage></MudTd>
         <MudTd DataLabel="Wins">@context.wins</MudTd>
         <MudTd DataLabel="Losses">@context.losses</MudTd>
         <MudTd DataLabel="GB">@context.gamesBack</MudTd>
+        <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
+        <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
+        <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>
+        <MudTd DataLabel="Streak">@context.streak.streakCode</MudTd>
+        <MudTd DataLabel="Magic Number">@context.magicNumber</MudTd>
     </RowTemplate>
 </MudTable>
 
-
-
 @code {
     private HubConnection hubConnection;
-
+    private Logos logos { get; set; } = new Logos();
     private IEnumerable<Teamrecord>? teamrecords { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
-        string baseUrl = NavigationManager.BaseUri;
-
         hubConnection = new HubConnectionBuilder()
-        .WithUrl(baseUrl + "standings")
-        .Build();
+            .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
+            .Build();
 
-
-        hubConnection.On("broadcast", async (string message) =>
+        hubConnection.On<string>("broadcast", async (string message) =>
         {
             teamrecords = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord>>(message);
-            await InvokeAsync(StateHasChanged);
+            InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
+
+        teamrecords = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord>>(await hubConnection.InvokeAsync<string>("BroadcastToConnection", hubConnection.ConnectionId));
+
+        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId));
+        
+
+        InvokeAsync(StateHasChanged);
+
     }
 }
