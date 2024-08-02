@@ -1,4 +1,6 @@
-﻿using NLWestStandings.Client.Classes;
+﻿using Flurl;
+using Flurl.Http;
+using NLWestStandings.Client.Classes;
 using System.Text.Json.Serialization;
 using static MudBlazor.Colors;
 
@@ -40,6 +42,7 @@ namespace NLWestStandings.MLB
 
     public class Teamrecord
     {
+        public string division_name { get; set; }
         public Team team { get; set; }
         public string season { get; set; }
         public Streak streak { get; set; }

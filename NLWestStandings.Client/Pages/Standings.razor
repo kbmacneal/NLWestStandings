@@ -7,40 +7,97 @@
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
 
+<style>
+    .mud-table-head{
+        background-color:bisque;
+    }
+</style>
+
 <PageTitle>Home</PageTitle>
 
-<MudTable Items="@teamrecords">
-    <HeaderContent>
-        <MudTh>Rank</MudTh>
-        <MudTh>Team</MudTh>
-        <MudTh>Wins</MudTh>
-        <MudTh>Losses</MudTh>
-        <MudTh>GB</MudTh>
-        <MudTh>WC GB</MudTh>
-        <MudTh>Winning %</MudTh>
-        <MudTh>Run Diff</MudTh>
-        <MudTh>Streak</MudTh>
-        <MudTh>Magic #</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        
-        <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
-        <MudTd> <MudImage Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href"></MudImage></MudTd>
-        <MudTd DataLabel="Wins">@context.wins</MudTd>
-        <MudTd DataLabel="Losses">@context.losses</MudTd>
-        <MudTd DataLabel="GB">@context.gamesBack</MudTd>
-        <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
-        <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
-        <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>
-        <MudTd DataLabel="Streak">@context.streak.streakCode</MudTd>
-        <MudTd DataLabel="Magic Number">@context.magicNumber</MudTd>
-    </RowTemplate>
-</MudTable>
+@if (NLStandings is not null)
+{
+    @foreach (var item in NLStandings.Reverse())
+    {
+        <MudTable Class="pb-8" T="Teamrecord" Items="@item" RowStyleFunc="RowStyleFunc">
+            <ToolBarContent><MudText Typo="Typo.h4">@item.First().division_name</MudText></ToolBarContent>
+            <HeaderContent>
+                <MudTh>Rank</MudTh>
+                <MudTh>Team</MudTh>
+                <MudTh>Wins</MudTh>
+                <MudTh>Losses</MudTh>
+                <MudTh>GB</MudTh>
+                <MudTh>WC GB</MudTh>
+                <MudTh>Winning %</MudTh>
+                <MudTh>Run Diff</MudTh>
+                <MudTh>Streak</MudTh>
+                <MudTh>Magic #</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+
+                <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
+                <MudTd> <MudImage Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href"></MudImage></MudTd>
+                <MudTd DataLabel="Wins">@context.wins</MudTd>
+                <MudTd DataLabel="Losses">@context.losses</MudTd>
+                <MudTd DataLabel="GB">@context.gamesBack</MudTd>
+                <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
+                <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
+                <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>
+                <MudTd DataLabel="Streak">@context.streak.streakCode</MudTd>
+                <MudTd DataLabel="Magic Number">@context.magicNumber</MudTd>
+            </RowTemplate>
+        </MudTable>
+        <MudDivider></MudDivider>
+
+    }
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+
+@if (ALStandings is not null)
+{
+    @foreach (var item in ALStandings.Reverse())
+    {
+        <MudTable Class="pb-8" T="Teamrecord" Items="@item" RowStyleFunc="RowStyleFunc">
+            <ToolBarContent><MudText Typo="Typo.h4">@item.First().division_name</MudText></ToolBarContent>
+            <HeaderContent>
+                <MudTh>Rank</MudTh>
+                <MudTh>Team</MudTh>
+                <MudTh>Wins</MudTh>
+                <MudTh>Losses</MudTh>
+                <MudTh>GB</MudTh>
+                <MudTh>WC GB</MudTh>
+                <MudTh>Winning %</MudTh>
+                <MudTh>Run Diff</MudTh>
+                <MudTh>Streak</MudTh>
+                <MudTh>Magic #</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+
+                <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
+                <MudTd> <MudImage Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href"></MudImage></MudTd>
+                <MudTd DataLabel="Wins">@context.wins</MudTd>
+                <MudTd DataLabel="Losses">@context.losses</MudTd>
+                <MudTd DataLabel="GB">@context.gamesBack</MudTd>
+                <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
+                <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
+                <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>
+                <MudTd DataLabel="Streak">@context.streak.streakCode</MudTd>
+                <MudTd DataLabel="Magic Number">@context.magicNumber</MudTd>
+            </RowTemplate>
+        </MudTable>
+        <MudDivider></MudDivider>
+    }
+}
+
 
 @code {
     private HubConnection hubConnection;
     private Logos logos { get; set; } = new Logos();
-    private IEnumerable<Teamrecord>? teamrecords { get; set; } = null;
+    private IEnumerable<Teamrecord[]>? NLStandings { get; set; } = null;
+    private IEnumerable<Teamrecord[]>? ALStandings { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,20 +105,39 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
             .Build();
 
-        hubConnection.On<string>("broadcast", async (string message) =>
+        hubConnection.On<string>("broadcastnl", async (string message) =>
         {
-            teamrecords = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord>>(message);
+            NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(message);
+            InvokeAsync(StateHasChanged);
+        });
+        
+        hubConnection.On<string>("broadcastal", async (string message) =>
+        {
+            ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(message);
             InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
 
-        teamrecords = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord>>(await hubConnection.InvokeAsync<string>("BroadcastToConnection", hubConnection.ConnectionId));
+        NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastNLToConnection", hubConnection.ConnectionId));
+
+        ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastALToConnection", hubConnection.ConnectionId));
 
         logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId));
-        
+
 
         InvokeAsync(StateHasChanged);
 
+    }
+
+    private string RowStyleFunc(Teamrecord arg1, int index)
+    {
+        switch (Int32.Parse(arg1.divisionRank) % 2)
+        {
+            case 0:
+                return "background-color:white";
+            default: return "background-color:beige";
+
+        }
     }
 }
