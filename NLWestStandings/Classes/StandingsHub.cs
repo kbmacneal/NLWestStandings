@@ -39,5 +39,15 @@ namespace NLWestStandings.Classes
                 return System.Text.Json.JsonSerializer.Serialize(standings._logos);
             }
         }
+
+        public async Task<string> GetCalendar(string connectionId)
+        {
+            using (var scope = services.CreateScope())
+            {
+                var standings = scope.ServiceProvider.GetRequiredService<StandingsService>();
+
+                return System.Text.Json.JsonSerializer.Serialize(standings.calendar);
+            }
+        }
     }
 }   

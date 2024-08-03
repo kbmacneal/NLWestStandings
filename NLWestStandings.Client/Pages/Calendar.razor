@@ -1,0 +1,93 @@
+﻿@page "/calendar/{teamid}"
+
+@using Microsoft.AspNetCore.SignalR.Client
+@using NLWestStandings.Client.Classes
+@using NLWestStandings.Client.Classes.Calendar
+@using NLWestStandings.MLB
+@rendermode InteractiveWebAssembly
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Team Calendar</PageTitle>
+
+@if (true)
+{
+    <MudCalendar Items="_events" MonthCellMinHeight="100">
+        <CellTemplate>
+            <div style="width: 100%; height: 100%; border: 2px solid @GetColor(((CustomItem)context).Color)">
+                <div style="background-color: @GetColor(((CustomItem)context).Color)"><MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">@(((CustomItem)context).Title)</MudText></div>
+                <div class="pa-2"><MudText Typo="Typo.body2">@context.Text</MudText></div>
+            </div>
+        </CellTemplate>
+    </MudCalendar>
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Items="_events" Indeterminate="true" />
+}
+
+
+@code {
+    private HubConnection hubConnection;
+
+    private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
+
+    [Parameter]
+    public string teamid { get; set; }
+
+    TeamCalendar calendar_data { get; set; }
+
+    private List<CustomItem> _events = new();
+
+    private class CustomItem : CalendarItem
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public Color Color { get; set; } = Color.Primary;
+    }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
+            .Build();
+
+        await hubConnection.StartAsync();
+
+        calendar_data = System.Text.Json.JsonSerializer.Deserialize<TeamCalendar>(await hubConnection.InvokeAsync<string>("GetCalendar", hubConnection.ConnectionId)) ?? new();
+
+        var temp_events = new List<CustomItem>();
+
+        foreach (var item in calendar_data.dates)
+        {
+            foreach (var game in item.games)
+            {
+                if (game.teams.away.team.id == Int32.Parse(teamid) || game.teams.home.team.id == Int32.Parse(teamid))
+                {
+                    var local_start = DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime();
+
+                    temp_events.Add(new CustomItem()
+                        {
+                            Start = local_start,
+                            End = local_start.AddHours(1),
+                            Title = ToAmPm(local_start),
+                        Text = $"{game.teams.away.team.name} @ {game.teams.home.team.name}",
+                            Color = game.teams.away.team.id == Int32.Parse(teamid) ? Color.Dark : Color.Primary
+                        });
+                }
+            }
+        }
+
+        _events = temp_events.DistinctBy(e => e.Text + e.Start).ToList();
+
+        InvokeAsync(StateHasChanged);
+
+    }
+
+    private string ToAmPm(DateTime dateTime)
+    {
+        return dateTime.ToString("t");
+    }
+}

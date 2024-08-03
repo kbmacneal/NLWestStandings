@@ -2,6 +2,7 @@
 using Flurl.Http;
 using Microsoft.AspNetCore.SignalR;
 using NLWestStandings.Client.Classes;
+using NLWestStandings.Client.Classes.Calendar;
 using NLWestStandings.Client.Classes.Divisions;
 using NLWestStandings.MLB;
 
@@ -11,11 +12,14 @@ namespace NLWestStandings.Classes
     {
         public IEnumerable<Teamrecord[]>? NLStandings { get; set; } = null;
         public IEnumerable<Teamrecord[]>? ALStandings { get; set; } = null;
+        public TeamCalendar? calendar { get; set; } = null;
         public Logos? _logos { get; set; } = null;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logos = await GetLogoLinks();
+
+            calendar = await GetCalendar();
 
             using (var scope = services.CreateScope())
             {
@@ -34,8 +38,6 @@ namespace NLWestStandings.Classes
                             .AppendPathSegment(division_id.ToString())
                             .GetJsonAsync<DivisionCall>())
                             .divisions.First().name;
-
-                            var t = "";
                         }
                     }
 
@@ -89,6 +91,17 @@ namespace NLWestStandings.Classes
                 .GetJsonAsync<Logos>();
 
             return logos;
+        }
+
+        private async Task<TeamCalendar> GetCalendar()
+        {
+            var beginning_of_month = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var end_of_month = new DateOnly(DateTime.Now.Year, 12, 1);
+
+            var calendar = await $"https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate={beginning_of_month}&endDate={end_of_month}"
+                .GetJsonAsync<TeamCalendar>();
+
+            return calendar;
         }
     }
 }

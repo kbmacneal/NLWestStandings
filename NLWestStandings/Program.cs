@@ -24,7 +24,10 @@ namespace NLWestStandings
                     .AddInteractiveServerComponents()
                     .AddInteractiveWebAssemblyComponents();
 
-                builder.Services.AddMudServices();
+                builder.Services.AddMudServices(options =>
+                {
+                    options.PopoverOptions.ThrowOnDuplicateProvider = false;
+                });
 
                 builder.Services.AddSignalR(options =>
                 {
@@ -36,6 +39,7 @@ namespace NLWestStandings
                     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                         ["application/octet-stream"]);
                 });
+
 
                 builder.Services.AddSingleton<StandingsService>();
                 builder.Services.AddSingleton<IHostedService>(p => p.GetRequiredService<StandingsService>());

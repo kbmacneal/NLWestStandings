@@ -13,7 +13,7 @@
     }
 </style>
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Standings</PageTitle>
 
 @if (NLStandings is not null)
 {
@@ -36,7 +36,7 @@
             <RowTemplate>
 
                 <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
-                <MudTd> <MudImage Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href"></MudImage></MudTd>
+                <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
                 <MudTd DataLabel="GB">@context.gamesBack</MudTd>
@@ -77,7 +77,7 @@ else
             <RowTemplate>
 
                 <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
-                <MudTd> <MudImage Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href"></MudImage></MudTd>
+                <MudTd><MudImage Class="rounded-lg" Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
                 <MudTd DataLabel="GB">@context.gamesBack</MudTd>
@@ -110,7 +110,7 @@ else
             NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(message);
             InvokeAsync(StateHasChanged);
         });
-        
+
         hubConnection.On<string>("broadcastal", async (string message) =>
         {
             ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(message);
@@ -139,5 +139,10 @@ else
             default: return "background-color:beige";
 
         }
+    }
+
+    private void GoToCalendar(int team_id)
+    {
+        NavigationManager.NavigateTo($"/calendar/{team_id}");
     }
 }
