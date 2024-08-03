@@ -1,8 +1,4 @@
-﻿using Flurl;
-using Flurl.Http;
-using NLWestStandings.Client.Classes;
-using System.Text.Json.Serialization;
-using static MudBlazor.Colors;
+﻿using System.Text.Json.Serialization;
 
 namespace NLWestStandings.MLB
 {

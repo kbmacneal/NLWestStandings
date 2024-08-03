@@ -1,6 +1,5 @@
 ﻿namespace NLWestStandings.Client.Classes
 {
-
     public class Logos
     {
         public Sport[] sports { get; set; }
@@ -78,5 +77,4 @@
         public bool isPremium { get; set; }
         public bool isHidden { get; set; }
     }
-
 }

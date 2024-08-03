@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using NLWestStandings.MLB;
 
 namespace NLWestStandings.Classes
 {
@@ -50,4 +49,4 @@ namespace NLWestStandings.Classes
             }
         }
     }
-}   
+}

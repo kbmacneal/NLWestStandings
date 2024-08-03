@@ -16,7 +16,7 @@ namespace NLWestStandings
 
                 Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Debug()
-                    .WriteTo.Async(e=>e.Console())
+                    .WriteTo.Async(e => e.Console())
                     .CreateLogger();
 
                 // Add services to the container.
@@ -39,7 +39,6 @@ namespace NLWestStandings
                     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                         ["application/octet-stream"]);
                 });
-
 
                 builder.Services.AddSingleton<StandingsService>();
                 builder.Services.AddSingleton<IHostedService>(p => p.GetRequiredService<StandingsService>());
@@ -77,7 +76,6 @@ namespace NLWestStandings
                     .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
 
                 app.Run();
-
             }
             catch (Exception ex)
             {
@@ -87,7 +85,6 @@ namespace NLWestStandings
             {
                 await Log.CloseAndFlushAsync();
             }
-
         }
     }
 }

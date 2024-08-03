@@ -1,6 +1,5 @@
 ﻿namespace NLWestStandings.Client.Classes.Calendar
 {
-
     public class TeamCalendar
     {
         public string copyright { get; set; }
@@ -130,6 +129,4 @@
     {
         public string link { get; set; }
     }
-
-
 }

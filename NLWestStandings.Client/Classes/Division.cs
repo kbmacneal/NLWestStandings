@@ -1,6 +1,5 @@
 ﻿namespace NLWestStandings.Client.Classes.Divisions
 {
-
     public class DivisionCall
     {
         public string copyright { get; set; }
@@ -34,5 +33,4 @@
         public int id { get; set; }
         public string link { get; set; }
     }
-
 }
