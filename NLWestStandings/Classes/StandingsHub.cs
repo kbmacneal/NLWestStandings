@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using NLWestStandings.Client.Classes.Calendar;
 
 namespace NLWestStandings.Classes
 {
@@ -39,13 +40,26 @@ namespace NLWestStandings.Classes
             }
         }
 
-        public async Task<string> GetCalendar(string connectionId)
+        public async Task<string> GetCalendar(string connectionId, string teamid)
         {
             using (var scope = services.CreateScope())
             {
                 var standings = scope.ServiceProvider.GetRequiredService<StandingsService>();
 
-                return System.Text.Json.JsonSerializer.Serialize(standings.calendar);
+                var rtn = new List<Game>(); ;
+
+                foreach (var item in standings.calendar.dates)
+                {
+                    foreach (var game in item.games)
+                    {
+                        if (game.teams.away.team.id == Int32.Parse(teamid) || game.teams.home.team.id == Int32.Parse(teamid))
+                        {
+                            rtn.Add(game);
+                        }
+                    }
+                }
+
+                return System.Text.Json.JsonSerializer.Serialize(rtn);
             }
         }
     }

@@ -35,7 +35,7 @@ else
     [Parameter]
     public string teamid { get; set; }
 
-    TeamCalendar calendar_data { get; set; }
+    List<Game> calendar_data { get; set; }
 
     private List<CustomItem> _events = new();
 
@@ -56,29 +56,27 @@ else
 
         await hubConnection.StartAsync();
 
-        calendar_data = System.Text.Json.JsonSerializer.Deserialize<TeamCalendar>(await hubConnection.InvokeAsync<string>("GetCalendar", hubConnection.ConnectionId)) ?? new();
+        calendar_data = System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetCalendar", hubConnection.ConnectionId, teamid.ToString())) ?? new();
 
         var temp_events = new List<CustomItem>();
 
-        foreach (var item in calendar_data.dates)
+        foreach (var game in calendar_data)
         {
-            foreach (var game in item.games)
+            if (game.teams.away.team.id == Int32.Parse(teamid) || game.teams.home.team.id == Int32.Parse(teamid))
             {
-                if (game.teams.away.team.id == Int32.Parse(teamid) || game.teams.home.team.id == Int32.Parse(teamid))
-                {
-                    var local_start = DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime();
+                var local_start = DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime();
 
-                    temp_events.Add(new CustomItem()
-                        {
-                            Start = local_start,
-                            End = local_start.AddHours(1),
-                            Title = ToAmPm(local_start),
+                temp_events.Add(new CustomItem()
+                    {
+                        Start = local_start,
+                        End = local_start.AddHours(1),
+                        Title = ToAmPm(local_start),
                         Text = $"{game.teams.away.team.name} @ {game.teams.home.team.name}",
-                            Color = game.teams.away.team.id == Int32.Parse(teamid) ? Color.Dark : Color.Primary
-                        });
-                }
+                        Color = game.teams.away.team.id == Int32.Parse(teamid) ? Color.Dark : Color.Primary
+                    });
             }
         }
+
 
         _events = temp_events.DistinctBy(e => e.Text + e.Start).ToList();
 
