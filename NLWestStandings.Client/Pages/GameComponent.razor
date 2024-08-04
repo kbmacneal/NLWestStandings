@@ -4,7 +4,9 @@
 @using NLWestStandings.Client.Classes
 @using NLWestStandings.Client.Classes.Calendar
 @using NLWestStandings.Client.Classes.LineScore
+@using NLWestStandings.Client.Classes.PlayByPlay
 @using NLWestStandings.MLB
+@using System.Globalization
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
 
@@ -21,7 +23,7 @@
         display: table-cell;
         width: 5%;
         border: solid black 1px;
-        text-align:center;
+        text-align: center;
     }
 </style>
 
@@ -30,7 +32,14 @@
 
 @if (score != null)
 {
-    <MudText Class="m-auto" Typo="Typo.h2">Current: @score.inningState @score.currentInningOrdinal</MudText>
+    <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
+
+    <MudText Class="m-auto" Typo="Typo.h5">Current: @score.inningState @score.currentInningOrdinal</MudText>
+
+    <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.probablePitchers.home.fullName vs. @playByPlay.gameData.probablePitchers.away.fullName</MudText>
+
+    <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
+
     <table>
         <th class="table_cell">Inning</th>
         @foreach (var inning in score.innings.OrderBy(e => e.num))
@@ -65,10 +74,45 @@
         </tr>
     </table>
 }
-else
+<br />
+<br />
+<br />
+@if (playByPlay != null)
 {
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    <MudText Typo="Typo.h5">Game Feed</MudText>
+    <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
+    <MudTable Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>Inning</MudTh>
+            <MudTh>Pitcher</MudTh>
+            <MudTh>Batter</MudTh>
+            <MudTh>Count</MudTh>
+            <MudTh>Result</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Inning">
+                <div class="d-flex">
+                    @if (context.about.halfInning == "top")
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.ArrowDropUp"></MudIcon>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown"></MudIcon>
+                    }
+
+                    @context.about.inning
+                </div>
+
+            </MudTd>
+            <MudTd DataLabel="Pitcher">@context.matchup.pitcher.fullName</MudTd>
+            <MudTd DataLabel="Batter">@context.matchup.batter.fullName</MudTd>
+            <MudTd Style="min-width:100px;" DataLabel="Count">@context.count.balls - @context.count.strikes <br /> @($"{context.count.outs} Out(s)")</MudTd>
+            <MudTd DataLabel="Result">@context.result.description</MudTd>
+        </RowTemplate>
+    </MudTable>
 }
+
 
 @code {
     private HubConnection hubConnection;
@@ -83,6 +127,10 @@ else
     [SupplyParameterFromQuery(Name = "awayteam")]
     public string awayteam { get; set; }
 
+    private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+
+    private PlayByPlay? playByPlay { get; set; } = null;
+
     private string gamename { get; set; }
 
     LineScoreData? score { get; set; } = null;
@@ -94,7 +142,30 @@ else
 
         gamename = $"{awayteam} @ {hometeam}";
 
+        await GetPlayByPlay();
+
         InvokeAsync(StateHasChanged);
 
+    }
+
+    private async Task GetPlayByPlay()
+    {
+        playByPlay = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
+        .GetJsonAsync<PlayByPlay>();
+
+        if (playByPlay.gameData.status.abstractGameCode != "F")
+        {
+            while (true)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(20));
+
+                playByPlay = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
+        .GetJsonAsync<PlayByPlay>();
+
+                InvokeAsync(StateHasChanged);
+            }
+        }
+
+        InvokeAsync(StateHasChanged);
     }
 }
