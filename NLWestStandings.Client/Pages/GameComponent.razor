@@ -11,6 +11,7 @@
 @using Websocket.Client
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
+@implements IAsyncDisposable;
 
 <MudPopoverProvider />
 
@@ -229,6 +230,15 @@ else
 
         await _client.Start();
 
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_client == null)
+            return;
+
+        await _client.Stop(WebSocketCloseStatus.NormalClosure, string.Empty);
+        _client.Dispose();
     }
 
     private async Task GetPlayByPlay()
