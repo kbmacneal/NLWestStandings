@@ -1,0 +1,108 @@
+﻿@page "/gamecomponent"
+@using Flurl.Http
+@using Microsoft.AspNetCore.SignalR.Client
+@using NLWestStandings.Client.Classes
+@using NLWestStandings.Client.Classes.Calendar
+@using NLWestStandings.Client.Classes.LineScore
+@using NLWestStandings.MLB
+@rendermode InteractiveWebAssembly
+@inject NavigationManager NavigationManager
+
+<MudPopoverProvider />
+
+<style>
+    .table {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .table_cell {
+        display: table-cell;
+        width: 5%;
+        border: solid black 1px;
+        text-align:center;
+    }
+</style>
+
+
+<PageTitle>Line Score</PageTitle>
+
+@if (score != null)
+{
+    <MudText Class="m-auto" Typo="Typo.h2">Current: @score.inningState @score.currentInningOrdinal</MudText>
+    <table>
+        <th class="table_cell">Inning</th>
+        @foreach (var inning in score.innings.OrderBy(e => e.num))
+        {
+            <th class="table_cell">@inning.num</th>
+        }
+        <th class="table_cell">Runs</th>
+        <th class="table_cell">Hits</th>
+        <th class="table_cell">Errors</th>
+        <th class="table_cell">LoB</th>
+        <tr>
+            <td class="table_cell">Away</td>
+            @foreach (var inning in score.innings.OrderBy(e => e.num))
+            {
+                <td class="table_cell">@inning.away.runs</td>
+            }
+            <td class="table_cell">@score.teams.away.runs</td>
+            <td class="table_cell">@score.teams.away.hits</td>
+            <td class="table_cell">@score.teams.away.errors</td>
+            <td class="table_cell">@score.teams.away.leftOnBase</td>
+        </tr>
+        <tr>
+            <td class="table_cell">Home</td>
+            @foreach (var inning in score.innings.OrderBy(e => e.num))
+            {
+                <td class="table_cell">@inning.home.runs</td>
+            }
+            <td class="table_cell">@score.teams.home.runs</td>
+            <td class="table_cell">@score.teams.home.hits</td>
+            <td class="table_cell">@score.teams.home.errors</td>
+            <td class="table_cell">@score.teams.home.leftOnBase</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td>
+
+            </td>
+        </tr>
+    </table>
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+
+@code {
+    private HubConnection hubConnection;
+
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "gamepk")]
+    public string gamepk { get; set; }
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "hometeam")]
+    public string hometeam { get; set; }
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "awayteam")]
+    public string awayteam { get; set; }
+
+    private string gamename { get; set; }
+
+    LineScoreData? score { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        score = await $"https://statsapi.mlb.com/api/v1/game/{gamepk}/linescore"
+                .GetJsonAsync<LineScoreData>();
+
+        gamename = $"{awayteam} @ {hometeam}";
+
+        InvokeAsync(StateHasChanged);
+
+    }
+}

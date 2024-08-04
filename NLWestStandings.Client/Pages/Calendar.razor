@@ -1,9 +1,9 @@
 ﻿@page "/calendar/{teamid}"
 
 @using Microsoft.AspNetCore.SignalR.Client
-@using NLWestStandings.Client.Classes
 @using NLWestStandings.Client.Classes.Calendar
 @using NLWestStandings.MLB
+@using System.Web
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
 
@@ -15,8 +15,27 @@
     <MudCalendar Items="_events" MonthCellMinHeight="100">
         <CellTemplate>
             <div style="width: 100%; height: 100%; border: 2px solid @GetColor(((CustomItem)context).Color)">
-                <div style="background-color: @GetColor(((CustomItem)context).Color)"><MudText Style="color: #ffffff;" Typo="Typo.body1" Align="Align.Center">@(((CustomItem)context).Title)</MudText></div>
-                <div class="pa-2"><MudText Typo="Typo.body2">@context.Text</MudText></div>
+                <div style="background-color: @GetColor(((CustomItem)context).Color)">
+
+                    
+
+                    @(((CustomItem)context).Title)
+
+            </div>
+            <div class="pa-2">
+
+                    <MudLink Style="color: #ffffff;"
+                             Typo="Typo.body1"
+                             Align="Align.Center"
+                             OnClick="@(() => GoToGame(((CustomItem)context).gamepk,((CustomItem)context).hometeam, ((CustomItem)context).awayteam))">
+
+                        <MudText Typo="Typo.body2">@context.Text</MudText>
+
+                    </MudLink>
+                
+                
+                
+            </div>
             </div>
         </CellTemplate>
     </MudCalendar>
@@ -44,6 +63,9 @@ else
         public string Title { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
         public Color Color { get; set; } = Color.Primary;
+        public string gamepk { get; set; }
+        public string hometeam { get; set; }
+        public string awayteam { get; set; }
     }
 
 
@@ -72,7 +94,10 @@ else
                         End = local_start.AddHours(1),
                         Title = ToAmPm(local_start),
                         Text = $"{game.teams.away.team.name} @ {game.teams.home.team.name}",
-                        Color = game.teams.away.team.id == Int32.Parse(teamid) ? Color.Dark : Color.Primary
+                        Color = game.teams.away.team.id == Int32.Parse(teamid) ? Color.Dark : Color.Primary,
+                        gamepk = game.gamePk.ToString(),
+                        hometeam = $"{game.teams.home.team.name}",
+                        awayteam = $"{game.teams.away.team.name}"
                     });
             }
         }
@@ -87,5 +112,10 @@ else
     private string ToAmPm(DateTime dateTime)
     {
         return dateTime.ToString("t");
+    }
+
+    private void GoToGame(string gamepk, string hometeam, string awayteam)
+    {
+        NavigationManager.NavigateTo($"gamecomponent?gamepk={gamepk}&hometeam={HttpUtility.UrlEncode(hometeam)}&awayteam={HttpUtility.UrlEncode(awayteam)}");
     }
 }
