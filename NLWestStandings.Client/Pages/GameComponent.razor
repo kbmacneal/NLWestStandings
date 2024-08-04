@@ -237,8 +237,6 @@ else
         {
             playByPlay = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
         .GetJsonAsync<PlayByPlay>();
-
-            InvokeAsync(StateHasChanged);
         }
         catch (Exception)
         {
@@ -253,8 +251,6 @@ else
         {
             playByPlay = await $"https://ws.statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?language=en&pushUpdateId={updateID}"
         .GetJsonAsync<PlayByPlay>();
-
-            InvokeAsync(StateHasChanged);
         }
         catch (Exception)
         {
