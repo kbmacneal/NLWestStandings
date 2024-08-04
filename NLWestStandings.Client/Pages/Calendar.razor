@@ -11,38 +11,31 @@
 
 <PageTitle>Team Calendar</PageTitle>
 
-@if (true)
-{
-    <MudCalendar Items="_events" MonthCellMinHeight="100">
-        <CellTemplate>
-            <div style="width: 100%; height: 100%; border: 2px solid @GetColor(((CustomItem)context).Color)">
-                <div style="background-color: @GetColor(((CustomItem)context).Color)">
-                    <p style="color:white;">@(((CustomItem)context).Title)</p>
-                </div>
-                <div class="pa-2 align-content-center">
-
-                    <MudLink Style="color: #ffffff;"
-                             Typo="Typo.body1"
-                             Align="Align.Center"
-                             OnClick="@(() => GoToGame(((CustomItem)context).gamepk,((CustomItem)context).hometeam, ((CustomItem)context).awayteam))">
-
-                        @* <MudText Typo="Typo.body2">@context.Text</MudText> *@
-
-                        <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  ((CustomItem)context).awayteam).team.logos[0].href"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  ((CustomItem)context).hometeam).team.logos[0].href"></MudImage>
-
-                    </MudLink>
-
-
-
-                </div>
+<MudCalendar Items="_events" MonthCellMinHeight="100">
+    <CellTemplate>
+        <div style="width: 100%; height: 100%; border: 2px solid @GetColor(((CustomItem)context).Color)">
+            <div style="background-color: @GetColor(((CustomItem)context).Color)">
+                <p style="color:white;">@(((CustomItem)context).Title)</p>
             </div>
-        </CellTemplate>
-    </MudCalendar>
-}
-else
-{
-    <MudProgressCircular Color="Color.Primary" Items="_events" Indeterminate="true" />
-}
+            <div class="pa-2 align-content-center">
+
+                <MudLink Style="color: #ffffff;"
+                         Typo="Typo.body1"
+                         Align="Align.Center"
+                         OnClick="@(() => GoToGame(((CustomItem)context).gamepk,((CustomItem)context).hometeam, ((CustomItem)context).awayteam))">
+
+                    @* <MudText Typo="Typo.body2">@context.Text</MudText> *@
+
+                    <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  ((CustomItem)context).awayteam).team.logos[0].href"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  ((CustomItem)context).hometeam).team.logos[0].href"></MudImage>
+
+                </MudLink>
+
+
+
+            </div>
+        </div>
+    </CellTemplate>
+</MudCalendar>
 
 
 @code {
