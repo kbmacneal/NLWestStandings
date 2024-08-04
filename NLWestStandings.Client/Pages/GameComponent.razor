@@ -37,7 +37,14 @@
 {
     <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
 
-    <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
+    @if(playByPlay.liveData.plays.currentPlay is not null)
+    {
+        <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
+    }
+    else
+    {
+        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+    }
 
     <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
 
@@ -171,7 +178,7 @@ else
 
     private string gamename { get; set; }
 
-    private IWebsocketClient? _client;
+    private WebsocketClient? _client { get; set; }
 
     private string _message = "Gameday5";
 
@@ -191,7 +198,7 @@ else
 
         await GetPlayByPlay();
 
-        if (playByPlay?.gameData.status.abstractGameCode != "F")
+        if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
             var url = new Uri($"wss://ws.statsapi.mlb.com/api/v1/game/push/subscribe/gameday/{gamepk}");
             _client = new WebsocketClient(url);
@@ -224,12 +231,9 @@ else
                 // Log($"Received: '{msg.Text}'", LogSeverity.Info);
                 await InvokeAsync(StateHasChanged);
             });
+
+            await _client.Start();
         }
-
-        await InvokeAsync(StateHasChanged);
-
-        await _client.Start();
-
     }
 
     public async ValueTask DisposeAsync()
@@ -247,6 +251,9 @@ else
         {
             playByPlay = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
         .GetJsonAsync<PlayByPlay>();
+
+            await InvokeAsync(StateHasChanged);
+
         }
         catch (Exception)
         {
@@ -261,6 +268,9 @@ else
         {
             playByPlay = await $"https://ws.statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?language=en&pushUpdateId={updateID}"
         .GetJsonAsync<PlayByPlay>();
+
+            await InvokeAsync(StateHasChanged);
+
         }
         catch (Exception)
         {
