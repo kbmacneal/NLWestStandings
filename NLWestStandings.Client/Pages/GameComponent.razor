@@ -53,7 +53,7 @@
         <th class="table_cell">Errors</th>
         <th class="table_cell">LoB</th>
         <tr>
-            <td class="table_cell">Away</td>
+            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage> </td>
             @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
             {
                 <td class="table_cell">@inning.away.runs</td>
@@ -64,7 +64,7 @@
             <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
         </tr>
         <tr>
-            <td class="table_cell">Home</td>
+            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage> </td>
             @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
             {
                 <td class="table_cell">@inning.home.runs</td>
