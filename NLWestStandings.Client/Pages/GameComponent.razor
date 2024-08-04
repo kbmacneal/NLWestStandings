@@ -7,6 +7,8 @@
 @using NLWestStandings.Client.Classes.PlayByPlay
 @using NLWestStandings.MLB
 @using System.Globalization
+@using System.Net.WebSockets
+@using Websocket.Client
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
 
@@ -133,6 +135,10 @@
 
     private string gamename { get; set; }
 
+    private IWebsocketClient? _client;
+
+    private string _message = "Gameday5";
+
     LineScoreData? score { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
@@ -144,6 +150,43 @@
 
         await GetPlayByPlay();
 
+        if (playByPlay?.gameData.status.abstractGameCode != "F")
+        {
+            var url = new Uri($"wss://ws.statsapi.mlb.com/api/v1/game/push/subscribe/gameday/{gamepk}");
+            _client = new WebsocketClient(url);
+
+            _client.Name = "MLB Gameday";
+            _client.ReconnectTimeout = TimeSpan.FromSeconds(60);
+            _client.ErrorReconnectTimeout = TimeSpan.FromSeconds(30);
+            _client.ReconnectionHappened.Subscribe(info =>
+            {
+                // Console.WriteLine($"Reconnection happened, type: {info.Type}, url: {_client.Url}");
+                _client.Send(_message);
+                // Log($"Reconnected, type: '{info.Type}'", LogSeverity.Warning);
+                // StateHasChanged();
+            });
+            _client.DisconnectionHappened.Subscribe(info =>
+            {
+                // Console.WriteLine($"Disconnection happened, type: {info.Type}");
+                // Log($"Disconnected, type: '{info.Type}', reason: '{info.CloseStatus}'", LogSeverity.Warning);
+                // StateHasChanged();
+            });
+
+            _client.MessageReceived.Subscribe(async msg =>
+            {
+                Console.WriteLine($"Message received: {msg}");
+
+                var jsonplay = System.Text.Json.JsonSerializer.Deserialize<TimestampPlay>(msg.Text ?? "" .Replace("json", ""));
+
+                // var ts = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?timestamp={jsonplay.timeStamp}".GetStringAsync();
+
+                // Log($"Received: '{msg.Text}'", LogSeverity.Info);
+                InvokeAsync(StateHasChanged);
+            });
+
+            await _client.Start();
+        }
+
         InvokeAsync(StateHasChanged);
 
     }
@@ -153,19 +196,7 @@
         playByPlay = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
         .GetJsonAsync<PlayByPlay>();
 
-        if (playByPlay.gameData.status.abstractGameCode != "F")
-        {
-            while (true)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(20));
-
-                playByPlay = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
-        .GetJsonAsync<PlayByPlay>();
-
-                InvokeAsync(StateHasChanged);
-            }
-        }
-
         InvokeAsync(StateHasChanged);
     }
+
 }

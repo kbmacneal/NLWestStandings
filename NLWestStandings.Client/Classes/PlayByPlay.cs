@@ -1,6 +1,22 @@
 ﻿namespace NLWestStandings.Client.Classes.PlayByPlay
 {
 
+    public class TimestampPlay
+    {
+        public string timeStamp { get; set; }
+        public string gamePk { get; set; }
+        public string updateId { get; set; }
+        public int wait { get; set; }
+        public string[] logicalEvents { get; set; }
+        public string[] gameEvents { get; set; }
+        public Changeevent changeEvent { get; set; }
+    }
+
+    public class Changeevent
+    {
+        public string type { get; set; }
+    }
+
     public class PlayByPlay
     {
         public string copyright { get; set; }
@@ -3644,7 +3660,7 @@
 
     public class Plays
     {
-        public Allplay[] allPlays { get; set; }
+        public List<Allplay> allPlays { get; set; }
         public Currentplay currentPlay { get; set; }
         public int[] scoringPlays { get; set; }
         public Playsbyinning[] playsByInning { get; set; }
