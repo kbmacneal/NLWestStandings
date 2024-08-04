@@ -95,7 +95,7 @@ namespace NLWestStandings.Classes
 
         private async Task<TeamCalendar> GetCalendar()
         {
-            var beginning_of_month = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var beginning_of_month = new DateOnly(DateTime.Now.Year, 1, 1);
             var end_of_month = new DateOnly(DateTime.Now.Year, 12, 1);
 
             var calendar = await $"https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate={beginning_of_month}&endDate={end_of_month}"
