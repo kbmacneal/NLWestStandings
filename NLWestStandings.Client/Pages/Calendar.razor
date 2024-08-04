@@ -1,6 +1,7 @@
 ﻿@page "/calendar/{teamid}"
 
 @using Microsoft.AspNetCore.SignalR.Client
+@using NLWestStandings.Client.Classes
 @using NLWestStandings.Client.Classes.Calendar
 @using NLWestStandings.MLB
 @using System.Web
@@ -17,21 +18,23 @@
             <div style="width: 100%; height: 100%; border: 2px solid @GetColor(((CustomItem)context).Color)">
                 <div style="background-color: @GetColor(((CustomItem)context).Color)">
                     <p style="color:white;">@(((CustomItem)context).Title)</p>
-            </div>
-            <div class="pa-2">
+                </div>
+                <div class="pa-2 align-content-center">
 
                     <MudLink Style="color: #ffffff;"
                              Typo="Typo.body1"
                              Align="Align.Center"
                              OnClick="@(() => GoToGame(((CustomItem)context).gamepk,((CustomItem)context).hometeam, ((CustomItem)context).awayteam))">
 
-                        <MudText Typo="Typo.body2">@context.Text</MudText>
+                        @* <MudText Typo="Typo.body2">@context.Text</MudText> *@
+
+                        <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  ((CustomItem)context).awayteam).team.logos[0].href"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  ((CustomItem)context).hometeam).team.logos[0].href"></MudImage>
 
                     </MudLink>
-                
-                
-                
-            </div>
+
+
+
+                </div>
             </div>
         </CellTemplate>
     </MudCalendar>
@@ -54,6 +57,8 @@ else
 
     private List<CustomItem> _events = new();
 
+    private Logos logos { get; set; } = new Logos();
+
     private class CustomItem : CalendarItem
     {
         public string Title { get; set; } = string.Empty;
@@ -64,8 +69,6 @@ else
         public string awayteam { get; set; }
     }
 
-
-
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
@@ -73,6 +76,8 @@ else
             .Build();
 
         await hubConnection.StartAsync();
+
+        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId));
 
         calendar_data = System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetCalendar", hubConnection.ConnectionId, teamid.ToString())) ?? new();
 
