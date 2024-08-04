@@ -76,9 +76,9 @@
         </tr>
     </table>
 
-<br />
-<br />
-<br />
+    <br />
+    <br />
+    <br />
 
     <MudText Typo="Typo.h5">Game Feed</MudText>
     <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
@@ -221,13 +221,13 @@ else
                 await GetPlayByPlay(jsonplay.updateId);
 
                 // Log($"Received: '{msg.Text}'", LogSeverity.Info);
-                InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
             });
-
-            await _client.Start();
         }
 
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
+
+        await _client.Start();
 
     }
 
