@@ -1,6 +1,5 @@
 ﻿namespace NLWestStandings.Client.Classes.LineScore
 {
-
     public class LineScoreData
     {
         public string copyright { get; set; }
@@ -218,6 +217,4 @@
         public int errors { get; set; }
         public int leftOnBase { get; set; }
     }
-
-
 }
