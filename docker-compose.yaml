@@ -8,5 +8,5 @@ services:
       - 8090:8081
     image: nlweststandings
 networks:
-  dockge_default:
+  nlweststandings:
     external: true

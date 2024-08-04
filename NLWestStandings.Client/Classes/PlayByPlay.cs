@@ -1,6 +1,23 @@
 ﻿namespace NLWestStandings.Client.Classes.PlayByPlay
 {
 
+    public class PbPPushNotification
+    {
+        public string timeStamp { get; set; }
+        public string gamePk { get; set; }
+        public string updateId { get; set; }
+        public int wait { get; set; }
+        public string[] logicalEvents { get; set; }
+        public string[] gameEvents { get; set; }
+        public Changeevent changeEvent { get; set; }
+        public bool isDelay { get; set; }
+    }
+
+    public class Changeevent
+    {
+        public string type { get; set; }
+    }
+
     public class TimestampPlay
     {
         public string timeStamp { get; set; }
@@ -10,11 +27,6 @@
         public string[] logicalEvents { get; set; }
         public string[] gameEvents { get; set; }
         public Changeevent changeEvent { get; set; }
-    }
-
-    public class Changeevent
-    {
-        public string type { get; set; }
     }
 
     public class PlayByPlay

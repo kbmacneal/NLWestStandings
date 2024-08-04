@@ -160,7 +160,7 @@
             _client.ErrorReconnectTimeout = TimeSpan.FromSeconds(30);
             _client.ReconnectionHappened.Subscribe(info =>
             {
-                // Console.WriteLine($"Reconnection happened, type: {info.Type}, url: {_client.Url}");
+                Console.WriteLine($"Reconnection happened, type: {info.Type}, url: {_client.Url}");
                 _client.Send(_message);
                 // Log($"Reconnected, type: '{info.Type}'", LogSeverity.Warning);
                 // StateHasChanged();
@@ -174,11 +174,11 @@
 
             _client.MessageReceived.Subscribe(async msg =>
             {
-                Console.WriteLine($"Message received: {msg}");
+                Console.WriteLine($"Live update received");
 
-                var jsonplay = System.Text.Json.JsonSerializer.Deserialize<TimestampPlay>(msg.Text ?? "" .Replace("json", ""));
+                var jsonplay = System.Text.Json.JsonSerializer.Deserialize<PbPPushNotification>(msg.Text ?? "");
 
-                // var ts = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?timestamp={jsonplay.timeStamp}".GetStringAsync();
+                await GetPlayByPlay(jsonplay.updateId);
 
                 // Log($"Received: '{msg.Text}'", LogSeverity.Info);
                 InvokeAsync(StateHasChanged);
@@ -193,10 +193,33 @@
 
     private async Task GetPlayByPlay()
     {
-        playByPlay = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
+        try
+        {
+            playByPlay = await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
         .GetJsonAsync<PlayByPlay>();
 
-        InvokeAsync(StateHasChanged);
+            InvokeAsync(StateHasChanged);
+        }
+        catch (Exception)
+        {
+            var t = "";
+        }
+
     }
 
+    private async Task GetPlayByPlay(string updateID)
+    {
+        try
+        {
+            playByPlay = await $"https://ws.statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?language=en&pushUpdateId={updateID}"
+        .GetJsonAsync<PlayByPlay>();
+
+            InvokeAsync(StateHasChanged);
+        }
+        catch (Exception)
+        {
+            var t = "";
+        }
+
+    }
 }
