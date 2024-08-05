@@ -37,7 +37,7 @@
 {
     <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
 
-    @if(playByPlay.liveData.plays.currentPlay is not null)
+    @if (playByPlay.liveData.plays.currentPlay is not null)
     {
         <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
     }
@@ -46,9 +46,25 @@
         <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
     }
 
-    <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
+    @if (playByPlay.gameData.probablePitchers.home is not null && playByPlay.gameData.probablePitchers.away is not null)
+    {
+        <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
+    }
+    else
+    {
+        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+    }
 
-    <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
+    @if (playByPlay.gameData.weather is not null)
+    {
+        <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
+
+    }
+    else
+    {
+        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+    }
+
 
     <table>
         <th class="table_cell">Inning</th>
