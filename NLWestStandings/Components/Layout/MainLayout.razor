@@ -12,6 +12,7 @@
 
 <MudLayout>
     <MudAppBar Color="Color.Primary" Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Outlined.Home" Href="home" Style="color:white;"></MudIconButton>
         <MudText Typo="Typo.h5" Class="ml-3">MLB Standings</MudText>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
@@ -46,7 +47,7 @@
 
 @code {
     private bool _drawerOpen = false;
-    
+
     private void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
