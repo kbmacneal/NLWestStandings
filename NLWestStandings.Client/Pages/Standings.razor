@@ -15,8 +15,11 @@
 
 <PageTitle>Standings</PageTitle>
 
+
 @if (NLStandings is not null)
 {
+    <MudLink Href="todaycalendar">Today's Games</MudLink>
+
     @foreach (var item in NLStandings.Reverse())
     {
         <MudTable Class="pb-8" T="Teamrecord" Items="@item" RowStyleFunc="RowStyleFunc">

@@ -90,7 +90,7 @@
 
     <MudText Typo="Typo.h5">Game Feed</MudText>
     <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
-    <MudTable Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
+    <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
         <HeaderContent>
             <MudTh>Inning</MudTh>
             <MudTh>Pitcher</MudTh>
