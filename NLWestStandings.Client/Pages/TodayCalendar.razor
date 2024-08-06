@@ -1,5 +1,6 @@
 ﻿@page "/todaycalendar"
 
+@using Flurl.Http
 @using Microsoft.AspNetCore.SignalR.Client
 @using NLWestStandings.Client.Classes
 @using NLWestStandings.Client.Classes.Calendar
@@ -52,7 +53,13 @@ else
 
         logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId)) ?? new();
 
-        calendar_data = (System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetTodayCalendar", hubConnection.ConnectionId)) ?? new()).OrderBy(e => e.gameDate).ToList();
+        // calendar_data = (System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetTodayCalendar", hubConnection.ConnectionId)) ?? new()).OrderBy(e => e.gameDate).ToList();
+
+        calendar_data = (await $"https://statsapi.mlb.com/api/v1/schedule?date={DateTime.Now.Date.ToString("yyyy-MM-dd")}&sportId=1"
+            .GetJsonAsync<TeamCalendar>())
+            .dates[0].games
+            .OrderBy(e => e.gameDate)
+            .ToList();
 
         await InvokeAsync(StateHasChanged);
 

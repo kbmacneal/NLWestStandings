@@ -185,9 +185,9 @@
                                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
                     </ToolBarContent>
                     <Columns>
-                        <PropertyColumn Property="x => x.name" />
-                        <PropertyColumn Property="x => string.Join(',',x.positions)" />
-                        <PropertyColumn Property="x => x.status" />
+                        <PropertyColumn Title="Name" Property="x => x.name" />
+                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+                        <PropertyColumn Title="Status" Property="x => x.status" />
                     </Columns>
                 </MudDataGrid>
             </MudPaper>
@@ -202,9 +202,9 @@
                                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
                     </ToolBarContent>
                     <Columns>
-                        <PropertyColumn Property="x => x.name" />
-                        <PropertyColumn Property="x => string.Join(',',x.positions)" />
-                        <PropertyColumn Property="x => x.status" />
+                        <PropertyColumn Title="Name" Property="x => x.name" />
+                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+                        <PropertyColumn Title="Status" Property="x => x.status" />
                     </Columns>
                 </MudDataGrid>
             </MudPaper>
