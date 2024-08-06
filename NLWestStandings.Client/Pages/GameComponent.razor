@@ -4,6 +4,7 @@
 @using NLWestStandings.Client.Classes
 @using NLWestStandings.Client.Classes.Calendar
 @using NLWestStandings.Client.Classes.DepthChart
+@using NLWestStandings.Client.Classes.GameStats
 @using NLWestStandings.Client.Classes.LineScore
 @using NLWestStandings.Client.Classes.PlayByPlay
 @using NLWestStandings.MLB
@@ -441,5 +442,22 @@ else
         }
 
         return new DepthChart();
+    }
+
+    private async Task<GameStats> GetPersonGameStats(string person_id, string gamepk)
+    {
+    
+
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/people/{person_id}/stats/game/{gamepk}"
+        .GetJsonAsync<GameStats>();
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new GameStats();
     }
 }
