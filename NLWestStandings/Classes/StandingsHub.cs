@@ -76,7 +76,7 @@ namespace NLWestStandings.Classes
                 {
                     foreach (var game in item.games)
                     {
-                        if (game.officialDate == DateTime.Now.ToString("yyyy-MM-dd"))
+                        if (DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"))
                         {
                             rtn.Add(game);
                         }
