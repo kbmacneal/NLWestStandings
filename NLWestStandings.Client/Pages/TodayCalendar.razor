@@ -1,4 +1,4 @@
-﻿@page "/todaycalendar"
+﻿@page "/todaycalendar/{date}"
 
 @using Flurl.Http
 @using Microsoft.AspNetCore.SignalR.Client
@@ -39,6 +39,9 @@ else
 @code {
     private HubConnection? hubConnection;
 
+    [Parameter]
+    public string date{ get; set; }
+
     List<Game>? calendar_data { get; set; }
 
     private Logos logos { get; set; } = new Logos();
@@ -55,7 +58,7 @@ else
 
         // calendar_data = (System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetTodayCalendar", hubConnection.ConnectionId)) ?? new()).OrderBy(e => e.gameDate).ToList();
 
-        calendar_data = (await $"https://statsapi.mlb.com/api/v1/schedule?date={DateTime.Now.Date.ToString("yyyy-MM-dd")}&sportId=1"
+        calendar_data = (await $"https://statsapi.mlb.com/api/v1/schedule?date={date}&sportId=1"
             .GetJsonAsync<TeamCalendar>())
             .dates[0].games
             .OrderBy(e => e.gameDate)

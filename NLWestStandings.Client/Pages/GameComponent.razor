@@ -461,7 +461,7 @@ else
                 var stats = await GetPersonGameStats(batter.ToString(), gamepk);
                 var person = await GetPerson(batter.ToString());
 
-                if (new string[] { "P", "Y" }.Contains(person.people[0].primaryPosition.code))
+                if (person.people[0].primaryPosition.code == "1")
                 {
                     awaydepthChart?.Add(new DepthChartDTO()
                         {
