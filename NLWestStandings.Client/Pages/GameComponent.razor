@@ -6,6 +6,7 @@
 @using NLWestStandings.Client.Classes.DepthChart
 @using NLWestStandings.Client.Classes.GameStats
 @using NLWestStandings.Client.Classes.LineScore
+@using NLWestStandings.Client.Classes.Person
 @using NLWestStandings.Client.Classes.PlayByPlay
 @using NLWestStandings.MLB
 @using System.Globalization
@@ -176,40 +177,79 @@
                 </MudTable>
             </MudPaper>
         </MudItem>
-        <MudItem xs="3">
-            <MudPaper>
-                <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.h6">Home Depth Chart</MudText>
-                        <MudSpacer />
-                        <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                    </ToolBarContent>
-                    <Columns>
-                        <PropertyColumn Title="Name" Property="x => x.name" />
-                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
-                        <PropertyColumn Title="Status" Property="x => x.status" />
-                    </Columns>
-                </MudDataGrid>
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="3">
-            <MudPaper>
-                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.h6">Away Depth Chart</MudText>
-                        <MudSpacer />
-                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                    </ToolBarContent>
-                    <Columns>
-                        <PropertyColumn Title="Name" Property="x => x.name" />
-                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
-                        <PropertyColumn Title="Status" Property="x => x.status" />
-                    </Columns>
-                </MudDataGrid>
-            </MudPaper>
-        </MudItem>
+        @if (playByPlay?.gameData.status.abstractGameCode == "L")
+        {
+            <MudItem xs="3">
+                <MudPaper>
+                    <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">Home Depth Chart</MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Title="Name" Property="x => x.name" />
+                            <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+                            <PropertyColumn Title="Status" Property="x => x.status" />
+                        </Columns>
+                    </MudDataGrid>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="3">
+                <MudPaper>
+                    <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">Away Depth Chart</MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Title="Name" Property="x => x.name" />
+                            <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+                            <PropertyColumn Title="Status" Property="x => x.status" />
+                        </Columns>
+                    </MudDataGrid>
+                </MudPaper>
+            </MudItem>
+        }
+        else if (playByPlay?.gameData.status.abstractGameCode == "F")
+        {
+            <MudItem xs="3">
+                <MudPaper>
+                    <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">Home Game Stats</MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Title="Name" Property="x => x.name" />
+                            <PropertyColumn Title="Stats" Property="x => x.stats" />
+                        </Columns>
+                    </MudDataGrid>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="3">
+                <MudPaper>
+                    <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">Away Game Stats</MudText>
+                            <MudSpacer />
+                            <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Title="Name" Property="x => x.name" />
+                            <PropertyColumn Title="Stats" Property="x => x.stats" />
+                        </Columns>
+                    </MudDataGrid>
+                </MudPaper>
+            </MudItem>
+        }
+
     </MudGrid>
 
 
@@ -253,6 +293,7 @@ else
         public string jersey_num { get; set; }
         public List<string> positions { get; set; }
         public string status { get; set; }
+        public string stats { get; set; }
     }
 
     private string _homesearchString;
@@ -306,50 +347,50 @@ else
 
         await GetPlayByPlay();
 
-        var home_temp = await GetDepthChart(playByPlay?.gameData.teams.home.id.ToString
-        () ?? "0");
-
-        var away_temp = await GetDepthChart(playByPlay?.gameData.teams.away.id.ToString
-        () ?? "0");
-
-        foreach (var play in home_temp.roster)
-        {
-            if (homedepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
-            {
-                homedepthChart?.First(e => e.name == play.person.fullName).positions.Add(play.position.name);
-            }
-            else
-            {
-                homedepthChart?.Add(new DepthChartDTO()
-                    {
-                        name = play.person.fullName,
-                        jersey_num = play.jerseyNumber,
-                        positions = new() { play.position.name },
-                        status = play.status.description
-                    });
-            }
-        }
-
-        foreach (var play in away_temp.roster)
-        {
-            if (awaydepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
-            {
-                awaydepthChart?.First(e => e.name == play.person.fullName).positions.Add(play.position.name);
-            }
-            else
-            {
-                awaydepthChart?.Add(new DepthChartDTO()
-                    {
-                        name = play.person.fullName,
-                        jersey_num = play.jerseyNumber,
-                        positions = new() { play.position.name },
-                        status = play.status.description
-                    });
-            }
-        }
-
         if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
+            var home_temp = await GetDepthChart(playByPlay?.gameData.teams.home.id.ToString
+        () ?? "0");
+
+            var away_temp = await GetDepthChart(playByPlay?.gameData.teams.away.id.ToString
+            () ?? "0");
+
+            foreach (var play in home_temp.roster)
+            {
+                if (homedepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
+                {
+                    homedepthChart?.First(e => e.name == play.person.fullName).positions.Add(play.position.name);
+                }
+                else
+                {
+                    homedepthChart?.Add(new DepthChartDTO()
+                        {
+                            name = play.person.fullName,
+                            jersey_num = play.jerseyNumber,
+                            positions = new() { play.position.name },
+                            status = play.status.description
+                        });
+                }
+            }
+
+            foreach (var play in away_temp.roster)
+            {
+                if (awaydepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
+                {
+                    awaydepthChart?.First(e => e.name == play.person.fullName).positions.Add(play.position.name);
+                }
+                else
+                {
+                    awaydepthChart?.Add(new DepthChartDTO()
+                        {
+                            name = play.person.fullName,
+                            jersey_num = play.jerseyNumber,
+                            positions = new() { play.position.name },
+                            status = play.status.description
+                        });
+                }
+            }
+
             var url = new Uri($"wss://ws.statsapi.mlb.com/api/v1/game/push/subscribe/gameday/{gamepk}");
             _client = new WebsocketClient(url);
 
@@ -383,6 +424,64 @@ else
             });
 
             await _client.Start();
+        }
+        else if (playByPlay?.gameData.status.abstractGameCode == "F")
+        {
+            var bscore = await GetBoxscore(gamepk);
+
+            foreach (var batter in bscore.teams.home.batters)
+            {
+                var stats = await GetPersonGameStats(batter.ToString(), gamepk);
+                var person = await GetPerson(batter.ToString());
+
+                if (person.people[0].primaryPosition.code == "1")
+                {
+                    homedepthChart?.Add(new DepthChartDTO()
+                        {
+                            name = person.people[0].fullName,
+                            jersey_num = "",
+                            positions = new(),
+                            stats = stats.stats[0].splits.FirstOrDefault(e => e.group == "pitching")?.stat.summary ?? ""
+                        });
+                }
+                else
+                {
+                    homedepthChart?.Add(new DepthChartDTO()
+                        {
+                            name = person.people[0].fullName,
+                            jersey_num = "",
+                            positions = new(),
+                            stats = stats.stats[0].splits.FirstOrDefault(e => e.group == "hitting")?.stat.summary ?? ""
+                        });
+                }
+            }
+
+            foreach (var batter in bscore.teams.away.batters)
+            {
+                var stats = await GetPersonGameStats(batter.ToString(), gamepk);
+                var person = await GetPerson(batter.ToString());
+
+                if (new string[] { "P", "Y" }.Contains(person.people[0].primaryPosition.code))
+                {
+                    awaydepthChart?.Add(new DepthChartDTO()
+                        {
+                            name = person.people[0].fullName,
+                            jersey_num = "",
+                            positions = new(),
+                            stats = stats.stats[0].splits.FirstOrDefault(e => e.group == "pitching")?.stat.summary ?? ""
+                        });
+                }
+                else
+                {
+                    awaydepthChart?.Add(new DepthChartDTO()
+                        {
+                            name = person.people[0].fullName,
+                            jersey_num = "",
+                            positions = new(),
+                            stats = stats.stats[0].splits.FirstOrDefault(e => e.group == "hitting")?.stat.summary ?? ""
+                        });
+                }
+            }
         }
     }
 
@@ -446,7 +545,7 @@ else
 
     private async Task<GameStats> GetPersonGameStats(string person_id, string gamepk)
     {
-    
+
 
         try
         {
@@ -459,5 +558,35 @@ else
         }
 
         return new GameStats();
+    }
+
+    private async Task<Boxscore> GetBoxscore(string gamepk)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/game/{gamepk}/boxscore"
+        .GetJsonAsync<Boxscore>();
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new Boxscore();
+    }
+
+    private async Task<PersonRecord> GetPerson(string personid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/people/{personid}/"
+        .GetJsonAsync<PersonRecord>();
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new PersonRecord();
     }
 }
