@@ -39,14 +39,14 @@
 
 
 @code {
-    private HubConnection hubConnection;
+    private HubConnection? hubConnection;
 
     private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
 
     [Parameter]
     public string teamid { get; set; }
 
-    List<Game> calendar_data { get; set; }
+    List<Game>? calendar_data { get; set; }
 
     private List<CustomItem> _events = new();
 
@@ -57,9 +57,9 @@
         public string Title { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
         public Color Color { get; set; } = Color.Primary;
-        public string gamepk { get; set; }
-        public string hometeam { get; set; }
-        public string awayteam { get; set; }
+        public string? gamepk { get; set; }
+        public string? hometeam { get; set; }
+        public string? awayteam { get; set; }
     }
 
     protected override async Task OnInitializedAsync()
@@ -70,7 +70,7 @@
 
         await hubConnection.StartAsync();
 
-        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId));
+        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId)) ?? new();
 
         calendar_data = System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetCalendar", hubConnection.ConnectionId, teamid.ToString())) ?? new();
 
@@ -96,11 +96,9 @@
             }
         }
 
-
         _events = temp_events.DistinctBy(e => e.Text + e.Start).ToList();
 
-        InvokeAsync(StateHasChanged);
-
+        await InvokeAsync(StateHasChanged);
     }
 
     private string ToAmPm(DateTime dateTime)

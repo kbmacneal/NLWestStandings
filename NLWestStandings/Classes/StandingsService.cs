@@ -36,7 +36,7 @@ namespace NLWestStandings.Classes
                         {
                             item2.division_name = (await "https://statsapi.mlb.com/api/v1/divisions/"
                             .AppendPathSegment(division_id.ToString())
-                            .GetJsonAsync<DivisionCall>())
+                            .GetJsonAsync<DivisionCall>(cancellationToken: stoppingToken))
                             .divisions.First().name;
                         }
                     }
@@ -49,7 +49,7 @@ namespace NLWestStandings.Classes
                         {
                             item2.division_name = (await "https://statsapi.mlb.com/api/v1/divisions/"
                                 .AppendPathSegment(division_id.ToString())
-                                .GetJsonAsync<DivisionCall>())
+                                .GetJsonAsync<DivisionCall>(cancellationToken: stoppingToken))
                                 .divisions.First().name;
                         }
                     }

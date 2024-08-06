@@ -8,15 +8,18 @@
 @inject NavigationManager NavigationManager
 
 <style>
-    .mud-table-head{
-        background-color:bisque;
+    .mud-table-head {
+        background-color: bisque;
     }
 </style>
 
 <PageTitle>Standings</PageTitle>
 
+
 @if (NLStandings is not null)
 {
+    <MudLink Href="todaycalendar">Today's Games</MudLink>
+
     @foreach (var item in NLStandings.Reverse())
     {
         <MudTable Class="pb-8" T="Teamrecord" Items="@item" RowStyleFunc="RowStyleFunc">
@@ -94,7 +97,7 @@ else
 
 
 @code {
-    private HubConnection hubConnection;
+    private HubConnection? hubConnection;
     private Logos logos { get; set; } = new Logos();
     private IEnumerable<Teamrecord[]>? NLStandings { get; set; } = null;
     private IEnumerable<Teamrecord[]>? ALStandings { get; set; } = null;
@@ -108,13 +111,13 @@ else
         hubConnection.On<string>("broadcastnl", async (string message) =>
         {
             NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(message);
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         });
 
         hubConnection.On<string>("broadcastal", async (string message) =>
         {
             ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(message);
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
@@ -123,10 +126,9 @@ else
 
         ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastALToConnection", hubConnection.ConnectionId));
 
-        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId));
+        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId)) ?? new();
 
-
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
 
     }
 

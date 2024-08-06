@@ -105,30 +105,27 @@
     <br />
     <br />
 
-    <MudGrid>
-        <MudItem xs="6">
-            <MudPaper>
-                <MudText Typo="Typo.h5">Game Feed</MudText>
-                <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
-                <MudTable Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
-                    <HeaderContent>
-                        <MudTh>Inning</MudTh>
-                        <MudTh>Pitcher</MudTh>
-                        <MudTh>Batter</MudTh>
-                        <MudTh>Count</MudTh>
-                        <MudTh>Result</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Inning">
-                            <div class="d-flex">
-                                @if (context.about.halfInning == "top")
-                                {
-                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropUp"></MudIcon>
-                                }
-                                else
-                                {
-                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown"></MudIcon>
-                                }
+    <MudText Typo="Typo.h5">Game Feed</MudText>
+    <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
+    <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>Inning</MudTh>
+            <MudTh>Pitcher</MudTh>
+            <MudTh>Batter</MudTh>
+            <MudTh>Count</MudTh>
+            <MudTh>Result</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Inning">
+                <div class="d-flex">
+                    @if (context.about.halfInning == "top")
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.ArrowDropUp"></MudIcon>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown"></MudIcon>
+                    }
 
                                 @context.about.inning
                             </div>
@@ -195,17 +192,17 @@
 }
 
 @code {
-    private HubConnection hubConnection;
+    private HubConnection? hubConnection;
 
     [Parameter]
     [SupplyParameterFromQuery(Name = "gamepk")]
     public string gamepk { get; set; }
     [Parameter]
     [SupplyParameterFromQuery(Name = "hometeam")]
-    public string hometeam { get; set; }
+    public string hometeam { get; set; } = "N/A";
     [Parameter]
     [SupplyParameterFromQuery(Name = "awayteam")]
-    public string awayteam { get; set; }
+    public string awayteam { get; set; } = "N/A";
 
     private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
@@ -232,7 +229,7 @@
 
         await hubConnection.StartAsync();
 
-        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId));
+        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId)) ?? new();
 
         await GetPlayByPlay();
 
@@ -259,7 +256,7 @@
             });
             _client.DisconnectionHappened.Subscribe(info =>
             {
-                // Console.WriteLine($"Disconnection happened, type: {info.Type}");
+                Console.WriteLine($"Disconnection happened, type: {info.Type}");
                 // Log($"Disconnected, type: '{info.Type}', reason: '{info.CloseStatus}'", LogSeverity.Warning);
                 // StateHasChanged();
             });
@@ -270,7 +267,7 @@
 
                 var jsonplay = System.Text.Json.JsonSerializer.Deserialize<PbPPushNotification>(msg.Text ?? "");
 
-                await GetPlayByPlay(jsonplay.updateId);
+                await GetPlayByPlay(jsonplay?.updateId ?? "");
 
                 // Log($"Received: '{msg.Text}'", LogSeverity.Info);
                 await InvokeAsync(StateHasChanged);
