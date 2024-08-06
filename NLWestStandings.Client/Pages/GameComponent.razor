@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @using NLWestStandings.Client.Classes
 @using NLWestStandings.Client.Classes.Calendar
+@using NLWestStandings.Client.Classes.DepthChart
 @using NLWestStandings.Client.Classes.LineScore
 @using NLWestStandings.Client.Classes.PlayByPlay
 @using NLWestStandings.MLB
@@ -104,75 +105,93 @@
     <br />
     <br />
 
-    <MudText Typo="Typo.h5">Game Feed</MudText>
-    <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
-    <MudTable Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
-        <HeaderContent>
-            <MudTh>Inning</MudTh>
-            <MudTh>Pitcher</MudTh>
-            <MudTh>Batter</MudTh>
-            <MudTh>Count</MudTh>
-            <MudTh>Result</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Inning">
-                <div class="d-flex">
-                    @if (context.about.halfInning == "top")
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.ArrowDropUp"></MudIcon>
-                    }
-                    else
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown"></MudIcon>
-                    }
+    <MudGrid>
+        <MudItem xs="6">
+            <MudPaper>
+                <MudText Typo="Typo.h5">Game Feed</MudText>
+                <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
+                <MudTable Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
+                    <HeaderContent>
+                        <MudTh>Inning</MudTh>
+                        <MudTh>Pitcher</MudTh>
+                        <MudTh>Batter</MudTh>
+                        <MudTh>Count</MudTh>
+                        <MudTh>Result</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Inning">
+                            <div class="d-flex">
+                                @if (context.about.halfInning == "top")
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropUp"></MudIcon>
+                                }
+                                else
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown"></MudIcon>
+                                }
 
-                    @context.about.inning
-                </div>
+                                @context.about.inning
+                            </div>
 
-            </MudTd>
+                        </MudTd>
 
-            @if (context.about.halfInning == "top")
-            {
-                <MudTd Class="align-content-center" Style="min-width:250px;">
-                    <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage>
+                        @if (context.about.halfInning == "top")
+                        {
+                            <MudTd Class="align-content-center" Style="min-width:250px;">
+                                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage>
 
-                    @context.matchup.pitcher.fullName
-                </MudTd>
-            }
-            else
-            {
-                <MudTd Class="align-content-center" Style="min-width:250px;">
-                    <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage>
+                                @context.matchup.pitcher.fullName
+                            </MudTd>
+                        }
+                        else
+                        {
+                            <MudTd Class="align-content-center" Style="min-width:250px;">
+                                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage>
 
-                    @context.matchup.pitcher.fullName
-                </MudTd>
-            }
+                                @context.matchup.pitcher.fullName
+                            </MudTd>
+                        }
 
-            @if (context.about.halfInning == "top")
-            {
-                <MudTd Class="align-content-center" Style="min-width:250px;">
-                    <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage>
+                        @if (context.about.halfInning == "top")
+                        {
+                            <MudTd Class="align-content-center" Style="min-width:250px;">
+                                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage>
 
-                    @context.matchup.batter.fullName
-                </MudTd>
-            }
-            else
-            {
-                <MudTd Class="align-content-center" Style="min-width:250px;">
-                    <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage>
+                                @context.matchup.batter.fullName
+                            </MudTd>
+                        }
+                        else
+                        {
+                            <MudTd Class="align-content-center" Style="min-width:250px;">
+                                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage>
 
-                    @context.matchup.batter.fullName
-                </MudTd>
-            }
+                                @context.matchup.batter.fullName
+                            </MudTd>
+                        }
 
-            <MudTd Style="min-width:100px;" DataLabel="Count">@context.count.balls - @context.count.strikes <br /> @($"{context.count.outs} Out(s)")</MudTd>
-            <MudTd DataLabel="Result">@context.result.description</MudTd>
-        </RowTemplate>
-    </MudTable>
-}
-else
-{
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                        <MudTd Style="min-width:100px;" DataLabel="Count">@context.count.balls - @context.count.strikes <br /> @($"{context.count.outs} Out(s)")</MudTd>
+                        <MudTd DataLabel="Result">@context.result.description</MudTd>
+                    </RowTemplate>
+                </MudTable>
+
+                else
+                {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                }
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="3">
+            <MudPaper>
+
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="3">
+
+            <MudPaper>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
 }
 
 @code {
@@ -191,6 +210,9 @@ else
     private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
     private PlayByPlay? playByPlay { get; set; } = null;
+
+    private DepthChart? homedepthChart { get; set; } = null;
+    private DepthChart? awaydepthChart { get; set; } = null;
 
     private string gamename { get; set; }
 
@@ -213,6 +235,12 @@ else
         logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId));
 
         await GetPlayByPlay();
+
+        homedepthChart = await GetDepthChart(playByPlay?.gameData.teams.home.id.ToString
+        () ?? "0");
+
+        awaydepthChart = await GetDepthChart(playByPlay?.gameData.teams.away.id.ToString
+        () ?? "0");
 
         if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
@@ -294,4 +322,20 @@ else
         }
 
     }
+
+    private async Task<DepthChart> GetDepthChart(string teamid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/teams/{teamid}/roster/depthChart"
+        .GetJsonAsync<DepthChart>();
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new DepthChart();
+    }
+
 }
