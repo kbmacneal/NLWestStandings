@@ -108,7 +108,7 @@
     <br />
 
     <MudGrid>
-        <MudItem xs="6">
+        <MudItem lg="6" sm="12">
             <MudPaper>
                 <MudText Typo="Typo.h5">Game Feed</MudText>
                 <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
@@ -179,7 +179,7 @@
         </MudItem>
         @if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
-            <MudItem xs="3">
+            <MudItem lg="3" sm="12">
                 <MudPaper>
                     <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
                         <ToolBarContent>
@@ -196,7 +196,7 @@
                     </MudDataGrid>
                 </MudPaper>
             </MudItem>
-            <MudItem xs="3">
+            <MudItem lg="3" sm="12">
                 <MudPaper>
                     <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
                         <ToolBarContent>
@@ -216,7 +216,7 @@
         }
         else if (playByPlay?.gameData.status.abstractGameCode == "F")
         {
-            <MudItem xs="3">
+            <MudItem lg="3" sm="12">
                 <MudPaper>
                     <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
                         <ToolBarContent>
@@ -232,7 +232,7 @@
                     </MudDataGrid>
                 </MudPaper>
             </MudItem>
-            <MudItem xs="3">
+            <MudItem lg="3" sm="12">
                 <MudPaper>
                     <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
                         <ToolBarContent>
