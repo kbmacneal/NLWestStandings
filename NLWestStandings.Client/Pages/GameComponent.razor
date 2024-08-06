@@ -176,23 +176,23 @@ else
 }
 
 @code {
-    private HubConnection hubConnection;
+    private HubConnection? hubConnection;
 
     [Parameter]
     [SupplyParameterFromQuery(Name = "gamepk")]
     public string gamepk { get; set; }
     [Parameter]
     [SupplyParameterFromQuery(Name = "hometeam")]
-    public string hometeam { get; set; }
+    public string hometeam { get; set; } = "N/A";
     [Parameter]
     [SupplyParameterFromQuery(Name = "awayteam")]
-    public string awayteam { get; set; }
+    public string awayteam { get; set; } = "N/A";
 
     private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
     private PlayByPlay? playByPlay { get; set; } = null;
 
-    private string gamename { get; set; }
+    private string? gamename { get; set; }
 
     private WebsocketClient? _client { get; set; }
 
@@ -210,7 +210,7 @@ else
 
         await hubConnection.StartAsync();
 
-        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId));
+        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId)) ?? new();
 
         await GetPlayByPlay();
 
@@ -242,7 +242,7 @@ else
 
                 var jsonplay = System.Text.Json.JsonSerializer.Deserialize<PbPPushNotification>(msg.Text ?? "");
 
-                await GetPlayByPlay(jsonplay.updateId);
+                await GetPlayByPlay(jsonplay?.updateId ?? "");
 
                 // Log($"Received: '{msg.Text}'", LogSeverity.Info);
                 await InvokeAsync(StateHasChanged);
