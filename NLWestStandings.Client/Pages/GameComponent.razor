@@ -231,7 +231,7 @@ else
             });
             _client.DisconnectionHappened.Subscribe(info =>
             {
-                // Console.WriteLine($"Disconnection happened, type: {info.Type}");
+                Console.WriteLine($"Disconnection happened, type: {info.Type}");
                 // Log($"Disconnected, type: '{info.Type}', reason: '{info.CloseStatus}'", LogSeverity.Warning);
                 // StateHasChanged();
             });
