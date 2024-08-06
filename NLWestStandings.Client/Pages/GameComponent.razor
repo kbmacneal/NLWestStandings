@@ -108,7 +108,7 @@
     <br />
 
     <MudGrid>
-        <MudItem lg="6" sm="12">
+        <MudItem lg="9" sm="12">
             <MudPaper>
                 <MudText Typo="Typo.h5">Game Feed</MudText>
                 <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
@@ -179,75 +179,65 @@
         </MudItem>
         @if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
-            <MudItem lg="3" sm="12">
-                <MudPaper>
-                    <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
-                        <ToolBarContent>
-                            <MudText Typo="Typo.h6">Home Depth Chart</MudText>
-                            <MudSpacer />
-                            <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                        </ToolBarContent>
-                        <Columns>
-                            <PropertyColumn Title="Name" Property="x => x.name" />
-                            <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
-                            <PropertyColumn Title="Status" Property="x => x.status" />
-                        </Columns>
-                    </MudDataGrid>
-                </MudPaper>
+            <MudItem lg="3" sm="12" Class="d-flex flex-column flex-grow-1">
+                <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Home Depth Chart</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Title="Name" Property="x => x.name" />
+                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+                        <PropertyColumn Title="Status" Property="x => x.status" />
+                    </Columns>
+                </MudDataGrid>
+                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Away Depth Chart</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Title="Name" Property="x => x.name" />
+                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+                        <PropertyColumn Title="Status" Property="x => x.status" />
+                    </Columns>
+                </MudDataGrid>
             </MudItem>
-            <MudItem lg="3" sm="12">
-                <MudPaper>
-                    <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
-                        <ToolBarContent>
-                            <MudText Typo="Typo.h6">Away Depth Chart</MudText>
-                            <MudSpacer />
-                            <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                        </ToolBarContent>
-                        <Columns>
-                            <PropertyColumn Title="Name" Property="x => x.name" />
-                            <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
-                            <PropertyColumn Title="Status" Property="x => x.status" />
-                        </Columns>
-                    </MudDataGrid>
-                </MudPaper>
-            </MudItem>
+
         }
         else if (playByPlay?.gameData.status.abstractGameCode == "F")
         {
-            <MudItem lg="3" sm="12">
-                <MudPaper>
-                    <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
-                        <ToolBarContent>
-                            <MudText Typo="Typo.h6">Home Game Stats</MudText>
-                            <MudSpacer />
-                            <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                        </ToolBarContent>
-                        <Columns>
-                            <PropertyColumn Title="Name" Property="x => x.name" />
-                            <PropertyColumn Title="Stats" Property="x => x.stats" />
-                        </Columns>
-                    </MudDataGrid>
-                </MudPaper>
+            <MudItem lg="3" sm="12" Class="d-flex flex-column flex-grow-1">
+                <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Home Game Stats</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Title="Name" Property="x => x.name" />
+                        <PropertyColumn Title="Stats" Property="x => x.stats" />
+                    </Columns>
+                </MudDataGrid>
+                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Away Game Stats</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Title="Name" Property="x => x.name" />
+                        <PropertyColumn Title="Stats" Property="x => x.stats" />
+                    </Columns>
+                </MudDataGrid>
             </MudItem>
-            <MudItem lg="3" sm="12">
-                <MudPaper>
-                    <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
-                        <ToolBarContent>
-                            <MudText Typo="Typo.h6">Away Game Stats</MudText>
-                            <MudSpacer />
-                            <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                        </ToolBarContent>
-                        <Columns>
-                            <PropertyColumn Title="Name" Property="x => x.name" />
-                            <PropertyColumn Title="Stats" Property="x => x.stats" />
-                        </Columns>
-                    </MudDataGrid>
-                </MudPaper>
-            </MudItem>
+
         }
 
     </MudGrid>
@@ -289,11 +279,11 @@ else
 
     private class DepthChartDTO
     {
-        public string name { get; set; }
-        public string jersey_num { get; set; }
-        public List<string> positions { get; set; }
-        public string status { get; set; }
-        public string stats { get; set; }
+        public string name { get; set; } = "";
+        public string jersey_num { get; set; } = "";
+        public List<string> positions { get; set; } = new();
+        public string status { get; set; } = "";
+        public string stats { get; set; } = "";
     }
 
     private string _homesearchString;
