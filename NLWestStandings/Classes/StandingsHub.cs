@@ -83,7 +83,7 @@ namespace NLWestStandings.Classes
                     }
                 }
 
-                return System.Text.Json.JsonSerializer.Serialize(rtn);
+                return System.Text.Json.JsonSerializer.Serialize(rtn.OrderBy(e=>e.gameDate).ToList());
             }
         }
     }
