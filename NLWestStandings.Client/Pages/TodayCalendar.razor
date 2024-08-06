@@ -36,9 +36,9 @@ else
 }
 
 @code {
-    private HubConnection hubConnection;
+    private HubConnection? hubConnection;
 
-    List<Game> calendar_data { get; set; }
+    List<Game>? calendar_data { get; set; }
 
     private Logos logos { get; set; } = new Logos();
 
@@ -50,11 +50,11 @@ else
 
         await hubConnection.StartAsync();
 
-        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId));
+        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId)) ?? new();
 
         calendar_data = System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetTodayCalendar", hubConnection.ConnectionId)) ?? new();
 
-        InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
 
     }
 

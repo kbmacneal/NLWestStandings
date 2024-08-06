@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using MoreLinq;
 using NLWestStandings.Client.Classes.Calendar;
+using System.Linq;
 
 namespace NLWestStandings.Classes
 {
@@ -70,20 +71,13 @@ namespace NLWestStandings.Classes
             {
                 var standings = scope.ServiceProvider.GetRequiredService<StandingsService>();
 
-                var rtn = new List<Game>(); ;
+                var rtn = (standings.calendar?.dates ?? [])
+                    .SelectMany(item => item.games
+                        .Where(game => DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd")))
+                    .OrderBy(e => e.gameDate)
+                    .ToList();
 
-                foreach (var item in standings.calendar.dates)
-                {
-                    foreach (var game in item.games)
-                    {
-                        if (DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"))
-                        {
-                            rtn.Add(game);
-                        }
-                    }
-                }
-
-                return System.Text.Json.JsonSerializer.Serialize(rtn.OrderBy(e=>e.gameDate).ToList());
+                return System.Text.Json.JsonSerializer.Serialize(rtn);
             }
         }
     }
