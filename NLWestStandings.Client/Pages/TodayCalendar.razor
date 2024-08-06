@@ -52,7 +52,7 @@ else
 
         logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId)) ?? new();
 
-        calendar_data = System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetTodayCalendar", hubConnection.ConnectionId)) ?? new();
+        calendar_data = (System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetTodayCalendar", hubConnection.ConnectionId)) ?? new()).OrderBy(e => e.gameDate).ToList();
 
         await InvokeAsync(StateHasChanged);
 

@@ -105,27 +105,30 @@
     <br />
     <br />
 
-    <MudText Typo="Typo.h5">Game Feed</MudText>
-    <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
-    <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
-        <HeaderContent>
-            <MudTh>Inning</MudTh>
-            <MudTh>Pitcher</MudTh>
-            <MudTh>Batter</MudTh>
-            <MudTh>Count</MudTh>
-            <MudTh>Result</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Inning">
-                <div class="d-flex">
-                    @if (context.about.halfInning == "top")
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.ArrowDropUp"></MudIcon>
-                    }
-                    else
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown"></MudIcon>
-                    }
+    <MudGrid>
+        <MudItem xs="6">
+            <MudPaper>
+                <MudText Typo="Typo.h5">Game Feed</MudText>
+                <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
+                <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
+                    <HeaderContent>
+                        <MudTh>Inning</MudTh>
+                        <MudTh>Pitcher</MudTh>
+                        <MudTh>Batter</MudTh>
+                        <MudTh>Count</MudTh>
+                        <MudTh>Result</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Inning">
+                            <div class="d-flex">
+                                @if (context.about.halfInning == "top")
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropUp"></MudIcon>
+                                }
+                                else
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown"></MudIcon>
+                                }
 
                                 @context.about.inning
                             </div>
@@ -170,25 +173,49 @@
                         <MudTd DataLabel="Result">@context.result.description</MudTd>
                     </RowTemplate>
                 </MudTable>
-
-                else
-                {
-                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-                }
             </MudPaper>
         </MudItem>
         <MudItem xs="3">
             <MudPaper>
-
+                <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Home Depth Chart</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Property="x => x.name" />
+                        <PropertyColumn Property="x => string.Join(',',x.positions)" />
+                        <PropertyColumn Property="x => x.status" />
+                    </Columns>
+                </MudDataGrid>
             </MudPaper>
         </MudItem>
         <MudItem xs="3">
-
             <MudPaper>
+                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Away Depth Chart</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Property="x => x.name" />
+                        <PropertyColumn Property="x => string.Join(',',x.positions)" />
+                        <PropertyColumn Property="x => x.status" />
+                    </Columns>
+                </MudDataGrid>
             </MudPaper>
         </MudItem>
     </MudGrid>
 
+
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
 
 @code {
@@ -208,8 +235,8 @@
 
     private PlayByPlay? playByPlay { get; set; } = null;
 
-    private DepthChart? homedepthChart { get; set; } = null;
-    private DepthChart? awaydepthChart { get; set; } = null;
+    private List<DepthChartDTO> homedepthChart { get; set; } = new();
+    private List<DepthChartDTO> awaydepthChart { get; set; } = new();
 
     private string gamename { get; set; }
 
@@ -218,6 +245,51 @@
     private string _message = "Gameday5";
 
     private Logos logos { get; set; } = new Logos();
+
+    private class DepthChartDTO
+    {
+        public string name { get; set; }
+        public string jersey_num { get; set; }
+        public List<string> positions { get; set; }
+        public string status { get; set; }
+    }
+
+    private string _homesearchString;
+    private string _awaysearchString;
+    private List<string> _events = new();
+    // custom sort by name length
+    private Func<DepthChartDTO, object> _sortBy => x =>
+    {
+        return x.name;
+    };
+    // quick filter - filter globally across multiple columns with the same input
+    private Func<DepthChartDTO, bool> _homequickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_homesearchString))
+            return true;
+
+        if (x.name.Contains(_homesearchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        if (@String.Join(", ", @x.positions).Contains(_homesearchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        if (x.status.Contains(_homesearchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        return false;
+    };
+
+    private Func<DepthChartDTO, bool> _awayquickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_awaysearchString))
+            return true;
+
+        if (x.name.Contains(_awaysearchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        if (@String.Join(", ", @x.positions).Contains(_awaysearchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        if (x.status.Contains(_awaysearchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        return false;
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -233,11 +305,47 @@
 
         await GetPlayByPlay();
 
-        homedepthChart = await GetDepthChart(playByPlay?.gameData.teams.home.id.ToString
+        var home_temp = await GetDepthChart(playByPlay?.gameData.teams.home.id.ToString
         () ?? "0");
 
-        awaydepthChart = await GetDepthChart(playByPlay?.gameData.teams.away.id.ToString
+        var away_temp = await GetDepthChart(playByPlay?.gameData.teams.away.id.ToString
         () ?? "0");
+
+        foreach (var play in home_temp.roster)
+        {
+            if (homedepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
+            {
+                homedepthChart?.First(e => e.name == play.person.fullName).positions.Add(play.position.name);
+            }
+            else
+            {
+                homedepthChart?.Add(new DepthChartDTO()
+                    {
+                        name = play.person.fullName,
+                        jersey_num = play.jerseyNumber,
+                        positions = new() { play.position.name },
+                        status = play.status.description
+                    });
+            }
+        }
+
+        foreach (var play in away_temp.roster)
+        {
+            if (awaydepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
+            {
+                awaydepthChart?.First(e => e.name == play.person.fullName).positions.Add(play.position.name);
+            }
+            else
+            {
+                awaydepthChart?.Add(new DepthChartDTO()
+                    {
+                        name = play.person.fullName,
+                        jersey_num = play.jerseyNumber,
+                        positions = new() { play.position.name },
+                        status = play.status.description
+                    });
+            }
+        }
 
         if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
@@ -334,5 +442,4 @@
 
         return new DepthChart();
     }
-
 }
