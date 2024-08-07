@@ -108,11 +108,11 @@
     <br />
 
     <MudGrid>
-        <MudItem lg="9" sm="12">
+        <MudItem lg="8" sm="12">
             <MudPaper>
                 <MudText Typo="Typo.h5">Game Feed</MudText>
                 <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
-                <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
+                <MudTable Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
                     <HeaderContent>
                         <MudTh>Inning</MudTh>
                         <MudTh>Pitcher</MudTh>
@@ -139,7 +139,7 @@
 
                         @if (context.about.halfInning == "top")
                         {
-                            <MudTd Class="align-content-center" Style="min-width:250px;">
+                            <MudTd Class="align-content-center">
                                 <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage>
 
                                 @context.matchup.pitcher.fullName
@@ -147,7 +147,7 @@
                         }
                         else
                         {
-                            <MudTd Class="align-content-center" Style="min-width:250px;">
+                            <MudTd Class="align-content-center">
                                 <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage>
 
                                 @context.matchup.pitcher.fullName
@@ -156,7 +156,7 @@
 
                         @if (context.about.halfInning == "top")
                         {
-                            <MudTd Class="align-content-center" Style="min-width:250px;">
+                            <MudTd Class="align-content-center">
                                 <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage>
 
                                 @context.matchup.batter.fullName
@@ -164,7 +164,7 @@
                         }
                         else
                         {
-                            <MudTd Class="align-content-center" Style="min-width:250px;">
+                            <MudTd Class="align-content-center">
                                 <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage>
 
                                 @context.matchup.batter.fullName
@@ -179,7 +179,7 @@
         </MudItem>
         @if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
-            <MudItem lg="3" sm="12" Class="d-flex flex-column flex-grow-1">
+            <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
                 <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
                     <ToolBarContent>
                         <MudText Typo="Typo.h6">Home Depth Chart</MudText>
@@ -211,7 +211,7 @@
         }
         else if (playByPlay?.gameData.status.abstractGameCode == "F")
         {
-            <MudItem lg="3" sm="12" Class="d-flex flex-column flex-grow-1">
+            <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
                 <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
                     <ToolBarContent>
                         <MudText Typo="Typo.h6">Home Game Stats</MudText>
