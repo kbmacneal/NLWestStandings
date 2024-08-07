@@ -112,7 +112,7 @@
             <MudPaper>
                 <MudText Typo="Typo.h5">Game Feed</MudText>
                 <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
-                <MudTable Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
+                <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
                     <HeaderContent>
                         <MudTh>Inning</MudTh>
                         <MudTh>Pitcher</MudTh>
@@ -174,6 +174,9 @@
                         <MudTd Style="min-width:100px;" DataLabel="Count">@context.count.balls - @context.count.strikes <br /> @($"{context.count.outs} Out(s)")</MudTd>
                         <MudTd DataLabel="Result">@context.result.description</MudTd>
                     </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager />
+                    </PagerContent>
                 </MudTable>
             </MudPaper>
         </MudItem>
