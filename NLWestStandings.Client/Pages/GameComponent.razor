@@ -309,6 +309,8 @@ else
 
         if (x.status.Contains(_homesearchString, StringComparison.OrdinalIgnoreCase)) return true;
 
+        if (x.stats.Contains(_homesearchString, StringComparison.OrdinalIgnoreCase)) return true;
+
         return false;
     };
 
