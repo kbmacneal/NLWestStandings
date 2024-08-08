@@ -1,16 +1,12 @@
-version: "3.4"
-
+version: "3.3"
 services:
   nlweststandings:
-    image: ${DOCKER_REGISTRY-}nlweststandings
     stdin_open: true
     tty: true
     ports:
       - 8089:8080
       - 8090:8081
-    build:
-      context: .
-      dockerfile: NLWestStandings/Dockerfile
+    image: nlweststandings
 networks:
   nlweststandings:
     external: true
