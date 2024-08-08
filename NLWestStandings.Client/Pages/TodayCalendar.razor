@@ -63,10 +63,10 @@ else
         switch (date)
         {
             case"today":
-                date_parm = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+                date_parm = DateTime.Now.ToString("yyyy-MM-dd");
                 break;
             case "yesterday":
-                date_parm = DateTime.Now.ToString("yyyy-MM-dd");
+                date_parm = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
                 break;
             case "tomorrow":
                 date_parm = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
