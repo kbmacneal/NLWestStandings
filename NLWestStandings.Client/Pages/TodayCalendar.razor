@@ -58,7 +58,25 @@ else
 
         // calendar_data = (System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetTodayCalendar", hubConnection.ConnectionId)) ?? new()).OrderBy(e => e.gameDate).ToList();
 
-        calendar_data = (await $"https://statsapi.mlb.com/api/v1/schedule?date={date}&sportId=1"
+        string date_parm = "";
+
+        switch (date)
+        {
+            case"today":
+                date_parm = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+                break;
+            case "yesterday":
+                date_parm = DateTime.Now.ToString("yyyy-MM-dd");
+                break;
+            case "tomorrow":
+                date_parm = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
+                break;
+            default:
+                date_parm = DateTime.Now.ToString("yyyy-MM-dd");
+                break;
+        }
+
+        calendar_data = (await $"https://statsapi.mlb.com/api/v1/schedule?date={date_parm}&sportId=1"
             .GetJsonAsync<TeamCalendar>())
             .dates[0].games
             .OrderBy(e => e.gameDate)

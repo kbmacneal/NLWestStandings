@@ -18,12 +18,18 @@
 
 @if (NLStandings is not null)
 {
-    <div class="d-flex">
-        <MudLink OnClick="@(() => GoToDayGame(true))">Yesterday's Games</MudLink>
-        <p>|</p>
-        <MudLink OnClick="@(() => GoToDayGame(false))">Today's Games</MudLink>
-    </div>
-   
+    <MudGrid Class="d-flex justify-space-around flex-grow-1 gap-4">
+        <MudItem>
+            <MudLink OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudLink>
+        </MudItem>
+        <MudItem>
+            <MudLink OnClick="@(() => GoToDayGame("today"))">Today's Games</MudLink>
+        </MudItem>
+        <MudItem>
+            <MudLink OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudLink>
+        </MudItem>
+    </MudGrid>
+
     @foreach (var item in NLStandings.Reverse())
     {
         <MudTable Class="pb-8" T="Teamrecord" Items="@item" RowStyleFunc="RowStyleFunc">
@@ -152,16 +158,8 @@ else
         NavigationManager.NavigateTo($"/calendar/{team_id}");
     }
 
-    private void GoToDayGame(bool yesterday)
+    private void GoToDayGame(string day)
     {
-        if(yesterday)
-        {
-            NavigationManager.NavigateTo($"/todaycalendar/{DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd")}");
-        }
-        else
-        {
-            NavigationManager.NavigateTo($"/todaycalendar/{DateTime.Now.ToString("yyyy-MM-dd")}");
-        }
-        
+        NavigationManager.NavigateTo($"/todaycalendar/{day}");
     }
 }
