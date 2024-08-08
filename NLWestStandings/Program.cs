@@ -65,7 +65,7 @@ namespace NLWestStandings
 
                 app.MapHub<StandingsHub>("/broadcaststandings");
 
-                //app.UseHttpsRedirection();
+                app.UseHttpsRedirection();
 
                 app.UseStaticFiles();
                 app.UseAntiforgery();
