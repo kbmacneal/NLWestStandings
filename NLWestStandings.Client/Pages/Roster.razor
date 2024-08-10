@@ -5,6 +5,8 @@
 @using NLWestStandings.Client.Classes
 @using NLWestStandings.Client.Classes.Calendar
 @using NLWestStandings.Client.Classes.DepthChart
+@using NLWestStandings.Client.Classes.HittingStats
+@using NLWestStandings.Client.Classes.PitchingStats
 @using NLWestStandings.MLB
 @using System.Web
 @rendermode InteractiveWebAssembly
@@ -24,10 +26,55 @@
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <Columns>
+            <HierarchyColumn T="DepthChartDTO" />
+            <PropertyColumn Title="ID" Property="x => x.id" />
             <PropertyColumn Title="Name" Property="x => x.name" />
             <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
             <PropertyColumn Title="Status" Property="x => x.status" />
         </Columns>
+        <ChildRowContent>
+            @if (new string[] { "1", "S" }.Contains(@context.Item.position_code))
+            {
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">@DateTime.Now.Year Stats</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText>ERA: @context.Item.pitchingStats.stats[0].splits[0].stat.era</MudText>
+                        <MudText>IP: @context.Item.pitchingStats.stats[0].splits[0].stat.inningsPitched</MudText>
+                        <MudText>Wins: @context.Item.pitchingStats.stats[0].splits[0].stat.wins</MudText>
+                        <MudText>Losses: @context.Item.pitchingStats.stats[0].splits[0].stat.losses</MudText>
+                        <MudText>Saves: @context.Item.pitchingStats.stats[0].splits[0].stat.saves</MudText>
+                        <MudText>Strike %: @context.Item.pitchingStats.stats[0].splits[0].stat.strikePercentage</MudText>
+                        <MudText>Strike/Walk: @context.Item.pitchingStats.stats[0].splits[0].stat.strikeoutWalkRatio</MudText>
+                    </MudCardContent>
+                </MudCard>
+            }
+            else
+            {
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">@DateTime.Now.Year Stats</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText>AVG: @context.Item.hittingStats.stats[0].splits[0].stat.avg</MudText> 
+                        <MudText>HR: @context.Item.hittingStats.stats[0].splits[0].stat.homeRuns</MudText> 
+                        <MudText>OBP: @context.Item.hittingStats.stats[0].splits[0].stat.obp</MudText> 
+                        <MudText>Slug: @context.Item.hittingStats.stats[0].splits[0].stat.slg</MudText> 
+                        <MudText>OPS: @context.Item.hittingStats.stats[0].splits[0].stat.ops</MudText> 
+                        <MudText>Stolen Bases: @context.Item.hittingStats.stats[0].splits[0].stat.stolenBases</MudText> 
+                        <MudText>Caught Stealing: @context.Item.hittingStats.stats[0].splits[0].stat.caughtStealing</MudText> 
+                        <MudText>RBI: @context.Item.hittingStats.stats[0].splits[0].stat.rbi</MudText> 
+                        <MudText>BABIP: @context.Item.hittingStats.stats[0].splits[0].stat.babip</MudText> 
+                        <MudText>AB/HR: @context.Item.hittingStats.stats[0].splits[0].stat.atBatsPerHomeRun</MudText> 
+                    </MudCardContent>
+                </MudCard>
+            }
+        </ChildRowContent>
     </MudDataGrid>
 
 
@@ -45,11 +92,15 @@ else
 
     private class DepthChartDTO
     {
+        public int id { get; set; } = 0;
         public string name { get; set; } = "";
         public string jersey_num { get; set; } = "";
         public List<string> positions { get; set; } = new();
+        public string position_code { get; set; } = "";
         public string status { get; set; } = "";
         public string stats { get; set; } = "";
+        public PitchingStats pitchingStats { get; set; }
+        public HittingStats hittingStats { get; set; }
     }
 
     private string _searchString;
@@ -89,13 +140,20 @@ else
             {
                 depthChart?.Add(new DepthChartDTO()
                     {
+                        id = play.person.id,
                         name = play.person.fullName,
                         jersey_num = play.jerseyNumber,
                         positions = new() { play.position.name },
-                        status = play.status.description
+                        position_code = play.position.code,
+                        status = play.status.description,
+                        pitchingStats = new string[] { "1", "S" }.Contains(play.position.code) ? await GetPitchingStats(play.person.id) : new(),
+                        hittingStats = !(new string[] { "1", "S" }.Contains(play.position.code)) ? await GetHittingStats(play.person.id) : new(),
+
                     });
             }
         }
+
+        var t = "";
     }
 
     private async Task<DepthChart> GetDepthChart(string teamid)
@@ -112,4 +170,36 @@ else
 
         return new DepthChart();
     }
+
+    private async Task<HittingStats> GetHittingStats(int playerid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/people/{playerid}/stats?stats=season&group=hitting&season={DateTime.Now.Year}"
+        .GetJsonAsync<HittingStats>();
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new HittingStats();
+    }
+
+    private async Task<PitchingStats> GetPitchingStats(int playerid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/people/{playerid}/stats?stats=season&group=pitching&season={DateTime.Now.Year}"
+        .GetJsonAsync<PitchingStats>();
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new PitchingStats();
+    }
+
+
 }
