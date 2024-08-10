@@ -1,0 +1,115 @@
+﻿@page "/roster/{teamid}"
+
+@using Flurl.Http
+@using Microsoft.AspNetCore.SignalR.Client
+@using NLWestStandings.Client.Classes
+@using NLWestStandings.Client.Classes.Calendar
+@using NLWestStandings.Client.Classes.DepthChart
+@using NLWestStandings.MLB
+@using System.Web
+@rendermode InteractiveWebAssembly
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Roster</PageTitle>
+
+@if (depthChart is not null)
+{
+
+    <MudDataGrid T="DepthChartDTO" Items="@depthChart" Filterable="true" QuickFilter="@_quickFilter">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Depth Chart</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Title="Name" Property="x => x.name" />
+            <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+            <PropertyColumn Title="Status" Property="x => x.status" />
+        </Columns>
+    </MudDataGrid>
+
+
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+
+@code {
+    private List<DepthChartDTO> depthChart { get; set; } = new();
+
+    [Parameter]
+    public string teamid { get; set; }
+
+    private class DepthChartDTO
+    {
+        public string name { get; set; } = "";
+        public string jersey_num { get; set; } = "";
+        public List<string> positions { get; set; } = new();
+        public string status { get; set; } = "";
+        public string stats { get; set; } = "";
+    }
+
+    private string _searchString;
+
+    private Func<DepthChartDTO, object> _sortBy => x =>
+    {
+        return x.name;
+    };
+    // quick filter - filter globally across multiple columns with the same input
+    private Func<DepthChartDTO, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.name.Contains(_searchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        if (@String.Join(", ", @x.positions).Contains(_searchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        if (x.status.Contains(_searchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        if (x.stats.Contains(_searchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        return false;
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var _temp = await GetDepthChart(teamid);
+
+        foreach (var play in _temp.roster)
+        {
+            if (depthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
+            {
+                depthChart?.First(e => e.name == play.person.fullName).positions.Add(play.position.name);
+            }
+            else
+            {
+                depthChart?.Add(new DepthChartDTO()
+                    {
+                        name = play.person.fullName,
+                        jersey_num = play.jerseyNumber,
+                        positions = new() { play.position.name },
+                        status = play.status.description
+                    });
+            }
+        }
+    }
+
+    private async Task<DepthChart> GetDepthChart(string teamid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/teams/{teamid}/roster/depthChart"
+        .GetJsonAsync<DepthChart>();
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new DepthChart();
+    }
+}

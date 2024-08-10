@@ -37,6 +37,7 @@
             <HeaderContent>
                 <MudTh>Rank</MudTh>
                 <MudTh>Team</MudTh>
+                <MudTh>Roster</MudTh>
                 <MudTh>Wins</MudTh>
                 <MudTh>Losses</MudTh>
                 <MudTh>GB</MudTh>
@@ -50,6 +51,7 @@
 
                 <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
                 <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
+                <MudTd DataLabel="Roster"><MudLink OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
                 <MudTd DataLabel="GB">@context.gamesBack</MudTd>
@@ -78,6 +80,7 @@ else
             <HeaderContent>
                 <MudTh>Rank</MudTh>
                 <MudTh>Team</MudTh>
+                <MudTh>Roster</MudTh>
                 <MudTh>Wins</MudTh>
                 <MudTh>Losses</MudTh>
                 <MudTh>GB</MudTh>
@@ -91,6 +94,7 @@ else
 
                 <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
                 <MudTd><MudImage Class="rounded-lg" Height="50" Width="50" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == context.team.name).team.logos[0].href" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
+                <MudTd DataLabel="Roster"><MudLink OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
                 <MudTd DataLabel="GB">@context.gamesBack</MudTd>
@@ -161,5 +165,10 @@ else
     private void GoToDayGame(string day)
     {
         NavigationManager.NavigateTo($"/todaycalendar/{day}");
+    }
+
+    private void GoToRoster(int teamid)
+    {
+        NavigationManager.NavigateTo($"/roster/{teamid}");
     }
 }
