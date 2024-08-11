@@ -33,7 +33,7 @@
             <PropertyColumn Title="Status" Property="x => x.status" />
         </Columns>
         <ChildRowContent>
-            @if (new string[] { "1", "S" }.Contains(@context.Item.position_code))
+            @if (new string[] { "1", "S", "C" }.Contains(@context.Item.position_code))
             {
                 <MudCard>
                     <MudCardHeader>
@@ -146,8 +146,8 @@ else
                         positions = new() { play.position.name },
                         position_code = play.position.code,
                         status = play.status.description,
-                        pitchingStats = new string[] { "1", "S" }.Contains(play.position.code) ? await GetPitchingStats(play.person.id) : new(),
-                        hittingStats = !(new string[] { "1", "S" }.Contains(play.position.code)) ? await GetHittingStats(play.person.id) : new(),
+                        pitchingStats = new string[] { "1", "S", "C" }.Contains(play.position.code) ? await GetPitchingStats(play.person.id) : new(),
+                        hittingStats = !(new string[] { "1", "S", "C" }.Contains(play.position.code)) ? await GetHittingStats(play.person.id) : new(),
 
                     });
             }
