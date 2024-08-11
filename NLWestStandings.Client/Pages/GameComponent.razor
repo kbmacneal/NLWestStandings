@@ -38,218 +38,218 @@
 
 @if (playByPlay != null)
 {
-    <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
+            <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
 
     @if (playByPlay.liveData.plays.currentPlay is not null)
     {
-        <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
+                        <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
     }
     else
     {
-        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+                        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
     }
 
     @if (playByPlay.gameData.probablePitchers.home is not null && playByPlay.gameData.probablePitchers.away is not null)
     {
-        @* <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText> *@
+                        <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
     }
     else
     {
-        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+                        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
     }
 
     @if (playByPlay.gameData.weather is not null)
     {
-        <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
+                        <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
 
     }
     else
     {
-        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+                        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
     }
 
 
-    <table>
-        <th class="table_cell">Inning</th>
+            <table>
+                <th class="table_cell">Inning</th>
         @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
         {
-            <th class="table_cell">@inning.num</th>
+                            <th class="table_cell">@inning.num</th>
         }
-        <th class="table_cell">Runs</th>
-        <th class="table_cell">Hits</th>
-        <th class="table_cell">Errors</th>
-        <th class="table_cell">LoB</th>
-        <tr>
-            @* <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage> </td> *@
+                <th class="table_cell">Runs</th>
+                <th class="table_cell">Hits</th>
+                <th class="table_cell">Errors</th>
+                <th class="table_cell">LoB</th>
+                <tr>
+                     <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> </td> 
             @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
             {
-                <td class="table_cell">@inning.away.runs</td>
+                                <td class="table_cell">@inning.away.runs</td>
             }
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.runs</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.hits</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.errors</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
-        </tr>
-        <tr>
-            @* <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage> </td> *@
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.runs</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.hits</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.errors</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
+                </tr>
+                <tr>
+                    <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> </td>
             @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
             {
-                <td class="table_cell">@inning.home.runs</td>
+                                <td class="table_cell">@inning.home.runs</td>
             }
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.runs</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.hits</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.errors</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.leftOnBase</td>
-        </tr>
-    </table>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.runs</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.hits</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.errors</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.leftOnBase</td>
+                </tr>
+            </table>
 
-    <br />
-    <br />
-    <br />
+            <br />
+            <br />
+            <br />
 
-    <MudGrid>
-        <MudItem lg="8" sm="12">
-            <MudPaper>
-                <MudText Typo="Typo.h5">Game Feed</MudText>
-                <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
-                <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
-                    <HeaderContent>
-                        <MudTh>Inning</MudTh>
-                        <MudTh>Pitcher</MudTh>
-                        <MudTh>Batter</MudTh>
-                        <MudTh>Count</MudTh>
-                        <MudTh>Result</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd DataLabel="Inning">
-                            <div class="d-flex">
+            <MudGrid>
+                <MudItem lg="8" sm="12">
+                    <MudPaper>
+                        <MudText Typo="Typo.h5">Game Feed</MudText>
+                        <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
+                        <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
+                            <HeaderContent>
+                                <MudTh>Inning</MudTh>
+                                <MudTh>Pitcher</MudTh>
+                                <MudTh>Batter</MudTh>
+                                <MudTh>Count</MudTh>
+                                <MudTh>Result</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Inning">
+                                    <div class="d-flex">
                                 @if (context.about.halfInning == "top")
                                 {
-                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropUp"></MudIcon>
+                                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropUp"></MudIcon>
                                 }
                                 else
                                 {
-                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown"></MudIcon>
+                                                    <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown"></MudIcon>
                                 }
 
                                 @context.about.inning
-                            </div>
+                                    </div>
 
-                        </MudTd>
-
-                        @if (context.about.halfInning == "top")
-                        {
-                            <MudTd Class="align-content-center">
-                                @* <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage> *@
-
-                                @context.matchup.pitcher.fullName
-                            </MudTd>
-                        }
-                        else
-                        {
-                            <MudTd Class="align-content-center">
-                                @* <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage> *@
-
-                                @context.matchup.pitcher.fullName
-                            </MudTd>
-                        }
+                                </MudTd>
 
                         @if (context.about.halfInning == "top")
                         {
-                            <MudTd Class="align-content-center">
-                                @* <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == awayteam).team.logos[0].href"></MudImage> *@
+                                            <MudTd Class="align-content-center">
+                                                        <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage>
 
-                                @context.matchup.batter.fullName
-                            </MudTd>
+                                @context.matchup.pitcher.fullName
+                                            </MudTd>
                         }
                         else
                         {
-                            <MudTd Class="align-content-center">
-                                @* <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName == hometeam).team.logos[0].href"></MudImage> *@
+                                            <MudTd Class="align-content-center">
+                                                        <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage>
 
-                                @context.matchup.batter.fullName
-                            </MudTd>
+                                @context.matchup.pitcher.fullName
+                                            </MudTd>
                         }
 
-                        <MudTd Style="min-width:100px;" DataLabel="Count">@context.count.balls - @context.count.strikes <br /> @($"{context.count.outs} Out(s)")</MudTd>
-                        <MudTd DataLabel="Result">@context.result.description</MudTd>
-                    </RowTemplate>
-                    <PagerContent>
-                        <MudTablePager />
-                    </PagerContent>
-                </MudTable>
-            </MudPaper>
-        </MudItem>
+                        @if (context.about.halfInning == "top")
+                        {
+                                            <MudTd Class="align-content-center">
+                                                 <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage>
+
+                                @context.matchup.batter.fullName
+                                            </MudTd>
+                        }
+                        else
+                        {
+                                            <MudTd Class="align-content-center">
+                                                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage>
+
+                                @context.matchup.batter.fullName
+                                            </MudTd>
+                        }
+
+                                <MudTd Style="min-width:100px;" DataLabel="Count">@context.count.balls - @context.count.strikes <br /> @($"{context.count.outs} Out(s)")</MudTd>
+                                <MudTd DataLabel="Result">@context.result.description</MudTd>
+                            </RowTemplate>
+                            <PagerContent>
+                                <MudTablePager />
+                            </PagerContent>
+                        </MudTable>
+                    </MudPaper>
+                </MudItem>
         @if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
-            <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
-                <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.h6">Home Depth Chart</MudText>
-                        <MudSpacer />
-                        <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                    </ToolBarContent>
-                    <Columns>
-                        <PropertyColumn Title="Name" Property="x => x.name" />
-                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
-                        <PropertyColumn Title="Status" Property="x => x.status" />
-                    </Columns>
-                </MudDataGrid>
-                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.h6">Away Depth Chart</MudText>
-                        <MudSpacer />
-                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                    </ToolBarContent>
-                    <Columns>
-                        <PropertyColumn Title="Name" Property="x => x.name" />
-                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
-                        <PropertyColumn Title="Status" Property="x => x.status" />
-                    </Columns>
-                </MudDataGrid>
-            </MudItem>
+                            <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
+                                <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
+                                    <ToolBarContent>
+                                        <MudText Typo="Typo.h6">Home Depth Chart</MudText>
+                                        <MudSpacer />
+                                        <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                                    </ToolBarContent>
+                                    <Columns>
+                                        <PropertyColumn Title="Name" Property="x => x.name" />
+                                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+                                        <PropertyColumn Title="Status" Property="x => x.status" />
+                                    </Columns>
+                                </MudDataGrid>
+                                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
+                                    <ToolBarContent>
+                                        <MudText Typo="Typo.h6">Away Depth Chart</MudText>
+                                        <MudSpacer />
+                                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                                    </ToolBarContent>
+                                    <Columns>
+                                        <PropertyColumn Title="Name" Property="x => x.name" />
+                                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+                                        <PropertyColumn Title="Status" Property="x => x.status" />
+                                    </Columns>
+                                </MudDataGrid>
+                            </MudItem>
 
         }
         else if (playByPlay?.gameData.status.abstractGameCode == "F")
         {
-            <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
-                <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.h6">Home Game Stats</MudText>
-                        <MudSpacer />
-                        <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                    </ToolBarContent>
-                    <Columns>
-                        <PropertyColumn Title="Name" Property="x => x.name" />
-                        <PropertyColumn Title="Stats" Property="x => x.stats" />
-                    </Columns>
-                </MudDataGrid>
-                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.h6">Away Game Stats</MudText>
-                        <MudSpacer />
-                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                    </ToolBarContent>
-                    <Columns>
-                        <PropertyColumn Title="Name" Property="x => x.name" />
-                        <PropertyColumn Title="Stats" Property="x => x.stats" />
-                    </Columns>
-                </MudDataGrid>
-            </MudItem>
+                            <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
+                                <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
+                                    <ToolBarContent>
+                                        <MudText Typo="Typo.h6">Home Game Stats</MudText>
+                                        <MudSpacer />
+                                        <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                                    </ToolBarContent>
+                                    <Columns>
+                                        <PropertyColumn Title="Name" Property="x => x.name" />
+                                        <PropertyColumn Title="Stats" Property="x => x.stats" />
+                                    </Columns>
+                                </MudDataGrid>
+                                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
+                                    <ToolBarContent>
+                                        <MudText Typo="Typo.h6">Away Game Stats</MudText>
+                                        <MudSpacer />
+                                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                                    </ToolBarContent>
+                                    <Columns>
+                                        <PropertyColumn Title="Name" Property="x => x.name" />
+                                        <PropertyColumn Title="Stats" Property="x => x.stats" />
+                                    </Columns>
+                                </MudDataGrid>
+                            </MudItem>
 
         }
 
-    </MudGrid>
+            </MudGrid>
 
 
 }
 else
 {
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
 
 @code {
