@@ -197,32 +197,10 @@ else
     @if (playByPlay?.gameData.status.abstractGameCode == "L")
     {
         <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
-            <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
-                <ToolBarContent>
-                    <MudText Typo="Typo.h6">Home Depth Chart</MudText>
-                    <MudSpacer />
-                    <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                </ToolBarContent>
-                <Columns>
-                    <PropertyColumn Title="Name" Property="x => x.name" />
-                    <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
-                    <PropertyColumn Title="Status" Property="x => x.status" />
-                </Columns>
-            </MudDataGrid>
-            <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
-                <ToolBarContent>
-                    <MudText Typo="Typo.h6">Away Depth Chart</MudText>
-                    <MudSpacer />
-                    <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                </ToolBarContent>
-                <Columns>
-                    <PropertyColumn Title="Name" Property="x => x.name" />
-                    <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
-                    <PropertyColumn Title="Status" Property="x => x.status" />
-                </Columns>
-            </MudDataGrid>
+            <MudText Typo="Typo.h4">Home Team</MudText>
+            <Roster teamid="@playByPlay.gameData.teams.home.id.ToString()"></Roster>
+            <MudText Typo="Typo.h4">Away Team</MudText>
+            <Roster teamid="@playByPlay.gameData.teams.away.id.ToString()"></Roster>
         </MudItem>
 
     }
@@ -251,22 +229,22 @@ else
             }
             @if (awaydepthChart != null && awaydepthChart.Count > 0)
             {
-            <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
-                <ToolBarContent>
-                    <MudText Typo="Typo.h6">Away Game Stats</MudText>
-                    <MudSpacer />
-                    <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                </ToolBarContent>
-                <Columns>
-                    <PropertyColumn Title="Name" Property="x => x.name" />
-                    <PropertyColumn Title="Stats" Property="x => x.stats" />
-                </Columns>
-            </MudDataGrid>
+                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Away Game Stats</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Title="Name" Property="x => x.name" />
+                        <PropertyColumn Title="Stats" Property="x => x.stats" />
+                    </Columns>
+                </MudDataGrid>
             }
             else
             {
-            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
             }
         </MudItem>
 
