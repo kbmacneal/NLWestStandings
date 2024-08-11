@@ -14,22 +14,20 @@
 </style>
 
 <PageTitle>Standings</PageTitle>
-
-
+<MudGrid Class="d-flex justify-space-around flex-grow-1 gap-4">
+    <MudItem>
+        <MudLink OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudLink>
+    </MudItem>
+    <MudItem>
+        <MudLink OnClick="@(() => GoToDayGame("today"))">Today's Games</MudLink>
+    </MudItem>
+    <MudItem>
+        <MudLink OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudLink>
+    </MudItem>
+</MudGrid>
+<MudText Typo="Typo.subtitle2" Style="color:grey;">Click the team logo for that team's calendar.</MudText>
 @if (NLStandings is not null)
 {
-    <MudGrid Class="d-flex justify-space-around flex-grow-1 gap-4">
-        <MudItem>
-            <MudLink OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudLink>
-        </MudItem>
-        <MudItem>
-            <MudLink OnClick="@(() => GoToDayGame("today"))">Today's Games</MudLink>
-        </MudItem>
-        <MudItem>
-            <MudLink OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudLink>
-        </MudItem>
-    </MudGrid>
-
     @foreach (var item in NLStandings.Reverse())
     {
         <MudTable Class="pb-8" T="Teamrecord" Items="@item" RowStyleFunc="RowStyleFunc">

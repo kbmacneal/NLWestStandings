@@ -14,25 +14,23 @@
 @if (calendar_data is not null)
 {
 
-        <MudList Style="align-items: center;" T="Game">
+    <MudList Style="align-items: center;" T="Game">
         @foreach (var game in calendar_data)
         {
-                    <MudPaper Class="d-flex pa-4 flex-row flex-1">
-                        <MudIconButton Icon="@Icons.Material.Filled.PlayCircleFilled"
-                                       OnClick="@(() => GoToGame(game.gamePk.ToString(), game.teams.home.team.name, game.teams.away.team.name))"></MudIconButton>
-                        <MudText Class="object-center pt-3" Style="min-width:200px;">@DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("MM/dd/yyyy hh:mm tt")</MudText>
-                        <MudListItem Text="Inbox">
-                                             <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(game.teams.away.team.name)"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(game.teams.home.team.name)"></MudImage>
-                        </MudListItem>
-                    </MudPaper>       
+            <MudPaper Class="d-flex pa-4 flex-row flex-1">
+                <MudIconButton Icon="@Icons.Material.Filled.PlayCircleFilled"
+                               OnClick="@(() => GoToGame(game.gamePk.ToString(), game.teams.home.team.name, game.teams.away.team.name))"></MudIconButton>
+                <MudText Class="object-center pt-3" Style="min-width:200px;">@DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("MM/dd/yyyy hh:mm tt")</MudText>
+                <MudListItem Text="Inbox">
+                    <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(game.teams.away.team.name)"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(game.teams.home.team.name)"></MudImage>
+                </MudListItem>
+            </MudPaper>
         }
-        </MudList>
-
-
+    </MudList>
 }
 else
 {
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
 
 @code {
