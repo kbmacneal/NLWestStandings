@@ -13,11 +13,11 @@ namespace NLWestStandings.Classes
         public IEnumerable<Teamrecord[]>? NLStandings { get; set; } = null;
         public IEnumerable<Teamrecord[]>? ALStandings { get; set; } = null;
         public TeamCalendar? calendar { get; set; } = null;
-        public Logos? _logos { get; set; } = null;
+        //public Logos? _logos { get; set; } = null;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logos = await GetLogoLinks();
+            //_logos = await GetLogoLinks();
 
             calendar = await GetCalendar();
 
@@ -85,13 +85,15 @@ namespace NLWestStandings.Classes
             return standings;
         }
 
-        private async Task<Logos> GetLogoLinks()
-        {
-            var logos = await "https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/teams"
-                .GetJsonAsync<Logos>();
+        //private async Task<Logos> GetLogoLinks()
+        //{
+        //    //var logos = await "https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/teams"
+        //    //.GetJsonAsync<Logos>();
 
-            return logos;
-        }
+        //    var logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(File.ReadAllText(System.IO.Path.Combine(AppContext.BaseDirectory, "wwwroot", "logos.json")));
+
+        //    return logos;
+        //}
 
         private async Task<TeamCalendar> GetCalendar()
         {

@@ -9,7 +9,6 @@
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
 
-
 <PageTitle>Today's Games</PageTitle>
 
 @if (calendar_data is not null)
@@ -23,7 +22,7 @@
                                OnClick="@(() => GoToGame(game.gamePk.ToString(), game.teams.home.team.name, game.teams.away.team.name))"></MudIconButton>
                 <MudText Class="object-center pt-3" Style="min-width:200px;">@DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("MM/dd/yyyy hh:mm tt")</MudText>
                 <MudListItem Text="Inbox">
-                    <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  game.teams.away.team.name).team.logos[0].href"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  game.teams.home.team.name).team.logos[0].href"></MudImage>
+                    @* <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  game.teams.away.team.name).team.logos[0].href"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@logos.sports[0].leagues[0].teams.First(e => e.team.displayName ==  game.teams.home.team.name).team.logos[0].href"></MudImage> *@
                 </MudListItem>
             </MudPaper>       
         }
@@ -44,8 +43,6 @@ else
 
     List<Game>? calendar_data { get; set; }
 
-    private Logos logos { get; set; } = new Logos();
-
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
@@ -53,8 +50,6 @@ else
             .Build();
 
         await hubConnection.StartAsync();
-
-        logos = System.Text.Json.JsonSerializer.Deserialize<Logos>(await hubConnection.InvokeAsync<string>("GetLogos", hubConnection.ConnectionId)) ?? new();
 
         // calendar_data = (System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetTodayCalendar", hubConnection.ConnectionId)) ?? new()).OrderBy(e => e.gameDate).ToList();
 

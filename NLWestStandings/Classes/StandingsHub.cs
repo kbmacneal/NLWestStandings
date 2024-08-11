@@ -32,15 +32,15 @@ namespace NLWestStandings.Classes
             }
         }
 
-        public async Task<string> GetLogos(string connectionId)
-        {
-            using (var scope = services.CreateScope())
-            {
-                var standings = scope.ServiceProvider.GetRequiredService<StandingsService>();
+        //public async Task<string> GetLogos(string connectionId)
+        //{
+        //    using (var scope = services.CreateScope())
+        //    {
+        //        var standings = scope.ServiceProvider.GetRequiredService<StandingsService>();
 
-                return System.Text.Json.JsonSerializer.Serialize(standings._logos);
-            }
-        }
+        //        return System.Text.Json.JsonSerializer.Serialize(standings._logos);
+        //    }
+        //}
 
         public async Task<string> GetCalendar(string connectionId, string teamid)
         {

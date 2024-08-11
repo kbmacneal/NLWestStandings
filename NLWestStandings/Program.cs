@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
 using NLWestStandings.Classes;
+using NLWestStandings.Client.Classes;
 using NLWestStandings.Components;
 using Serilog;
 
@@ -23,6 +24,8 @@ namespace NLWestStandings
                 builder.Services.AddRazorComponents()
                     .AddInteractiveServerComponents()
                     .AddInteractiveWebAssemblyComponents();
+
+                //builder.Services.AddSingleton<Logos>(System.Text.Json.JsonSerializer.Deserialize<Logos>(File.ReadAllText(System.IO.Path.Combine("wwwroot", "logos.json"))));
 
                 builder.Services.AddMudServices(options =>
                 {
