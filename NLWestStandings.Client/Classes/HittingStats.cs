@@ -38,6 +38,22 @@
 
     public class Stat1
     {
+        public float woba { get; set; }
+        public float wRaa { get; set; }
+        public float wRc { get; set; }
+        public float wRcPlus { get; set; }
+        public float rar { get; set; }
+        public float war { get; set; }
+        public float batting { get; set; }
+        public float fielding { get; set; }
+        public float baseRunning { get; set; }
+        public float positional { get; set; }
+        public float wLeague { get; set; }
+        public float replacement { get; set; }
+        public float spd { get; set; }
+        public float ubr { get; set; }
+        public float wGdp { get; set; }
+        public float wSb { get; set; }
         public int gamesPlayed { get; set; }
         public int groundOuts { get; set; }
         public int airOuts { get; set; }
@@ -99,5 +115,6 @@
         public string link { get; set; }
         public string abbreviation { get; set; }
     }
+
 
 }

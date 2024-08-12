@@ -33,7 +33,7 @@
             <PropertyColumn Title="Status" Property="x => x.status" />
         </Columns>
         <ChildRowContent>
-            @if (new string[] { "1", "S", "C" }.Contains(@context.Item.position_code))
+            @if (pitcher_list.Contains(@context.Item.position_code))
             {
                 <MudCard>
                     <MudCardHeader>
@@ -42,13 +42,16 @@
                         </CardHeaderContent>
                     </MudCardHeader>
                     <MudCardContent>
-                        <MudText>ERA: @context.Item.pitchingStats.stats[0].splits[0].stat.era</MudText>
-                        <MudText>IP: @context.Item.pitchingStats.stats[0].splits[0].stat.inningsPitched</MudText>
-                        <MudText>Wins: @context.Item.pitchingStats.stats[0].splits[0].stat.wins</MudText>
-                        <MudText>Losses: @context.Item.pitchingStats.stats[0].splits[0].stat.losses</MudText>
-                        <MudText>Saves: @context.Item.pitchingStats.stats[0].splits[0].stat.saves</MudText>
-                        <MudText>Strike %: @context.Item.pitchingStats.stats[0].splits[0].stat.strikePercentage</MudText>
-                        <MudText>Strike/Walk: @context.Item.pitchingStats.stats[0].splits[0].stat.strikeoutWalkRatio</MudText>
+                        <MudText>ERA: @context.Item.pitchingStats.stats[1].splits[0].stat.era</MudText>
+                        <MudText>IP: @context.Item.pitchingStats.stats[1].splits[0].stat.inningsPitched</MudText>
+                        <MudText>Wins: @context.Item.pitchingStats.stats[1].splits[0].stat.wins</MudText>
+                        <MudText>Losses: @context.Item.pitchingStats.stats[1].splits[0].stat.losses</MudText>
+                        <MudText>Saves: @context.Item.pitchingStats.stats[1].splits[0].stat.saves</MudText>
+                        <MudText>Strike %: @context.Item.pitchingStats.stats[1].splits[0].stat.strikePercentage</MudText>
+                        <MudText>Strike/Walk: @context.Item.pitchingStats.stats[1].splits[0].stat.strikeoutWalkRatio</MudText>
+                        <MudText>FIP: @context.Item.pitchingStats.stats[0].splits[0].stat.fip</MudText>
+                        <MudText>xFIP: @context.Item.pitchingStats.stats[0].splits[0].stat.xfip</MudText>
+                        <MudText>WAR: @context.Item.pitchingStats.stats[0].splits[0].stat.war</MudText>
                     </MudCardContent>
                 </MudCard>
             }
@@ -61,16 +64,19 @@
                         </CardHeaderContent>
                     </MudCardHeader>
                     <MudCardContent>
-                        <MudText>AVG: @context.Item.hittingStats.stats[0].splits[0].stat.avg</MudText>
-                        <MudText>HR: @context.Item.hittingStats.stats[0].splits[0].stat.homeRuns</MudText>
-                        <MudText>OBP: @context.Item.hittingStats.stats[0].splits[0].stat.obp</MudText>
-                        <MudText>Slug: @context.Item.hittingStats.stats[0].splits[0].stat.slg</MudText>
-                        <MudText>OPS: @context.Item.hittingStats.stats[0].splits[0].stat.ops</MudText>
-                        <MudText>Stolen Bases: @context.Item.hittingStats.stats[0].splits[0].stat.stolenBases</MudText>
-                        <MudText>Caught Stealing: @context.Item.hittingStats.stats[0].splits[0].stat.caughtStealing</MudText>
-                        <MudText>RBI: @context.Item.hittingStats.stats[0].splits[0].stat.rbi</MudText>
-                        <MudText>BABIP: @context.Item.hittingStats.stats[0].splits[0].stat.babip</MudText>
-                        <MudText>AB/HR: @context.Item.hittingStats.stats[0].splits[0].stat.atBatsPerHomeRun</MudText>
+                        <MudText>AVG: @context.Item.hittingStats.stats[1].splits[0].stat.avg</MudText>
+                        <MudText>HR: @context.Item.hittingStats.stats[1].splits[0].stat.homeRuns</MudText>
+                        <MudText>OBP: @context.Item.hittingStats.stats[1].splits[0].stat.obp</MudText>
+                        <MudText>Slug: @context.Item.hittingStats.stats[1].splits[0].stat.slg</MudText>
+                        <MudText>OPS: @context.Item.hittingStats.stats[1].splits[0].stat.ops</MudText>
+                        <MudText>Stolen Bases: @context.Item.hittingStats.stats[1].splits[0].stat.stolenBases</MudText>
+                        <MudText>Caught Stealing: @context.Item.hittingStats.stats[1].splits[0].stat.caughtStealing</MudText>
+                        <MudText>RBI: @context.Item.hittingStats.stats[1].splits[0].stat.rbi</MudText>
+                        <MudText>wOBA: @context.Item.hittingStats.stats[0].splits[0].stat.woba</MudText>
+                        <MudText>wRC+: @context.Item.hittingStats.stats[0].splits[0].stat.wRcPlus</MudText>
+                        <MudText>WAR: @context.Item.hittingStats.stats[0].splits[0].stat.war</MudText>
+                        <MudText>BABIP: @context.Item.hittingStats.stats[1].splits[0].stat.babip</MudText>
+                        <MudText>AB/HR: @context.Item.hittingStats.stats[1].splits[0].stat.atBatsPerHomeRun</MudText>
                     </MudCardContent>
                 </MudCard>
             }
@@ -102,6 +108,8 @@ else
         public PitchingStats pitchingStats { get; set; }
         public HittingStats hittingStats { get; set; }
     }
+
+    private static string[] pitcher_list = new string[] { "1", "S", "C" };
 
     private string _searchString;
 
@@ -146,8 +154,8 @@ else
                         positions = new() { play.position.name },
                         position_code = play.position.code,
                         status = play.status.description,
-                        pitchingStats = new string[] { "1", "S", "C" }.Contains(play.position.code) ? await GetPitchingStats(play.person.id) : new(),
-                        hittingStats = !(new string[] { "1", "S", "C" }.Contains(play.position.code)) ? await GetHittingStats(play.person.id) : new(),
+                        pitchingStats = pitcher_list.Contains(play.position.code) ? await GetPitchingStats(play.person.id) : new(),
+                        hittingStats = !(pitcher_list.Contains(play.position.code)) ? await GetHittingStats(play.person.id) : new(),
 
                     });
             }
@@ -175,7 +183,7 @@ else
     {
         try
         {
-            return await $"https://statsapi.mlb.com/api/v1/people/{playerid}/stats?stats=season&group=hitting&season={DateTime.Now.Year}"
+            return await $"https://statsapi.mlb.com/api/v1/people/{playerid}/stats?stats=season&stats=sabermetrics&group=hitting&season={DateTime.Now.Year}"
         .GetJsonAsync<HittingStats>();
 
         }
@@ -190,7 +198,7 @@ else
     {
         try
         {
-            return await $"https://statsapi.mlb.com/api/v1/people/{playerid}/stats?stats=season&group=pitching&season={DateTime.Now.Year}"
+            return await $"https://statsapi.mlb.com/api/v1/people/{playerid}/stats?stats=season&stats=sabermetrics&group=pitching&season={DateTime.Now.Year}"
         .GetJsonAsync<PitchingStats>();
 
         }

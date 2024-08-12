@@ -38,6 +38,19 @@
 
     public class Stat1
     {
+        public float fip { get; set; }
+        public float xfip { get; set; }
+        public float fipMinus { get; set; }
+        public float ra9War { get; set; }
+        public float rar { get; set; }
+        public float war { get; set; }
+        public float sd { get; set; }
+        public float md { get; set; }
+        public float pli { get; set; }
+        public float inli { get; set; }
+        public float gmli { get; set; }
+        public float exli { get; set; }
+        public float eraMinus { get; set; }
         public int gamesPlayed { get; set; }
         public int gamesStarted { get; set; }
         public int groundOuts { get; set; }
