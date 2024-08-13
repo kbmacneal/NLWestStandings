@@ -75,6 +75,7 @@ namespace NLWestStandings.MLB
         public string winningPercentage { get; set; }
         public string wildCardRank { get; set; }
         public bool wildCardLeader { get; set; }
+        public int gamesleft => 162 - wins - losses;
     }
 
     public class Team

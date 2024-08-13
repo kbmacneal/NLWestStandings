@@ -38,6 +38,7 @@
                 <MudTh>Roster</MudTh>
                 <MudTh>Wins</MudTh>
                 <MudTh>Losses</MudTh>
+                <MudTh>Games Left</MudTh>
                 <MudTh>GB</MudTh>
                 <MudTh>WC GB</MudTh>
                 <MudTh>Winning %</MudTh>
@@ -52,6 +53,7 @@
                 <MudTd DataLabel="Roster"><MudLink OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
+                <MudTd DataLabel="Games Left">@context.gamesleft</MudTd>
                 <MudTd DataLabel="GB">@context.gamesBack</MudTd>
                 <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
                 <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
@@ -81,6 +83,7 @@ else
                 <MudTh>Roster</MudTh>
                 <MudTh>Wins</MudTh>
                 <MudTh>Losses</MudTh>
+                <MudTh>Games Left</MudTh>
                 <MudTh>GB</MudTh>
                 <MudTh>WC GB</MudTh>
                 <MudTh>Winning %</MudTh>
@@ -95,6 +98,7 @@ else
                 <MudTd DataLabel="Roster"><MudLink OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
+                <MudTd DataLabel="Games Left">@context.gamesleft</MudTd>
                 <MudTd DataLabel="GB">@context.gamesBack</MudTd>
                 <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
                 <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
