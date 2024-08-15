@@ -197,10 +197,12 @@ else
     @if (playByPlay?.gameData.status.abstractGameCode == "L")
     {
         <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
+            <MudCheckBox @bind-Value="@showHome">Show Home</MudCheckBox>
+            <MudCheckBox @bind-Value="@showAway">Show Away</MudCheckBox>
             <MudText Typo="Typo.h4">Home Team</MudText>
-            <Roster teamid="@playByPlay.gameData.teams.home.id.ToString()"></Roster>
+            <Roster Hidden="@(!showHome)" teamid="@playByPlay.gameData.teams.home.id.ToString()"></Roster>
             <MudText Typo="Typo.h4">Away Team</MudText>
-            <Roster teamid="@playByPlay.gameData.teams.away.id.ToString()"></Roster>
+            <Roster Hidden="@(!showAway)" teamid="@playByPlay.gameData.teams.away.id.ToString()"></Roster>
         </MudItem>
 
     }
@@ -266,6 +268,9 @@ else
     [Parameter]
     [SupplyParameterFromQuery(Name = "awayteam")]
     public string awayteam { get; set; } = "N/A";
+
+    bool showHome;
+    bool showAway;
 
     private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
