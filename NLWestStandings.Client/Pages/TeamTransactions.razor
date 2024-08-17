@@ -1,0 +1,66 @@
+﻿@page "/transactions/{teamid}"
+
+@using Flurl.Http
+@using Microsoft.AspNetCore.SignalR.Client
+@using NLWestStandings.Client.Classes
+@using NLWestStandings.Client.Classes.Calendar
+@using NLWestStandings.Client.Classes.DepthChart
+@using NLWestStandings.Client.Classes.HittingStats
+@using NLWestStandings.Client.Classes.PitchingStats
+@using NLWestStandings.Client.Classes.Transactions
+@using NLWestStandings.MLB
+@using System.Web
+@rendermode InteractiveWebAssembly
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Transactions</PageTitle>
+
+@if (transactions is not null)
+{
+    <MudText Typo="Typo.h6">Last 20 Transactions</MudText>
+    <MudTable T="Transaction" Items="@transactions.transactions.OrderByDescending(e=>e.date).Take(20)">
+        <HeaderContent>
+            <MudTh>Date</MudTh>
+            <MudTh>Transaction</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Date">@context.date</MudTd>
+            <MudTd DataLabel="Rank">@context.description</MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+
+@code {
+    [Parameter]
+    public string teamid { get; set; }
+
+    private Transactions? transactions { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        transactions = await GetTransactions(teamid);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task<Transactions> GetTransactions(string teamid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/transactions?teamId={teamid}&startDate={DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")}&endDate={DateTime.Now.ToString("yyyy-MM-dd")}"
+        .GetJsonAsync<Transactions>();
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new Transactions();
+    }
+
+}

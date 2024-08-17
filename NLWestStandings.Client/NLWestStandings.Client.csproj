@@ -22,6 +22,9 @@
     <Content Update="Pages\Calendar.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="Pages\TeamTransactions.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
     <Content Update="Pages\Roster.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>

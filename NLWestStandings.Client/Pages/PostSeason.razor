@@ -1,0 +1,52 @@
+﻿@page "/postseason"
+
+@using Flurl.Http
+@using Microsoft.AspNetCore.SignalR.Client
+@using NLWestStandings.Client.Classes
+@using NLWestStandings.Client.Classes.Calendar
+@using NLWestStandings.Client.Classes.DepthChart
+@using NLWestStandings.Client.Classes.HittingStats
+@using NLWestStandings.Client.Classes.PitchingStats
+@using NLWestStandings.MLB
+@using System.Web
+@rendermode InteractiveWebAssembly
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Transactions</PageTitle>
+
+@if (true)
+{
+
+
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+
+@code {
+    [Parameter]
+    public string teamid { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+       
+    }
+
+    private async Task<DepthChart> GetPostSeasonSchedule()
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/schedule/postseason/"
+        .GetJsonAsync<DepthChart>();
+
+        }
+        catch (Exception)
+        {
+        }
+
+        return new DepthChart();
+    }
+
+}

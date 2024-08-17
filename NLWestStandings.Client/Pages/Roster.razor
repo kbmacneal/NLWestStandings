@@ -15,80 +15,95 @@
 
 <PageTitle>Roster</PageTitle>
 
-@if (depthChart is not null)
-{
-
-    <MudDataGrid hidden="@Hidden" T="DepthChartDTO" Items="@depthChart" Filterable="true" QuickFilter="@_quickFilter">
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Depth Chart</MudText>
-            <MudSpacer />
-            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        </ToolBarContent>
-        <Columns>
-            <HierarchyColumn T="DepthChartDTO" />
-            <PropertyColumn Title="ID" Property="x => x.id" />
-            <PropertyColumn Title="Name" Property="x => x.name" />
-            <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
-            <PropertyColumn Title="Status" Property="x => x.status" />
-        </Columns>
-        <ChildRowContent>
-            @if (pitcher_list.Contains(@context.Item.position_code))
+<MudGrid>
+    <MudItem lg="9" sm="12">
+        <MudPaper>
+            @if (depthChart is not null)
             {
-                <MudCard>
-                    <MudCardHeader>
-                        <CardHeaderContent>
-                            <MudText Typo="Typo.h6">@DateTime.Now.Year Stats</MudText>
-                        </CardHeaderContent>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText>ERA: @context.Item.pitchingStats.stats[1].splits[0].stat.era</MudText>
-                        <MudText>IP: @context.Item.pitchingStats.stats[1].splits[0].stat.inningsPitched</MudText>
-                        <MudText>Wins: @context.Item.pitchingStats.stats[1].splits[0].stat.wins</MudText>
-                        <MudText>Losses: @context.Item.pitchingStats.stats[1].splits[0].stat.losses</MudText>
-                        <MudText>Saves: @context.Item.pitchingStats.stats[1].splits[0].stat.saves</MudText>
-                        <MudText>Strike %: @context.Item.pitchingStats.stats[1].splits[0].stat.strikePercentage</MudText>
-                        <MudText>Strike/Walk: @context.Item.pitchingStats.stats[1].splits[0].stat.strikeoutWalkRatio</MudText>
-                        <MudText>FIP: @context.Item.pitchingStats.stats[0].splits[0].stat.fip</MudText>
-                        <MudText>xFIP: @context.Item.pitchingStats.stats[0].splits[0].stat.xfip</MudText>
-                        <MudText>WAR: @context.Item.pitchingStats.stats[0].splits[0].stat.war</MudText>
-                    </MudCardContent>
-                </MudCard>
+
+                <MudDataGrid hidden="@Hidden" T="DepthChartDTO" Items="@depthChart" Filterable="true" QuickFilter="@_quickFilter">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Depth Chart</MudText>
+                        <MudSpacer />
+                        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
+                    <Columns>
+                        <HierarchyColumn T="DepthChartDTO" />
+                        <PropertyColumn Title="ID" Property="x => x.id" />
+                        <PropertyColumn Title="Name" Property="x => x.name" />
+                        <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
+                        <PropertyColumn Title="Status" Property="x => x.status" />
+                    </Columns>
+                    <ChildRowContent>
+                        @if (pitcher_list.Contains(@context.Item.position_code))
+                        {
+                            <MudCard>
+                                <MudCardHeader>
+                                    <CardHeaderContent>
+                                        <MudText Typo="Typo.h6">@DateTime.Now.Year Stats</MudText>
+                                    </CardHeaderContent>
+                                </MudCardHeader>
+                                <MudCardContent>
+                                    <MudText>ERA: @context.Item.pitchingStats.stats[1].splits[0].stat.era</MudText>
+                                    <MudText>IP: @context.Item.pitchingStats.stats[1].splits[0].stat.inningsPitched</MudText>
+                                    <MudText>Wins: @context.Item.pitchingStats.stats[1].splits[0].stat.wins</MudText>
+                                    <MudText>Losses: @context.Item.pitchingStats.stats[1].splits[0].stat.losses</MudText>
+                                    <MudText>Saves: @context.Item.pitchingStats.stats[1].splits[0].stat.saves</MudText>
+                                    <MudText>Strike %: @context.Item.pitchingStats.stats[1].splits[0].stat.strikePercentage</MudText>
+                                    <MudText>Strike/Walk: @context.Item.pitchingStats.stats[1].splits[0].stat.strikeoutWalkRatio</MudText>
+                                    <MudText>FIP: @context.Item.pitchingStats.stats[0].splits[0].stat.fip</MudText>
+                                    <MudText>xFIP: @context.Item.pitchingStats.stats[0].splits[0].stat.xfip</MudText>
+                                    <MudText>WAR: @context.Item.pitchingStats.stats[0].splits[0].stat.war</MudText>
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                        else
+                        {
+                            <MudCard>
+                                <MudCardHeader>
+                                    <CardHeaderContent>
+                                        <MudText Typo="Typo.h6">@DateTime.Now.Year Stats</MudText>
+                                    </CardHeaderContent>
+                                </MudCardHeader>
+                                <MudCardContent>
+                                    <MudText>AVG: @context.Item.hittingStats.stats[1].splits[0].stat.avg</MudText>
+                                    <MudText>HR: @context.Item.hittingStats.stats[1].splits[0].stat.homeRuns</MudText>
+                                    <MudText>OBP: @context.Item.hittingStats.stats[1].splits[0].stat.obp</MudText>
+                                    <MudText>Slug: @context.Item.hittingStats.stats[1].splits[0].stat.slg</MudText>
+                                    <MudText>OPS: @context.Item.hittingStats.stats[1].splits[0].stat.ops</MudText>
+                                    <MudText>Stolen Bases: @context.Item.hittingStats.stats[1].splits[0].stat.stolenBases</MudText>
+                                    <MudText>Caught Stealing: @context.Item.hittingStats.stats[1].splits[0].stat.caughtStealing</MudText>
+                                    <MudText>RBI: @context.Item.hittingStats.stats[1].splits[0].stat.rbi</MudText>
+                                    <MudText>wOBA: @context.Item.hittingStats.stats[0].splits[0].stat.woba</MudText>
+                                    <MudText>wRC+: @context.Item.hittingStats.stats[0].splits[0].stat.wRcPlus</MudText>
+                                    <MudText>WAR: @context.Item.hittingStats.stats[0].splits[0].stat.war</MudText>
+                                    <MudText>BABIP: @context.Item.hittingStats.stats[1].splits[0].stat.babip</MudText>
+                                    <MudText>AB/HR: @context.Item.hittingStats.stats[1].splits[0].stat.atBatsPerHomeRun</MudText>
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                    </ChildRowContent>
+                </MudDataGrid>
+
+
             }
             else
             {
-                <MudCard>
-                    <MudCardHeader>
-                        <CardHeaderContent>
-                            <MudText Typo="Typo.h6">@DateTime.Now.Year Stats</MudText>
-                        </CardHeaderContent>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText>AVG: @context.Item.hittingStats.stats[1].splits[0].stat.avg</MudText>
-                        <MudText>HR: @context.Item.hittingStats.stats[1].splits[0].stat.homeRuns</MudText>
-                        <MudText>OBP: @context.Item.hittingStats.stats[1].splits[0].stat.obp</MudText>
-                        <MudText>Slug: @context.Item.hittingStats.stats[1].splits[0].stat.slg</MudText>
-                        <MudText>OPS: @context.Item.hittingStats.stats[1].splits[0].stat.ops</MudText>
-                        <MudText>Stolen Bases: @context.Item.hittingStats.stats[1].splits[0].stat.stolenBases</MudText>
-                        <MudText>Caught Stealing: @context.Item.hittingStats.stats[1].splits[0].stat.caughtStealing</MudText>
-                        <MudText>RBI: @context.Item.hittingStats.stats[1].splits[0].stat.rbi</MudText>
-                        <MudText>wOBA: @context.Item.hittingStats.stats[0].splits[0].stat.woba</MudText>
-                        <MudText>wRC+: @context.Item.hittingStats.stats[0].splits[0].stat.wRcPlus</MudText>
-                        <MudText>WAR: @context.Item.hittingStats.stats[0].splits[0].stat.war</MudText>
-                        <MudText>BABIP: @context.Item.hittingStats.stats[1].splits[0].stat.babip</MudText>
-                        <MudText>AB/HR: @context.Item.hittingStats.stats[1].splits[0].stat.atBatsPerHomeRun</MudText>
-                    </MudCardContent>
-                </MudCard>
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
             }
-        </ChildRowContent>
-    </MudDataGrid>
+        </MudPaper>
+    </MudItem>
+    <MudItem lg="3" sm="12">
+        <MudPaper>
+            <TeamTransactions teamid="@teamid"></TeamTransactions>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 
-}
-else
-{
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-}
+
+
 
 @code {
     private List<DepthChartDTO> depthChart { get; set; } = new();
