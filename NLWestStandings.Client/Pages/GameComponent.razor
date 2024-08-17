@@ -36,7 +36,7 @@
 
 <PageTitle>Line Score</PageTitle>
 
-@if (playByPlay != null)
+@if (playByPlay is not null)
 {
     <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
 
@@ -61,13 +61,11 @@
     @if (playByPlay.gameData.weather is not null)
     {
         <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
-
     }
     else
     {
         <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
     }
-
 
     <table>
         <th class="table_cell">Inning</th>
@@ -113,7 +111,7 @@ else
 <br />
 
 <MudGrid>
-    @if (playByPlay != null)
+    @if (playByPlay is not null)
     {
         <MudItem lg="8" sm="12">
             <MudPaper>
@@ -208,7 +206,6 @@ else
     }
     else if (playByPlay?.gameData.status.abstractGameCode == "F")
     {
-
         <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
             @if (homedepthChart != null && homedepthChart.Count > 0)
             {
@@ -229,6 +226,7 @@ else
             {
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
             }
+
             @if (awaydepthChart != null && awaydepthChart.Count > 0)
             {
                 <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
@@ -259,9 +257,11 @@ else
     [Parameter]
     [SupplyParameterFromQuery(Name = "gamepk")]
     public string gamepk { get; set; }
+
     [Parameter]
     [SupplyParameterFromQuery(Name = "hometeam")]
     public string hometeam { get; set; } = "N/A";
+
     [Parameter]
     [SupplyParameterFromQuery(Name = "awayteam")]
     public string awayteam { get; set; } = "N/A";
