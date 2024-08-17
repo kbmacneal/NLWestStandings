@@ -16,7 +16,7 @@
 <PageTitle>Roster</PageTitle>
 
 <MudGrid>
-    <MudItem lg="9" sm="12">
+    <MudItem lg="@(ShowTransactions ? 9 : 12)" sm="12">
         <MudPaper>
             @if (depthChart is not null)
             {
@@ -94,11 +94,15 @@
             }
         </MudPaper>
     </MudItem>
-    <MudItem lg="3" sm="12">
-        <MudPaper>
-            <TeamTransactions teamid="@teamid"></TeamTransactions>
-        </MudPaper>
-    </MudItem>
+    @if(ShowTransactions)
+    {
+        <MudItem lg="3" sm="12">
+            <MudPaper>
+                <TeamTransactions teamid="@teamid"></TeamTransactions>
+            </MudPaper>
+        </MudItem>
+    }
+    
 </MudGrid>
 
 
@@ -112,6 +116,8 @@
     public string teamid { get; set; }
     [Parameter]
     public bool Hidden { get; set; } = false;
+    [Parameter]
+    public bool ShowTransactions { get; set; } = true;
 
     private class DepthChartDTO
     {

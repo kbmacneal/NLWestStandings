@@ -200,9 +200,9 @@ else
             <MudCheckBox @bind-Value="@showHome">Show Home</MudCheckBox>
             <MudCheckBox @bind-Value="@showAway">Show Away</MudCheckBox>
             <MudText Typo="Typo.h4">Home Team</MudText>
-            <Roster Hidden="@(!showHome)" teamid="@playByPlay.gameData.teams.home.id.ToString()"></Roster>
+            <Roster ShowTransactions="false" Hidden="@(!showHome)" teamid="@playByPlay.gameData.teams.home.id.ToString()"></Roster>
             <MudText Typo="Typo.h4">Away Team</MudText>
-            <Roster Hidden="@(!showAway)" teamid="@playByPlay.gameData.teams.away.id.ToString()"></Roster>
+            <Roster ShowTransactions="false" Hidden="@(!showAway)" teamid="@playByPlay.gameData.teams.away.id.ToString()"></Roster>
         </MudItem>
 
     }
@@ -249,9 +249,6 @@ else
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
             }
         </MudItem>
-
-
-
     }
 
 </MudGrid>
