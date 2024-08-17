@@ -15,10 +15,44 @@
 
 <PageTitle>Transactions</PageTitle>
 
-@if (true)
+@if (_events.Count > 0)
 {
+    <MudCalendar CurrentDay="@(new DateTime(DateTime.Now.Year,10,1))" Items="_events" MonthCellMinHeight="100">
+        <CellTemplate>
+            <div style="width: 100%; height: 100%; border: 2px solid @GetColor(((CustomItem)context).Color)">
+                <div style="background-color: @GetColor(((CustomItem)context).Color)">
+                    <p style="color:white;">@(((CustomItem)context).Title)</p>
+                </div>
+                <div class="pa-2 align-content-center">
 
+                    <MudLink Style="color: #ffffff;"
+                             Typo="Typo.body1"
+                             Align="Align.Center"
+                             OnClick="@(() => GoToGame(((CustomItem)context).gamepk,((CustomItem)context).hometeam, ((CustomItem)context).awayteam))">
 
+                        <MudText>@(((CustomItem)context).Text)</MudText>
+                        @if (((CustomItem)context).awaysvg != "")
+                        {
+                            <MudImage Class="rounded-lg" Height="25" Width="25" Src="@(((CustomItem)context).awaysvg)"></MudImage>
+                        }
+                        else
+                        {
+                            <MudText>@(((CustomItem)context).awayteam)</MudText>
+                        }
+                        @@
+                        @if (((CustomItem)context).homesvg != "")
+                        {
+                            <MudImage Class="rounded-lg" Height="25" Width="25" Src="@(((CustomItem)context).homesvg)"></MudImage>
+                        }
+                        else
+                        {
+                            <MudText>@(((CustomItem)context).hometeam)</MudText>
+                        }
+                    </MudLink>
+                </div>
+            </div>
+        </CellTemplate>
+    </MudCalendar>
 }
 else
 {
@@ -26,27 +60,79 @@ else
 }
 
 @code {
-    [Parameter]
-    public string teamid { get; set; }
+    private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
+
+    List<Game>? calendar_data { get; set; }
+
+    private List<CustomItem> _events = new();
+
+    private class CustomItem : CalendarItem
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public Color Color { get; set; } = Color.Primary;
+        public string? gamepk { get; set; }
+        public string? hometeam { get; set; }
+        public string? awayteam { get; set; }
+        public string? homesvg { get; set; }
+        public string? awaysvg { get; set; }
+
+    }
 
     protected override async Task OnInitializedAsync()
     {
-       
+        var temp_events = new List<CustomItem>();
+
+        var games = (await GetPostSeasonSchedule()).dates.SelectMany(e => e.games);
+
+        foreach (var game in games)
+        {
+                var local_start = DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime();
+
+                temp_events.Add(new CustomItem()
+                    {
+                        Start = local_start,
+                        End = local_start.AddHours(1),
+                        Title = ToAmPm(local_start),
+                        Text = game.description,
+                        Color = Color.Primary,
+                        gamepk = game.gamePk.ToString(),
+                        hometeam = $"{game.teams.home.team.name}",
+                        awayteam = $"{game.teams.away.team.name}",
+                        homesvg = SVGLogo.GetLogo(game.teams.home.team.name),
+                        awaysvg = SVGLogo.GetLogo(game.teams.away.team.name)
+                    });
+            
+        }
+
+        _events = temp_events.DistinctBy(e => e.Text + e.Start).ToList();
+
+        await InvokeAsync(StateHasChanged);
     }
 
-    private async Task<DepthChart> GetPostSeasonSchedule()
+    private async Task<NLWestStandings.Client.Classes.PostSeason.PostSeason> GetPostSeasonSchedule()
     {
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/schedule/postseason/"
-        .GetJsonAsync<DepthChart>();
+        .GetJsonAsync<NLWestStandings.Client.Classes.PostSeason.PostSeason>();
 
         }
         catch (Exception)
         {
         }
 
-        return new DepthChart();
+        return new NLWestStandings.Client.Classes.PostSeason.PostSeason();
+    }
+
+    private string ToAmPm(DateTime dateTime)
+    {
+        return dateTime.ToString("t");
+    }
+
+    private void GoToGame(string gamepk, string hometeam, string awayteam)
+    {
+        NavigationManager.NavigateTo($"gamecomponent?gamepk={gamepk}&hometeam={HttpUtility.UrlEncode(hometeam)}&awayteam={HttpUtility.UrlEncode(awayteam)}");
     }
 
 }

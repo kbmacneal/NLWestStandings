@@ -14,7 +14,7 @@
 </style>
 
 <PageTitle>Standings</PageTitle>
-<MudGrid Class="d-flex justify-space-around flex-grow-1 gap-4">
+<MudGrid Class="d-flex justify-space-around flex-grow-0">
     <MudItem>
         <MudLink OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudLink>
     </MudItem>
@@ -23,6 +23,9 @@
     </MudItem>
     <MudItem>
         <MudLink OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudLink>
+    </MudItem>
+    <MudItem>
+        <MudLink OnClick="@(() => GoToPostSeason())">Postseason Games</MudLink>
     </MudItem>
 </MudGrid>
 <MudText Typo="Typo.subtitle2" Style="color:grey;">Click the team logo for that team's calendar.</MudText>
@@ -169,5 +172,10 @@ else
     private void GoToRoster(int teamid)
     {
         NavigationManager.NavigateTo($"/roster/{teamid}");
+    }
+    
+    private void GoToPostSeason()
+    {
+        NavigationManager.NavigateTo($"/postseason");
     }
 }
