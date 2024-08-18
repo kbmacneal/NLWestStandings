@@ -1,33 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
-    <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+		<StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
+		<RunAOTCompilation>true</RunAOTCompilation>
+		<WasmStripILAfterAOT>true</WasmStripILAfterAOT>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Flurl" Version="4.0.0" />
-    <PackageReference Include="Flurl.Http" Version="4.0.2" />
-    <PackageReference Include="Heron.MudCalendar" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.*" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.7" />
-  	<PackageReference Include="MudBlazor" Version="7.5.0" />
-  	<PackageReference Include="Websocket.Client" Version="5.1.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Flurl" Version="4.0.0" />
+		<PackageReference Include="Flurl.Http" Version="4.0.2" />
+		<PackageReference Include="Heron.MudCalendar" Version="2.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.*" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.7" />
+		<PackageReference Include="MudBlazor" Version="7.5.0" />
+		<PackageReference Include="Websocket.Client" Version="5.1.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Update="Pages\Calendar.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\TeamTransactions.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\Roster.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Update="Pages\Calendar.razor">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
+		<Content Update="Pages\TeamTransactions.razor">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
+		<Content Update="Pages\Roster.razor">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
+	</ItemGroup>
 
 </Project>
