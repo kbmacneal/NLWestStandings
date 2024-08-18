@@ -140,7 +140,7 @@ else
 
         gamename = $"{awayteam} @ {hometeam}";
 
-        if(liverefresh)
+        if (liverefresh && playByPlay?.gameData.status.abstractGameCode == "L")
         {
             var url = new Uri($"wss://ws.statsapi.mlb.com/api/v1/game/push/subscribe/gameday/{gamepk}");
             _client = new WebsocketClient(url);
