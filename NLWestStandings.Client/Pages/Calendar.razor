@@ -102,6 +102,6 @@ else
 
     private void GoToGame(string gamepk, string hometeam, string awayteam)
     {
-        NavigationManager.NavigateTo($"gamecomponent?gamepk={gamepk}&hometeam={HttpUtility.UrlEncode(hometeam)}&awayteam={HttpUtility.UrlEncode(awayteam)}");
+        NavigationManager.NavigateTo($"gamecomponent?gamepk={gamepk}");
     }
 }

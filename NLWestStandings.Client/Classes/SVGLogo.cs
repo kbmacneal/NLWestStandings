@@ -2,7 +2,7 @@
 {
     public static class SVGLogo
     {
-        public static string GetLogo(string team_name)
+        public static string GetLogo(string? team_name)
         {
             try
             {
