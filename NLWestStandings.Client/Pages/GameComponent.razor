@@ -19,7 +19,7 @@
 <MudPopoverProvider />
 
 
-<ScoreBug gamepk="@gamepk"></ScoreBug>
+<ScoreBug liverefresh="true" showheader="true" gamepk="@gamepk"></ScoreBug>
 
 <MudGrid>
     @if (playByPlay is not null)
@@ -322,7 +322,7 @@
 
                 var jsonplay = System.Text.Json.JsonSerializer.Deserialize<PbPPushNotification>(msg.Text ?? "");
 
-                await GetPlayByPlay(jsonplay?.updateId ?? "");
+                playByPlay = await GetPlayByPlay(jsonplay?.updateId ?? "");
 
                 // Log($"Received: '{msg.Text}'", LogSeverity.Info);
                 await InvokeAsync(StateHasChanged);

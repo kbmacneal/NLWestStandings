@@ -2,6 +2,11 @@
 @using NLWestStandings.Client.Classes
 @using NLWestStandings.Client.Classes.PlayByPlay
 @using System.Globalization
+@using System.Net.WebSockets
+@using Websocket.Client
+@implements IAsyncDisposable;
+
+
 <style>
     .table {
         display: table;
@@ -18,37 +23,40 @@
 </style>
 
 
-<PageTitle>Line Score</PageTitle>
+
 
 @if (playByPlay is not null)
 {
-    <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
+    @if (showheader)
+    {
+        <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
 
-    @if (playByPlay.liveData.plays.currentPlay is not null)
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
-    }
-    else
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
-    }
+        @if (playByPlay.liveData.plays.currentPlay is not null)
+        {
+            <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
+        }
+        else
+        {
+            <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+        }
 
-    @if (playByPlay.gameData.probablePitchers.home is not null && playByPlay.gameData.probablePitchers.away is not null)
-    {
-        <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
-    }
-    else
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
-    }
+        @if (playByPlay.gameData.probablePitchers.home is not null && playByPlay.gameData.probablePitchers.away is not null)
+        {
+            <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
+        }
+        else
+        {
+            <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+        }
 
-    @if (playByPlay.gameData.weather is not null)
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
-    }
-    else
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+        @if (playByPlay.gameData.weather is not null)
+        {
+            <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
+        }
+        else
+        {
+            <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+        }
     }
 
     <table>
@@ -97,6 +105,10 @@ else
 @code {
     [Parameter]
     public string gamepk { get; set; }
+    [Parameter]
+    public bool showheader { get; set; } = true;
+    [Parameter]
+    public bool liverefresh { get; set; } = true;
 
     public string hometeam { get; set; } = "N/A";
 
@@ -108,25 +120,96 @@ else
 
     private PlayByPlay? playByPlay { get; set; }
 
+    private WebsocketClient? _client { get; set; }
+
+    private string _message = "Gameday5";
+
+
     protected override async Task OnInitializedAsync()
     {
 
-        playByPlay = await GetPlayByPlay();
+        playByPlay = await GetPlayByPlay(gamepk);
+
+        if(playByPlay is null)
+        {
+            return;
+        }
 
         hometeam = playByPlay.gameData.teams.home.name;
         awayteam = playByPlay.gameData.teams.away.name;
 
         gamename = $"{awayteam} @ {hometeam}";
 
+        if(liverefresh)
+        {
+            var url = new Uri($"wss://ws.statsapi.mlb.com/api/v1/game/push/subscribe/gameday/{gamepk}");
+            _client = new WebsocketClient(url);
+
+            _client.Name = "MLB Gameday";
+            _client.ReconnectTimeout = TimeSpan.FromSeconds(60);
+            _client.ErrorReconnectTimeout = TimeSpan.FromSeconds(30);
+            _client.ReconnectionHappened.Subscribe(info =>
+            {
+                Console.WriteLine($"Reconnection happened, type: {info.Type}, url: {_client.Url}");
+                _client.Send(_message);
+                // Log($"Reconnected, type: '{info.Type}'", LogSeverity.Warning);
+                // StateHasChanged();
+            });
+            _client.DisconnectionHappened.Subscribe(info =>
+            {
+                Console.WriteLine($"Disconnection happened, type: {info.Type}");
+                // Log($"Disconnected, type: '{info.Type}', reason: '{info.CloseStatus}'", LogSeverity.Warning);
+                // StateHasChanged();
+            });
+
+            _client.MessageReceived.Subscribe(async msg =>
+            {
+                Console.WriteLine($"Live update received");
+
+                var jsonplay = System.Text.Json.JsonSerializer.Deserialize<PbPPushNotification>(msg.Text ?? "");
+
+                playByPlay = await GetUpdatePlayByPlay(jsonplay?.updateId ?? "");
+
+                // Log($"Received: '{msg.Text}'", LogSeverity.Info);
+                await InvokeAsync(StateHasChanged);
+            });
+
+            await _client.Start();
+        }
+
 
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task<PlayByPlay> GetPlayByPlay()
+    public async ValueTask DisposeAsync()
+    {
+        if (_client == null)
+            return;
+
+        await _client.Stop(WebSocketCloseStatus.NormalClosure, string.Empty);
+        _client.Dispose();
+    }
+
+    private async Task<PlayByPlay> GetPlayByPlay(string pk)
     {
         try
         {
-            return await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
+            return await $"https://statsapi.mlb.com/api/v1.1/game/{pk}/feed/live"
+        .GetJsonAsync<PlayByPlay>();
+
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+
+    }
+
+    private async Task<PlayByPlay> GetUpdatePlayByPlay(string updateID)
+    {
+        try
+        {
+            return await $"https://ws.statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?language=en&pushUpdateId={updateID}"
         .GetJsonAsync<PlayByPlay>();
 
         }

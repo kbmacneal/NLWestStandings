@@ -3702,7 +3702,7 @@
         public int rbi { get; set; }
         public int awayScore { get; set; }
         public int homeScore { get; set; }
-        public bool isOut { get; set; }
+        public bool? isOut { get; set; }
     }
 
     public class About
@@ -3886,8 +3886,8 @@
         public object start { get; set; }
         public object end { get; set; }
         public string outBase { get; set; }
-        public bool isOut { get; set; }
-        public int outNumber { get; set; }
+        public bool? isOut { get; set; }
+        public int? outNumber { get; set; }
     }
 
     public class Details
@@ -3958,7 +3958,7 @@
         public bool isStrike { get; set; }
         public bool isBall { get; set; }
         public Type2 type { get; set; }
-        public bool isOut { get; set; }
+        public bool? isOut { get; set; }
         public bool hasReview { get; set; }
     }
 
@@ -4068,7 +4068,7 @@
         public int rbi { get; set; }
         public int awayScore { get; set; }
         public int homeScore { get; set; }
-        public bool isOut { get; set; }
+        public bool? isOut { get; set; }
     }
 
     public class About1
@@ -4284,7 +4284,7 @@
         public string start { get; set; }
         public string end { get; set; }
         public string outBase { get; set; }
-        public bool isOut { get; set; }
+        public bool? isOut { get; set; }
         public int? outNumber { get; set; }
     }
 
@@ -4366,7 +4366,7 @@
         public int awayScore { get; set; }
         public int homeScore { get; set; }
         public bool isScoringPlay { get; set; }
-        public bool isOut { get; set; }
+        public bool? isOut { get; set; }
         public bool hasReview { get; set; }
         public Call1 call { get; set; }
         public string code { get; set; }
