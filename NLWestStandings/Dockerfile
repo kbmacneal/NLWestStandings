@@ -9,6 +9,7 @@ EXPOSE 8089
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+RUN dotnet workload install wasm-tools
 COPY ["NLWestStandings/NLWestStandings.csproj", "NLWestStandings/"]
 COPY ["NLWestStandings.Client/NLWestStandings.Client.csproj", "NLWestStandings.Client/"]
 RUN dotnet restore "./NLWestStandings/NLWestStandings.csproj"
