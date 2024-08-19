@@ -11,6 +11,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["NLWestStandings/NLWestStandings.csproj", "NLWestStandings/"]
 COPY ["NLWestStandings.Client/NLWestStandings.Client.csproj", "NLWestStandings.Client/"]
+RUN dotnet workload restore "./NLWestStandings/NLWestStandings.csproj"
 RUN dotnet restore "./NLWestStandings/NLWestStandings.csproj"
 COPY . .
 WORKDIR "/src/NLWestStandings"
