@@ -8,8 +8,8 @@ EXPOSE 8089
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
-RUN sudo apt-get update
-RUN sudo apt-get install python -y
+RUN apt-get update
+RUN apt-get install python -y
 WORKDIR /src
 COPY ["NLWestStandings/NLWestStandings.csproj", "NLWestStandings/"]
 COPY ["NLWestStandings.Client/NLWestStandings.Client.csproj", "NLWestStandings.Client/"]
