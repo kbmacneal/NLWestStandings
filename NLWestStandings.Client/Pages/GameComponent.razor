@@ -109,26 +109,28 @@
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         }
     </MudItem>
-    <MudItem Class="d-flex flex-row" lg="4" sm="12">
+    <MudItem Class="d-flex flex-row" lg="5" sm="12">
         @if(lineupObject is not null)
         {
-            <MudDataGrid T="Homeplayer" Items="@lineupObject.dates[0].games[0].lineups.homePlayers">
+            <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" ColumnResizeMode="@ResizeMode.Container" T="Homeplayer" Items="@lineupObject.dates[0].games[0].lineups.homePlayers">
                 <ToolBarContent>
                     <MudText Typo="Typo.h6">Home Lineup</MudText>
                 </ToolBarContent>
                 <Columns>
                     <PropertyColumn Title="Name" Property="x => x.fullName" />
-                    <PropertyColumn Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                    <PropertyColumn CellStyle="max-width: 25px; overflow-x: hidden; white-space: nowrap;" Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                    <PropertyColumn Title="Stats" Property="x => homedepthChart.FirstOrDefault(e=>e.id == x.id.ToString()).stats" />
                 </Columns>
             </MudDataGrid>
 
-            <MudDataGrid T="Awayplayer" Items="@lineupObject.dates[0].games[0].lineups.awayPlayers">
+            <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" ColumnResizeMode="@ResizeMode.Container" T="Awayplayer" Items="@lineupObject.dates[0].games[0].lineups.awayPlayers">
                 <ToolBarContent>
                     <MudText Typo="Typo.h6">Away Lineup</MudText>
                 </ToolBarContent>
                 <Columns>
                     <PropertyColumn Title="Name" Property="x => x.fullName" />
-                    <PropertyColumn Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                    <PropertyColumn CellStyle="max-width: 25px; overflow-x: hidden; white-space: nowrap;" Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                    <PropertyColumn Title="Stats" Property="x => awaydepthChart.FirstOrDefault(e=>e.id == x.id.ToString()).stats" />
                 </Columns>
             </MudDataGrid>
         }
@@ -235,50 +237,6 @@
         </MudItem>
 
     }
-    else if (playByPlay?.gameData.status.abstractGameCode == "F")
-    {
-        <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
-            @if (homedepthChart != null && homedepthChart.Count > 0)
-            {
-                <MudDataGrid T="DepthChartDTO" Items="@homedepthChart" Filterable="true" QuickFilter="@_homequickFilter">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.h6">Home Game Stats</MudText>
-                        <MudSpacer />
-                        <MudTextField @bind-Value="_homesearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                    </ToolBarContent>
-                    <Columns>
-                        <PropertyColumn Title="Name" Property="x => x.name" />
-                        <PropertyColumn Title="Stats" Property="x => x.stats" />
-                    </Columns>
-                </MudDataGrid>
-            }
-            else
-            {
-                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-            }
-
-            @if (awaydepthChart != null && awaydepthChart.Count > 0)
-            {
-                <MudDataGrid T="DepthChartDTO" Items="@awaydepthChart" Filterable="true" QuickFilter="@_awayquickFilter">
-                    <ToolBarContent>
-                        <MudText Typo="Typo.h6">Away Game Stats</MudText>
-                        <MudSpacer />
-                        <MudTextField @bind-Value="_awaysearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                    </ToolBarContent>
-                    <Columns>
-                        <PropertyColumn Title="Name" Property="x => x.name" />
-                        <PropertyColumn Title="Stats" Property="x => x.stats" />
-                    </Columns>
-                </MudDataGrid>
-            }
-            else
-            {
-                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-            }
-        </MudItem>
-    }
 
 </MudGrid>
 
@@ -309,6 +267,7 @@
 
     private class DepthChartDTO
     {
+        public string id { get; set; } = "";
         public string name { get; set; } = "";
         public string jersey_num { get; set; } = "";
         public List<string> positions { get; set; } = new();
@@ -372,8 +331,6 @@
         hometeam = playByPlay.gameData.teams.home.name;
         awayteam = playByPlay.gameData.teams.away.name;
 
-        await InvokeAsync(StateHasChanged);
-
         if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
             var home_temp = await GetDepthChart(playByPlay?.gameData.teams.home.id.ToString
@@ -392,6 +349,7 @@
                 {
                     homedepthChart?.Add(new DepthChartDTO()
                         {
+                            id = play.person.id.ToString(),
                             name = play.person.fullName,
                             jersey_num = play.jerseyNumber,
                             positions = new() { play.position.name },
@@ -410,6 +368,7 @@
                 {
                     awaydepthChart?.Add(new DepthChartDTO()
                         {
+                            id = play.person.id.ToString(),
                             name = play.person.fullName,
                             jersey_num = play.jerseyNumber,
                             positions = new() { play.position.name },
@@ -465,6 +424,7 @@
                 {
                     homedepthChart?.Add(new DepthChartDTO()
                         {
+                            id = person.people[0].id.ToString(),
                             name = person.people[0].fullName,
                             jersey_num = "",
                             positions = new(),
@@ -475,6 +435,7 @@
                 {
                     homedepthChart?.Add(new DepthChartDTO()
                         {
+                            id = person.people[0].id.ToString(),
                             name = person.people[0].fullName,
                             jersey_num = "",
                             positions = new(),
@@ -492,6 +453,7 @@
                 {
                     awaydepthChart?.Add(new DepthChartDTO()
                         {
+                            id = person.people[0].id.ToString(),
                             name = person.people[0].fullName,
                             jersey_num = "",
                             positions = new(),
@@ -502,6 +464,7 @@
                 {
                     awaydepthChart?.Add(new DepthChartDTO()
                         {
+                            id = person.people[0].id.ToString(),
                             name = person.people[0].fullName,
                             jersey_num = "",
                             positions = new(),
@@ -510,6 +473,8 @@
                 }
             }
         }
+
+        await InvokeAsync(StateHasChanged);
     }
 
     public async ValueTask DisposeAsync()
