@@ -110,33 +110,58 @@
         }
     </MudItem>
     <MudItem Class="d-flex flex-row" lg="5" sm="12">
-        @if(lineupObject is not null)
+        @if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
-            <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" ColumnResizeMode="@ResizeMode.Container" T="Homeplayer" Items="@lineupObject.dates[0].games[0].lineups.homePlayers">
-                <ToolBarContent>
-                    <MudText Typo="Typo.h6">Home Lineup</MudText>
-                </ToolBarContent>
-                <Columns>
-                    <PropertyColumn Title="Name" Property="x => x.fullName" />
-                    <PropertyColumn CellStyle="max-width: 25px; overflow-x: hidden; white-space: nowrap;" Title="Position" Property="x => x.primaryPosition.abbreviation" />
-                    <PropertyColumn Title="Stats" Property="x => homedepthChart.FirstOrDefault(e=>e.id == x.id.ToString()).stats" />
-                </Columns>
-            </MudDataGrid>
+            @if (lineupObject is not null)
+            {
+                <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" ColumnResizeMode="@ResizeMode.Container" T="Homeplayer" Items="@lineupObject.dates[0].games[0].lineups.homePlayers">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Home Lineup</MudText>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Title="Name" Property="x => x.fullName" />
+                        <PropertyColumn CellStyle="max-width: 25px; overflow-x: hidden; white-space: nowrap;" Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                    </Columns>
+                </MudDataGrid>
 
-            <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" ColumnResizeMode="@ResizeMode.Container" T="Awayplayer" Items="@lineupObject.dates[0].games[0].lineups.awayPlayers">
-                <ToolBarContent>
-                    <MudText Typo="Typo.h6">Away Lineup</MudText>
-                </ToolBarContent>
-                <Columns>
-                    <PropertyColumn Title="Name" Property="x => x.fullName" />
-                    <PropertyColumn CellStyle="max-width: 25px; overflow-x: hidden; white-space: nowrap;" Title="Position" Property="x => x.primaryPosition.abbreviation" />
-                    <PropertyColumn Title="Stats" Property="x => awaydepthChart.FirstOrDefault(e=>e.id == x.id.ToString()).stats" />
-                </Columns>
-            </MudDataGrid>
+                <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" ColumnResizeMode="@ResizeMode.Container" T="Awayplayer" Items="@lineupObject.dates[0].games[0].lineups.awayPlayers">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h6">Away Lineup</MudText>
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Title="Name" Property="x => x.fullName" />
+                        <PropertyColumn CellStyle="max-width: 25px; overflow-x: hidden; white-space: nowrap;" Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                    </Columns>
+                </MudDataGrid>
+            }
+            else
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
         }
         else
         {
-            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" ColumnResizeMode="@ResizeMode.Container" T="DepthChartDTO" Items="homedepthChart">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Home Stats</MudText>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Title="Name" Property="x => x.name" />
+                    <PropertyColumn CellStyle="max-width: 25px;" Title="Position" Property="x => String.Join(',', x.positions)" />
+                    <PropertyColumn Title="Stats" Property="x => x.stats" />
+                </Columns>
+            </MudDataGrid>
+
+            <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" ColumnResizeMode="@ResizeMode.Container" T="DepthChartDTO" Items="awaydepthChart">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Away Stats</MudText>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Title="Name" Property="x => x.name" />
+                    <PropertyColumn CellStyle="max-width: 25px;" Title="Position" Property="x => String.Join(',', x.positions)" />
+                    <PropertyColumn Title="Stats" Property="x => x.stats" />
+                </Columns>
+            </MudDataGrid>
         }
     </MudItem>
 </MudGrid>
@@ -427,7 +452,7 @@
                             id = person.people[0].id.ToString(),
                             name = person.people[0].fullName,
                             jersey_num = "",
-                            positions = new(),
+                            positions = new() { person.people[0].primaryPosition.abbreviation },
                             stats = stats.stats[0].splits.FirstOrDefault(e => e.group == "pitching")?.stat.summary ?? ""
                         });
                 }
@@ -438,7 +463,7 @@
                             id = person.people[0].id.ToString(),
                             name = person.people[0].fullName,
                             jersey_num = "",
-                            positions = new(),
+                            positions = new() { person.people[0].primaryPosition.abbreviation },
                             stats = stats.stats[0].splits.FirstOrDefault(e => e.group == "hitting")?.stat.summary ?? ""
                         });
                 }
