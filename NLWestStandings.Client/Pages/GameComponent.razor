@@ -171,7 +171,7 @@
 <MudGrid>
     @if (playByPlay is not null)
     {
-        <MudItem lg="8" sm="12">
+        <MudItem lg="@(playByPlay?.gameData.status.abstractGameCode == "L" ? 8 : 12)" sm="12">
             <MudPaper>
                 <MudText Typo="Typo.h5">Game Feed</MudText>
                 <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
