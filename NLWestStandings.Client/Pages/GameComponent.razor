@@ -6,6 +6,7 @@
 @using NLWestStandings.Client.Classes.DepthChart
 @using NLWestStandings.Client.Classes.GameStats
 @using NLWestStandings.Client.Classes.LineScore
+@using NLWestStandings.Client.Classes.Lineups
 @using NLWestStandings.Client.Classes.Person
 @using NLWestStandings.Client.Classes.PlayByPlay
 @using NLWestStandings.MLB
@@ -36,79 +37,109 @@
 
 <PageTitle>Line Score</PageTitle>
 
-@if (playByPlay is not null)
-{
-    <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
-
-    @if (playByPlay.liveData.plays.currentPlay is not null)
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
-    }
-    else
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
-    }
-
-    @if (playByPlay.gameData.probablePitchers.home is not null && playByPlay.gameData.probablePitchers.away is not null)
-    {
-        <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
-    }
-    else
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
-    }
-
-    @if (playByPlay.gameData.weather is not null)
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
-    }
-    else
-    {
-        <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
-    }
-
-    <table>
-        <th class="table_cell">Inning</th>
-        @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+<MudGrid>
+    <MudItem lg="7" sm="12">
+        @if (playByPlay is not null)
         {
-            <th class="table_cell">@inning.num</th>
-        }
-        <th class="table_cell">Runs</th>
-        <th class="table_cell">Hits</th>
-        <th class="table_cell">Errors</th>
-        <th class="table_cell">LoB</th>
-        <tr>
-            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> </td>
-            @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
-            {
-                <td class="table_cell">@inning.away.runs</td>
-            }
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.runs</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.hits</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.errors</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
-        </tr>
-        <tr>
-            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> </td>
-            @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
-            {
-                <td class="table_cell">@inning.home.runs</td>
-            }
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.runs</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.hits</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.errors</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.leftOnBase</td>
-        </tr>
-    </table>
-}
-else
-{
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-}
+            <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
 
-<br />
-<br />
-<br />
+            @if (playByPlay.liveData.plays.currentPlay is not null)
+            {
+                <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
+            }
+            else
+            {
+                <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+            }
+
+            @if (playByPlay.gameData.probablePitchers.home is not null && playByPlay.gameData.probablePitchers.away is not null)
+            {
+                <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
+            }
+            else
+            {
+                <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+            }
+
+            @if (playByPlay.gameData.weather is not null)
+            {
+                <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
+            }
+            else
+            {
+                <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
+            }
+
+            <table>
+                <th class="table_cell">Inning</th>
+                @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+                {
+                    <th class="table_cell">@inning.num</th>
+                }
+                <th class="table_cell">Runs</th>
+                <th class="table_cell">Hits</th>
+                <th class="table_cell">Errors</th>
+                <th class="table_cell">LoB</th>
+                <tr>
+                    <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> </td>
+                    @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+                    {
+                        <td class="table_cell">@inning.away.runs</td>
+                    }
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.runs</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.hits</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.errors</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
+                </tr>
+                <tr>
+                    <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> </td>
+                    @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+                    {
+                        <td class="table_cell">@inning.home.runs</td>
+                    }
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.runs</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.hits</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.errors</td>
+                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.leftOnBase</td>
+                </tr>
+            </table>
+        }
+        else
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+    </MudItem>
+    <MudItem Class="d-flex flex-row" lg="4" sm="12">
+        @if(lineupObject is not null)
+        {
+            <MudDataGrid T="Homeplayer" Items="@lineupObject.dates[0].games[0].lineups.homePlayers">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Home Lineup</MudText>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Title="Name" Property="x => x.fullName" />
+                    <PropertyColumn Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                </Columns>
+            </MudDataGrid>
+
+            <MudDataGrid T="Awayplayer" Items="@lineupObject.dates[0].games[0].lineups.awayPlayers">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Away Lineup</MudText>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Title="Name" Property="x => x.fullName" />
+                    <PropertyColumn Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                </Columns>
+            </MudDataGrid>
+        }
+        else
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+    </MudItem>
+</MudGrid>
+
+<MudSpacer></MudSpacer>
 
 <MudGrid>
     @if (playByPlay is not null)
@@ -285,6 +316,8 @@ else
         public string stats { get; set; } = "";
     }
 
+    private LineupObject? lineupObject { get; set; }
+
     private string _homesearchString;
     private string _awaysearchString;
     private List<string> _events = new();
@@ -335,6 +368,8 @@ else
         await hubConnection.StartAsync();
 
         playByPlay = await GetPlayByPlay();
+
+        lineupObject = await GetLineups(gamepk);
 
         hometeam = playByPlay.gameData.teams.home.name;
         awayteam = playByPlay.gameData.teams.away.name;
@@ -578,5 +613,20 @@ else
         }
 
         return new PersonRecord();
+    }
+
+    private async Task<LineupObject> GetLineups(string gamepk)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/schedule?gamePk={gamepk}&hydrate=lineups"
+        .GetJsonAsync<LineupObject>();
+
+        }
+        catch (Exception)
+        {
+            return new LineupObject();
+        }
+
     }
 }
