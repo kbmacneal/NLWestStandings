@@ -288,8 +288,8 @@
     [Parameter]
     [SupplyParameterFromQuery(Name = "gamepk")]
     public string gamepk { get; set; }
-    public string hometeam { get; set; } = "N/A";
-    public string awayteam { get; set; } = "N/A";
+    private string? hometeam { get; set; }
+    private string? awayteam { get; set; }
 
     bool showHome;
     bool showAway;
@@ -301,7 +301,7 @@
     private List<DepthChartDTO> homedepthChart { get; set; } = new();
     private List<DepthChartDTO> awaydepthChart { get; set; } = new();
 
-    private string gamename { get; set; }
+    private string gamename => $"{awayteam ?? ""} @ {hometeam ?? ""}";
 
     private WebsocketClient? _client { get; set; }
 
@@ -359,8 +359,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        gamename = $"{awayteam} @ {hometeam}";
-
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
             .Build();
