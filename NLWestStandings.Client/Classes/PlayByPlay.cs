@@ -3675,7 +3675,6 @@
         public List<Allplay> allPlays { get; set; }
         public Currentplay currentPlay { get; set; }
         public int[] scoringPlays { get; set; }
-        public Playsbyinning[] playsByInning { get; set; }
     }
 
     public class Currentplay
