@@ -1,0 +1,156 @@
+﻿@page "/postseasonranks"
+
+@using Flurl.Http
+@using Microsoft.AspNetCore.SignalR.Client
+@using NLWestStandings.Client.Classes
+@using NLWestStandings.Client.Classes.Calendar
+@using NLWestStandings.Client.Classes.DepthChart
+@using NLWestStandings.Client.Classes.HittingStats
+@using NLWestStandings.Client.Classes.PitchingStats
+@using NLWestStandings.MLB
+@using System.Web
+@rendermode InteractiveWebAssembly
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>PostSeason Ranks</PageTitle>
+
+
+
+
+<MudGrid>
+    <MudItem lg="6" sm="12">
+        @if (NLRanks is not null)
+        {
+            <MudTable Class="pb-8" T="PSRank" Items="@NLRanks" RowStyleFunc="RowStyleFunc">
+                <ToolBarContent><MudText Typo="Typo.h4">National League</MudText></ToolBarContent>
+                <HeaderContent>
+                    <MudTh>Team</MudTh>
+                    <MudTh>Rank</MudTh>
+                    <MudTh>Win%</MudTh>
+                    <MudTh>Clinched</MudTh>
+                    <MudTh>WC Games Back</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name)"></MudImage>@if(context.best_record){<MudImage Src="crown.svg" Height="25" Width="25"></MudImage>}
+                    </MudTd>
+                    <MudTd DataLabel="Rank">@context.league_rank</MudTd>
+                    <MudTd DataLabel="Win Percentage">@context.win_perc</MudTd>
+                    <MudTd DataLabel="Clinched"><MudCheckBox Disabled="true" @bind-Value="context.clinched"></MudCheckBox></MudTd>
+                    <MudTd DataLabel="WC Games Back">@context.WCGamesBack</MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+        else
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+    </MudItem>
+    <MudItem lg="6" sm="12">
+        @if (ALRanks is not null)
+        {
+            <MudTable Class="pb-8" T="PSRank" Items="@ALRanks" RowStyleFunc="RowStyleFunc">
+                <ToolBarContent><MudText Typo="Typo.h4">American League</MudText></ToolBarContent>
+                <HeaderContent>
+                    <MudTh>Team</MudTh>
+                    <MudTh>Rank</MudTh>
+                    <MudTh>Win%</MudTh>
+                    <MudTh>Clinched</MudTh>
+                    <MudTh>WC Games Back</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name)"></MudImage>@if (context.best_record)
+                        {
+                            <MudImage Src="crown.svg" Height="25" Width="25"></MudImage>
+                        }
+                    </MudTd>
+                    <MudTd DataLabel="Rank">@context.league_rank</MudTd>
+                    <MudTd DataLabel="Win Percentage">@context.win_perc</MudTd>
+                    <MudTd DataLabel="Clinched"><MudCheckBox Disabled="true" @bind-Value="context.clinched"></MudCheckBox></MudTd>
+                    <MudTd DataLabel="WC Games Back">@context.WCGamesBack</MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+        else
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+    </MudItem>
+</MudGrid>
+
+@code {
+    private HubConnection? hubConnection;
+    private List<PSRank>? NLRanks { get; set; }
+    private List<PSRank>? ALRanks { get; set; }
+
+    private class PSRank
+    {
+        public string team_name { get; set; }
+        public string league_rank { get; set; }
+        public string WCGamesBack { get; set; }
+        public string win_perc { get; set; }
+        public bool clinched { get; set; }
+        public bool best_record { get; set; } = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
+            .Build();
+
+        await hubConnection.StartAsync();
+
+        var NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastNLToConnection", hubConnection.ConnectionId));
+
+        var ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastALToConnection", hubConnection.ConnectionId));
+
+        NLRanks = NLStandings.SelectMany(e => e).OrderBy(e => Int32.Parse(e.leagueRank)).Take(10).Select(e => new PSRank()
+            {
+                team_name = e.team.name,
+                league_rank = e.leagueRank,
+                WCGamesBack = e.wildCardGamesBack,
+                win_perc = e.winningPercentage,
+                clinched = e.clinched
+            }).ToList();
+
+        ALRanks = ALStandings.SelectMany(e => e).OrderBy(e => Int32.Parse(e.leagueRank)).Take(10).Select(e => new PSRank()
+            {
+                team_name = e.team.name,
+                league_rank = e.leagueRank,
+                WCGamesBack = e.wildCardGamesBack,
+                win_perc = e.winningPercentage,
+                clinched = e.clinched
+            }).ToList();
+
+        if (Decimal.Parse(ALRanks[0].win_perc) > Decimal.Parse(NLRanks[0].win_perc))
+        {
+            ALRanks[0].best_record = true;
+        }
+        else
+        {
+            NLRanks[0].best_record = true;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private string RowStyleFunc(PSRank arg1, int index)
+    {
+        if (Int32.Parse(arg1.league_rank) > 6)
+        {
+            return "background-color:pink";
+        }
+        else if (Int32.Parse(arg1.league_rank) < 4)
+        {
+            return "background-color:white";
+        }
+        else
+        {
+            return "background-color:beige";
+        }
+    }
+
+}

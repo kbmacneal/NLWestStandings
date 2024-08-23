@@ -27,6 +27,9 @@
     <MudItem>
         <MudLink OnClick="@(() => GoToPostSeason())">Postseason Games</MudLink>
     </MudItem>
+    <MudItem>
+        <MudLink OnClick="@(() => GoToPostSeasonRanks())">Postseason Ranks</MudLink>
+    </MudItem>
 </MudGrid>
 <MudText Typo="Typo.subtitle2" Style="color:grey;">Click the team logo for that team's calendar.</MudText>
 @if (NLStandings is not null)
@@ -177,5 +180,10 @@ else
     private void GoToPostSeason()
     {
         NavigationManager.NavigateTo($"/postseason");
+    }
+    
+    private void GoToPostSeasonRanks()
+    {
+        NavigationManager.NavigateTo($"/postseasonranks");
     }
 }

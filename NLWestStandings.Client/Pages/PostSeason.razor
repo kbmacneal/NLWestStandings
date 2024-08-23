@@ -28,7 +28,7 @@
                     <MudLink Style="color: #ffffff;"
                              Typo="Typo.body1"
                              Align="Align.Center"
-                             OnClick="@(() => GoToGame(((CustomItem)context).gamepk,((CustomItem)context).hometeam, ((CustomItem)context).awayteam))">
+                             OnClick="@(() => GoToGame(((CustomItem)context).gamepk))">
 
                         <MudText>@(((CustomItem)context).Text)</MudText>
                         @if (((CustomItem)context).awaysvg != "")
@@ -130,9 +130,9 @@ else
         return dateTime.ToString("t");
     }
 
-    private void GoToGame(string gamepk, string hometeam, string awayteam)
+    private void GoToGame(string gamepk)
     {
-        NavigationManager.NavigateTo($"gamecomponent?gamepk={gamepk}&hometeam={HttpUtility.UrlEncode(hometeam)}&awayteam={HttpUtility.UrlEncode(awayteam)}");
+        NavigationManager.NavigateTo($"gamecomponent?gamepk={gamepk}");
     }
 
 }
