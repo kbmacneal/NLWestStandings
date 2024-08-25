@@ -264,12 +264,14 @@
     @if (playByPlay?.gameData.status.abstractGameCode == "L")
     {
         <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
-            <MudCheckBox @bind-Value="@showHome">Show Home</MudCheckBox>
-            <MudCheckBox @bind-Value="@showAway">Show Away</MudCheckBox>
-            <MudText Typo="Typo.h4">Home Team</MudText>
-            <Roster ShowTransactions="false" Hidden="@(!showHome)" teamid="@playByPlay.gameData.teams.home.id.ToString()"></Roster>
-            <MudText Typo="Typo.h4">Away Team</MudText>
-            <Roster ShowTransactions="false" Hidden="@(!showAway)" teamid="@playByPlay.gameData.teams.away.id.ToString()"></Roster>
+            <MudTabs Rounded="true" PanelClass="pa-6">
+                <MudTabPanel Text="Home Roster">
+                    <Roster ShowTransactions="false" Hidden="false" teamid="@playByPlay.gameData.teams.home.id.ToString()"></Roster>
+                </MudTabPanel>
+                <MudTabPanel Text="Away Roster">
+                    <Roster ShowTransactions="false" Hidden="false" teamid="@playByPlay.gameData.teams.away.id.ToString()"></Roster>
+                </MudTabPanel>
+            </MudTabs>
         </MudItem>
 
     }
@@ -286,9 +288,6 @@
     private string? awayteam { get; set; }
 
     private bool dark_mode { get; set; }
-
-    bool showHome;
-    bool showAway;
 
     private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 

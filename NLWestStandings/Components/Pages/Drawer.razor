@@ -10,7 +10,7 @@
     <MudIconButton Class="ml-auto" Icon="@(is_dark_mode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" Color="Color.Inherit" OnClick="@((e) => ToggleLightMode())"></MudIconButton>
 </MudAppBar>
 <MudDrawerContainer Class="mud-height-full">
-    <MudDrawer @bind-Open="@_drawerOpen" Elevation="0" Variant="@DrawerVariant.Persistent" Color="Color.Primary">
+    <MudDrawer @bind-Open="@_drawerOpen" Elevation="0" Variant="@DrawerVariant.Temporary" Color="Color.Primary">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">MLB Standings</MudText>
         </MudDrawerHeader>
