@@ -1,9 +1,12 @@
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
 using NLWestStandings.Classes;
 using NLWestStandings.Client.Classes;
 using NLWestStandings.Components;
 using Serilog;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NLWestStandings
 {
@@ -24,6 +27,8 @@ namespace NLWestStandings
                 builder.Services.AddRazorComponents()
                     .AddInteractiveServerComponents()
                     .AddInteractiveWebAssemblyComponents();
+
+                builder.Services.AddBlazoredLocalStorage();
 
                 //builder.Services.AddSingleton<Logos>(System.Text.Json.JsonSerializer.Deserialize<Logos>(File.ReadAllText(System.IO.Path.Combine("wwwroot", "logos.json"))));
 

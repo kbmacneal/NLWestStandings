@@ -1,0 +1,81 @@
+﻿@rendermode InteractiveServer
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+
+<MudThemeProvider @bind-IsDarkMode="@is_dark_mode" Theme="MyCustomTheme" />
+
+<MudAppBar Color="Color.Primary" Elevation="1">
+    <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+    <MudText Typo="Typo.h5" Class="ml-3">MLB Standings</MudText>
+    <MudIconButton Class="ml-auto" Icon="@(is_dark_mode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" Color="Color.Inherit" OnClick="@((e) => ToggleLightMode())"></MudIconButton>
+</MudAppBar>
+<MudDrawerContainer Class="mud-height-full">
+    <MudDrawer @bind-Open="@_drawerOpen" Elevation="0" Variant="@DrawerVariant.Persistent" Color="Color.Primary">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">MLB Standings</MudText>
+        </MudDrawerHeader>
+        <NavMenu />
+    </MudDrawer>
+</MudDrawerContainer>
+
+@code {
+    private bool _drawerOpen = false;
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private bool is_dark_mode { get; set; }
+
+    MudTheme MyCustomTheme = new MudTheme()
+        {
+            PaletteLight = new PaletteLight()
+            {
+                Primary = new MudBlazor.Utilities.MudColor("#005A9C"),
+                Secondary = Colors.Green.Accent4,
+                AppbarBackground = Colors.Red.Default,
+            },
+            PaletteDark = new PaletteDark()
+            {
+                Primary = new MudBlazor.Utilities.MudColor("#005596"),
+            },
+
+            LayoutProperties = new LayoutProperties()
+            {
+                DrawerWidthLeft = "260px",
+                DrawerWidthRight = "300px"
+            }
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (await localStorage.ContainKeyAsync("CurrentMode"))
+            {
+                is_dark_mode = await localStorage.GetItemAsync<bool>("CurrentMode");
+            }
+            else
+            {
+                await localStorage.SetItemAsync("CurrentMode", false);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task ToggleLightMode()
+    {
+        is_dark_mode = !is_dark_mode;
+
+        var test = await localStorage.GetItemAsync<bool>("CurrentMode");
+
+        await localStorage.SetItemAsync("CurrentMode", is_dark_mode);
+    }
+}

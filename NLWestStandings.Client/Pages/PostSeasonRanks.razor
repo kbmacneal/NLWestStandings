@@ -22,7 +22,7 @@
     <MudItem lg="6" sm="12">
         @if (NLRanks is not null)
         {
-            <MudTable Class="pb-8" T="PSRank" Items="@NLRanks" RowStyleFunc="RowStyleFunc">
+            <MudTable Class="pb-8" T="PSRank" Items="@NLRanks">
                 <ToolBarContent><MudText Typo="Typo.h4">National League</MudText></ToolBarContent>
                 <HeaderContent>
                     <MudTh>Team</MudTh>
@@ -50,7 +50,7 @@
     <MudItem lg="6" sm="12">
         @if (ALRanks is not null)
         {
-            <MudTable Class="pb-8" T="PSRank" Items="@ALRanks" RowStyleFunc="RowStyleFunc">
+            <MudTable Class="pb-8" T="PSRank" Items="@ALRanks">
                 <ToolBarContent><MudText Typo="Typo.h4">American League</MudText></ToolBarContent>
                 <HeaderContent>
                     <MudTh>Team</MudTh>

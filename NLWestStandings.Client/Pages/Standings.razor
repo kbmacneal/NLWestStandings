@@ -7,36 +7,17 @@
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
 
-<style>
-    .mud-table-head {
-        background-color: bisque;
-    }
-</style>
 
 <PageTitle>Standings</PageTitle>
 <MudGrid Class="d-flex justify-space-around flex-grow-0">
-    <MudItem>
-        <MudLink OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudLink>
-    </MudItem>
-    <MudItem>
-        <MudLink OnClick="@(() => GoToDayGame("today"))">Today's Games</MudLink>
-    </MudItem>
-    <MudItem>
-        <MudLink OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudLink>
-    </MudItem>
-    <MudItem>
-        <MudLink OnClick="@(() => GoToPostSeason())">Postseason Games</MudLink>
-    </MudItem>
-    <MudItem>
-        <MudLink OnClick="@(() => GoToPostSeasonRanks())">Postseason Ranks</MudLink>
-    </MudItem>
+    
 </MudGrid>
-<MudText Typo="Typo.subtitle2" Style="color:grey;">Click the team logo for that team's calendar.</MudText>
+<MudText Class="pa-6" Typo="Typo.subtitle2" Style="color:grey;">Click the team logo for that team's calendar.</MudText>
 @if (NLStandings is not null)
 {
     @foreach (var item in NLStandings.Reverse())
     {
-        <MudTable Class="pb-8" T="Teamrecord" Items="@item" RowStyleFunc="RowStyleFunc">
+        <MudTable Striped="true" Class="pb-8" T="Teamrecord" Items="@item">
             <ToolBarContent><MudText Typo="Typo.h4">@item.First().division_name</MudText></ToolBarContent>
             <HeaderContent>
                 <MudTh>Rank</MudTh>
@@ -56,7 +37,7 @@
 
                 <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
                 <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
-                <MudTd DataLabel="Roster"><MudLink OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
+                <MudTd DataLabel="Roster"><MudLink Color="Color.Inherit" OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
                 <MudTd DataLabel="Games Left">@context.gamesleft</MudTd>
@@ -81,7 +62,7 @@ else
 {
     @foreach (var item in ALStandings.Reverse())
     {
-        <MudTable Class="pb-8" T="Teamrecord" Items="@item" RowStyleFunc="RowStyleFunc">
+        <MudTable Striped="true" Class="pb-8" T="Teamrecord" Items="@item">
             <ToolBarContent><MudText Typo="Typo.h4">@item.First().division_name</MudText></ToolBarContent>
             <HeaderContent>
                 <MudTh>Rank</MudTh>
@@ -101,7 +82,7 @@ else
 
                 <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
                 <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
-                <MudTd DataLabel="Roster"><MudLink OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
+                <MudTd DataLabel="Roster"><MudLink Color="Color.Inherit" OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
                 <MudTd DataLabel="Games Left">@context.gamesleft</MudTd>
@@ -162,28 +143,13 @@ else
         }
     }
 
-    private void GoToCalendar(int team_id)
-    {
-        NavigationManager.NavigateTo($"/calendar/{team_id}");
-    }
-
-    private void GoToDayGame(string day)
-    {
-        NavigationManager.NavigateTo($"/todaycalendar/{day}");
-    }
-
     private void GoToRoster(int teamid)
     {
         NavigationManager.NavigateTo($"/roster/{teamid}");
     }
-    
-    private void GoToPostSeason()
+
+    private void GoToCalendar(int team_id)
     {
-        NavigationManager.NavigateTo($"/postseason");
-    }
-    
-    private void GoToPostSeasonRanks()
-    {
-        NavigationManager.NavigateTo($"/postseasonranks");
+        NavigationManager.NavigateTo($"/calendar/{team_id}");
     }
 }
