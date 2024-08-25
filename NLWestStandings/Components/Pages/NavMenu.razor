@@ -4,13 +4,13 @@
 <MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit">Home</MudNavLink>
     <MudNavGroup Title="Games" Expanded="true">
-        <MudNavLink Icon="@Icons.Material.Outlined.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudNavLink>
-        <MudNavLink Icon="@Icons.Material.Filled.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("today"))">Today's Games</MudNavLink>
-        <MudNavLink Icon="@Icons.Material.TwoTone.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Outlined.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("today"))">Today's Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.TwoTone.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="Post Season" Expanded="true">
-        <MudNavLink Icon="@Icons.Material.Filled.SportsBaseball" Match="NavLinkMatch.All" OnClick="@(() => GoToPostSeason())">Postseason Games</MudNavLink>
-        <MudNavLink Icon="@Icons.Material.Filled.List" Match="NavLinkMatch.All" OnClick="@(() => GoToPostSeasonRanks())">Postseason Ranks</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.SportsBaseball" Match="NavLinkMatch.All" OnClick="@(() => GoToPostSeason())">Postseason Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.List" Match="NavLinkMatch.All" OnClick="@(() => GoToPostSeasonRanks())">Postseason Ranks</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
 

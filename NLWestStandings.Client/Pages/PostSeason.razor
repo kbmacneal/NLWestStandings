@@ -11,6 +11,7 @@
 @using System.Web
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 
 <PageTitle>Transactions</PageTitle>
@@ -65,6 +66,8 @@ else
     List<Game>? calendar_data { get; set; }
 
     private List<CustomItem> _events = new();
+    private bool dark_mode { get; set; }
+
 
     private class CustomItem : CalendarItem
     {
@@ -87,27 +90,44 @@ else
 
         foreach (var game in games)
         {
-                var local_start = DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime();
+            var local_start = DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime();
 
-                temp_events.Add(new CustomItem()
-                    {
-                        Start = local_start,
-                        End = local_start.AddHours(1),
-                        Title = ToAmPm(local_start),
-                        Text = game.description,
-                        Color = Color.Primary,
-                        gamepk = game.gamePk.ToString(),
-                        hometeam = $"{game.teams.home.team.name}",
-                        awayteam = $"{game.teams.away.team.name}",
-                        homesvg = SVGLogo.GetLogo(game.teams.home.team.name),
-                        awaysvg = SVGLogo.GetLogo(game.teams.away.team.name)
-                    });
-            
+            temp_events.Add(new CustomItem()
+                {
+                    Start = local_start,
+                    End = local_start.AddHours(1),
+                    Title = ToAmPm(local_start),
+                    Text = game.description,
+                    Color = Color.Primary,
+                    gamepk = game.gamePk.ToString(),
+                    hometeam = $"{game.teams.home.team.name}",
+                    awayteam = $"{game.teams.away.team.name}",
+                    homesvg = SVGLogo.GetLogo(game.teams.home.team.name, dark_mode),
+                    awaysvg = SVGLogo.GetLogo(game.teams.away.team.name, dark_mode)
+                });
+
         }
 
         _events = temp_events.DistinctBy(e => e.Text + e.Start).ToList();
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (localStorage.ContainKey("CurrentMode"))
+            {
+                dark_mode = localStorage.GetItem<bool>("CurrentMode");
+            }
+            else
+            {
+                localStorage.SetItem("CurrentMode", false);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task<NLWestStandings.Client.Classes.PostSeason.PostSeason> GetPostSeasonSchedule()

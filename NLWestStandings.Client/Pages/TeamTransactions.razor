@@ -12,6 +12,7 @@
 @using System.Web
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 
 <PageTitle>Transactions</PageTitle>
@@ -40,12 +41,30 @@ else
     public string teamid { get; set; }
 
     private Transactions? transactions { get; set; }
+    private bool dark_mode { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         transactions = await GetTransactions(teamid);
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (localStorage.ContainKey("CurrentMode"))
+            {
+                dark_mode = localStorage.GetItem<bool>("CurrentMode");
+            }
+            else
+            {
+                localStorage.SetItem("CurrentMode", false);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task<Transactions> GetTransactions(string teamid)

@@ -11,6 +11,7 @@
 @using System.Web
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 
 <PageTitle>Roster</PageTitle>
@@ -118,6 +119,7 @@
     public bool Hidden { get; set; } = false;
     [Parameter]
     public bool ShowTransactions { get; set; } = true;
+    private bool dark_mode { get; set; }
 
     private class DepthChartDTO
     {
@@ -200,6 +202,23 @@
         }
 
         return new DepthChart();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (localStorage.ContainKey("CurrentMode"))
+            {
+                dark_mode = localStorage.GetItem<bool>("CurrentMode");
+            }
+            else
+            {
+                localStorage.SetItem("CurrentMode", false);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private async Task<HittingStats> GetHittingStats(int playerid)

@@ -11,6 +11,7 @@
 @using System.Web
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 
 <PageTitle>PostSeason Ranks</PageTitle>
@@ -33,7 +34,10 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>
-                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name)"></MudImage>@if(context.best_record){<MudImage Src="crown.svg" Height="25" Width="25"></MudImage>}
+                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record)
+                        {
+                            <MudImage Src="crown.svg" Height="25" Width="25"></MudImage>
+                        }
                     </MudTd>
                     <MudTd DataLabel="Rank">@context.league_rank</MudTd>
                     <MudTd DataLabel="Win Percentage">@context.win_perc</MudTd>
@@ -61,7 +65,7 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>
-                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name)"></MudImage>@if (context.best_record)
+                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record)
                         {
                             <MudImage Src="crown.svg" Height="25" Width="25"></MudImage>
                         }
@@ -84,6 +88,7 @@
     private HubConnection? hubConnection;
     private List<PSRank>? NLRanks { get; set; }
     private List<PSRank>? ALRanks { get; set; }
+    private bool dark_mode { get; set; }
 
     private class PSRank
     {
@@ -135,6 +140,23 @@
         }
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (localStorage.ContainKey("CurrentMode"))
+            {
+                dark_mode = localStorage.GetItem<bool>("CurrentMode");
+            }
+            else
+            {
+                localStorage.SetItem("CurrentMode", false);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private string RowStyleFunc(PSRank arg1, int index)

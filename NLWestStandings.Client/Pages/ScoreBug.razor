@@ -5,6 +5,7 @@
 @using System.Net.WebSockets
 @using Websocket.Client
 @implements IAsyncDisposable;
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 
 <style>
@@ -42,7 +43,7 @@
 
         @if (playByPlay.gameData.probablePitchers.home is not null && playByPlay.gameData.probablePitchers.away is not null)
         {
-            <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
+            <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
         }
         else
         {
@@ -70,7 +71,7 @@
         <th class="table_cell">Errors</th>
         <th class="table_cell">LoB</th>
         <tr>
-            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam)"></MudImage> </td>
+            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> </td>
             @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
             {
                 <td class="table_cell">@inning.away.runs</td>
@@ -81,7 +82,7 @@
             <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
         </tr>
         <tr>
-            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam)"></MudImage> </td>
+            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> </td>
             @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
             {
                 <td class="table_cell">@inning.home.runs</td>
@@ -124,6 +125,7 @@ else
 
     private string _message = "Gameday5";
 
+    private bool dark_mode { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -179,6 +181,23 @@ else
 
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (localStorage.ContainKey("CurrentMode"))
+            {
+                dark_mode = localStorage.GetItem<bool>("CurrentMode");
+            }
+            else
+            {
+                localStorage.SetItem("CurrentMode", false);
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     public async ValueTask DisposeAsync()

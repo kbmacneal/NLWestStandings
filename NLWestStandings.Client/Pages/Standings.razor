@@ -6,6 +6,7 @@
 @using NLWestStandings.MLB
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 
 <PageTitle>Standings</PageTitle>
@@ -36,7 +37,7 @@
             <RowTemplate>
 
                 <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
-                <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
+                <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name, dark_mode)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
                 <MudTd DataLabel="Roster"><MudLink Color="Color.Inherit" OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
@@ -81,7 +82,7 @@ else
             <RowTemplate>
 
                 <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
-                <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
+                <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name, dark_mode)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
                 <MudTd DataLabel="Roster"><MudLink Color="Color.Inherit" OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
                 <MudTd DataLabel="Wins">@context.wins</MudTd>
                 <MudTd DataLabel="Losses">@context.losses</MudTd>
@@ -103,6 +104,7 @@ else
     private HubConnection? hubConnection;
     private IEnumerable<Teamrecord[]>? NLStandings { get; set; } = null;
     private IEnumerable<Teamrecord[]>? ALStandings { get; set; } = null;
+    private bool dark_mode { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -140,6 +142,23 @@ else
                 return "background-color:white";
             default: return "background-color:beige";
 
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (localStorage.ContainKey("CurrentMode"))
+            {
+                dark_mode = localStorage.GetItem<bool>("CurrentMode");
+            }
+            else
+            {
+                localStorage.SetItem("CurrentMode", false);
+            }
+
+            await InvokeAsync(StateHasChanged);
         }
     }
 
