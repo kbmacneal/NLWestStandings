@@ -27,20 +27,26 @@
                 <ToolBarContent><MudText Typo="Typo.h4">National League</MudText></ToolBarContent>
                 <HeaderContent>
                     <MudTh>Team</MudTh>
-                    <MudTh>Rank</MudTh>
-                    <MudTh>Win%</MudTh>
+                    <MudTh>W/L</MudTh>
+                    <MudTh>Elim Num</MudTh>
+                    <MudTh>Magic Num</MudTh>
                     <MudTh>Clinched</MudTh>
-                    <MudTh>WC Games Back</MudTh>
+                    <MudTh>WC GB</MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>
-                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record)
+                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
+                        {
+                            <MudImage Src="crown_l.svg" Height="25" Width="25"></MudImage>
+                        }
+                        else if (context.best_record && !dark_mode)
                         {
                             <MudImage Src="crown.svg" Height="25" Width="25"></MudImage>
                         }
                     </MudTd>
-                    <MudTd DataLabel="Rank">@context.league_rank</MudTd>
-                    <MudTd DataLabel="Win Percentage">@context.win_perc</MudTd>
+                    <MudTd DataLabel="Win/Loss">@context.wins - @context.losses</MudTd>
+                    <MudTd DataLabel="Elimination Number">@context.elim_num</MudTd>
+                    <MudTd DataLabel="Magic Number">@context.magic_num</MudTd>
                     <MudTd DataLabel="Clinched"><MudCheckBox Disabled="true" @bind-Value="context.clinched"></MudCheckBox></MudTd>
                     <MudTd DataLabel="WC Games Back">@context.WCGamesBack</MudTd>
                 </RowTemplate>
@@ -58,20 +64,26 @@
                 <ToolBarContent><MudText Typo="Typo.h4">American League</MudText></ToolBarContent>
                 <HeaderContent>
                     <MudTh>Team</MudTh>
-                    <MudTh>Rank</MudTh>
-                    <MudTh>Win%</MudTh>
+                    <MudTh>W/L</MudTh>
+                    <MudTh>Elim Num</MudTh>
+                    <MudTh>Magic Num</MudTh>
                     <MudTh>Clinched</MudTh>
-                    <MudTh>WC Games Back</MudTh>
+                    <MudTh>WC GB</MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd>
-                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record)
+                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
+                        {
+                            <MudImage Src="crown_l.svg" Height="25" Width="25"></MudImage>
+                        }
+                        else if (context.best_record && !dark_mode)
                         {
                             <MudImage Src="crown.svg" Height="25" Width="25"></MudImage>
                         }
                     </MudTd>
-                    <MudTd DataLabel="Rank">@context.league_rank</MudTd>
-                    <MudTd DataLabel="Win Percentage">@context.win_perc</MudTd>
+                    <MudTd DataLabel="Win/Loss">@context.wins - @context.losses</MudTd>
+                    <MudTd DataLabel="Elimination Number">@context.elim_num</MudTd>
+                    <MudTd DataLabel="Magic Number">@context.magic_num</MudTd>
                     <MudTd DataLabel="Clinched"><MudCheckBox Disabled="true" @bind-Value="context.clinched"></MudCheckBox></MudTd>
                     <MudTd DataLabel="WC Games Back">@context.WCGamesBack</MudTd>
                 </RowTemplate>
@@ -96,6 +108,10 @@
         public string league_rank { get; set; }
         public string WCGamesBack { get; set; }
         public string win_perc { get; set; }
+        public string wins { get; set; }
+        public string losses { get; set; }
+        public string elim_num { get; set; }
+        public string magic_num { get; set; }
         public bool clinched { get; set; }
         public bool best_record { get; set; } = false;
     }
@@ -118,6 +134,10 @@
                 league_rank = e.leagueRank,
                 WCGamesBack = e.wildCardGamesBack,
                 win_perc = e.winningPercentage,
+                wins = e.wins.ToString(),
+                losses = e.losses.ToString(),
+                elim_num = e.eliminationNumber?.ToString() ?? "",
+                magic_num = e.magicNumber?.ToString() ?? "",
                 clinched = e.clinched
             }).ToList();
 
@@ -127,6 +147,10 @@
                 league_rank = e.leagueRank,
                 WCGamesBack = e.wildCardGamesBack,
                 win_perc = e.winningPercentage,
+                wins = e.wins.ToString(),
+                losses = e.losses.ToString(),
+                elim_num = e.eliminationNumber?.ToString() ?? "",
+                magic_num = e.magicNumber?.ToString() ?? "",
                 clinched = e.clinched
             }).ToList();
 
