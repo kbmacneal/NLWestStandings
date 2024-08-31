@@ -5,6 +5,8 @@
 @using NLWestStandings.Client.Classes.Calendar
 @using NLWestStandings.Client.Classes.DepthChart
 @using NLWestStandings.Client.Classes.GameStats
+@using NLWestStandings.Client.Classes.Last10GamesHitting
+@using NLWestStandings.Client.Classes.Last10GamesPitching
 @using NLWestStandings.Client.Classes.LineScore
 @using NLWestStandings.Client.Classes.Lineups
 @using NLWestStandings.Client.Classes.Person
@@ -124,6 +126,7 @@
                             <Columns>
                                 <PropertyColumn Title="Name" Property="x => x.fullName" />
                                 <PropertyColumn Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                                <PropertyColumn Title="Last 10 Games" Property="x => x.stats" />
                             </Columns>
                         </MudDataGrid>
                     </MudTabPanel>
@@ -135,10 +138,11 @@
                             <Columns>
                                 <PropertyColumn Title="Name" Property="x => x.fullName" />
                                 <PropertyColumn Title="Position" Property="x => x.primaryPosition.abbreviation" />
+                                <PropertyColumn Title="Last 10 Games" Property="x => x.stats" />
                             </Columns>
                         </MudDataGrid>
                     </MudTabPanel>
-                </MudTabs>                
+                </MudTabs>
             }
             else
             {
@@ -376,8 +380,42 @@
             var away_temp = await GetDepthChart(playByPlay?.gameData.teams.away.id.ToString
             () ?? "0");
 
+            var last10pitcherhome = await GetLast10GamesPitchingStats(playByPlay?.gameData.teams.home.id.ToString() ?? "0");
+            var last10hittinghome = await GetLast10GamesHittingStats(playByPlay?.gameData.teams.home.id.ToString() ?? "0");
+
+            var last10pitcheraway = await GetLast10GamesPitchingStats(playByPlay?.gameData.teams.away.id.ToString() ?? "0");
+            var last10hittingaway = await GetLast10GamesHittingStats(playByPlay?.gameData.teams.away.id.ToString() ?? "0");
+
             foreach (var play in home_temp.roster)
             {
+                // bool is_hitter = last10hittinghome.stats.SelectMany(e => e.splits.Select(f => f.player.id)).Contains(play.person.id);
+
+                bool is_hitter = !play.position.name.Contains("Pitch", StringComparison.InvariantCultureIgnoreCase);
+
+                string stats = "";
+
+                if (is_hitter)
+                {
+                    var hitting_stats = last10hittinghome.stats.SelectMany(e => e.splits).FirstOrDefault(e => e.player.id == play.person.id)?.stat ?? null;
+
+                    if (hitting_stats != null) stats = $"{hitting_stats.avg}, {hitting_stats.babip} BABIP, {hitting_stats.rbi} RBI, {hitting_stats.ops} OPS, {hitting_stats.homeRuns} HR";
+                }
+                // else
+                // {
+                //     var pitching_stats = last10pitcherhome.stats.SelectMany(e => e.splits).FirstOrDefault(e => e.player.id == play.person.id)?.stat ?? null;
+
+                //     if (pitching_stats != null) stats = $"{pitching_stats.era} ERA, {pitching_stats.hitsPer9Inn} H/9, {pitching_stats.homeRunsPer9} HR/9, {pitching_stats.inningsPitched} IP, {pitching_stats.strikeoutsPer9Inn} SO/9, {pitching_stats.whip} WHIP, {pitching_stats.wins}/{pitching_stats.losses} W/L";
+                // }
+
+                if (lineupObject.dates[0].games[0].lineups.homePlayers.FirstOrDefault(e => e.id == play.person.id) != null)
+                {
+                    lineupObject.dates[0].games[0].lineups.homePlayers.First(e => e.id == play.person.id).stats = stats;
+                }
+                else
+                {
+                    var t = "";
+                }
+
                 if (homedepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
                 {
                     homedepthChart?.First(e => e.name == play.person.fullName).positions.Add(play.position.name);
@@ -397,6 +435,34 @@
 
             foreach (var play in away_temp.roster)
             {
+                // bool is_hitter = !last10hittingaway.stats.SelectMany(e => e.splits.Select(f => f.player.id)).Contains(play.person.id);
+
+                bool is_hitter = !play.position.name.Contains("Pitch", StringComparison.InvariantCultureIgnoreCase);
+
+                string stats = "";
+
+                if (is_hitter)
+                {
+                    var hitting_stats = last10hittingaway.stats.SelectMany(e => e.splits).FirstOrDefault(e => e.player.id == play.person.id)?.stat ?? null;
+
+                    if (hitting_stats != null) stats = $"{hitting_stats.avg}, {hitting_stats.babip} BABIP, {hitting_stats.rbi} RBI, {hitting_stats.ops} OPS, {hitting_stats.homeRuns} HR";
+                }
+                // else
+                // {
+                //     var pitching_stats = last10pitcheraway.stats.SelectMany(e => e.splits).FirstOrDefault(e => e.player.id == play.person.id)?.stat ?? null;
+
+                //     if (pitching_stats != null) stats = $"{pitching_stats.era} ERA, {pitching_stats.hitsPer9Inn} H/9, {pitching_stats.homeRunsPer9} HR/9, {pitching_stats.inningsPitched} IP, {pitching_stats.strikeoutsPer9Inn} SO/9, {pitching_stats.whip} WHIP, {pitching_stats.wins}/{pitching_stats.losses} W/L";
+                // }
+
+                if (lineupObject.dates[0].games[0].lineups.awayPlayers.FirstOrDefault(e => e.id == play.person.id) != null)
+                {
+                    lineupObject.dates[0].games[0].lineups.awayPlayers.First(e => e.id == play.person.id).stats = stats;
+                }
+                else
+                {
+                    var t = "";
+                }
+
                 if (awaydepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
                 {
                     awaydepthChart?.First(e => e.name == play.person.fullName).positions.Add(play.position.name);
@@ -643,6 +709,36 @@
         catch (Exception)
         {
             return new LineupObject();
+        }
+
+    }
+
+    private async Task<Last10GamesHitting> GetLast10GamesHittingStats(string teamid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/stats?stats=lastXGames&group=hitting&teamId={teamid}"
+        .GetJsonAsync<Last10GamesHitting>();
+
+        }
+        catch (Exception)
+        {
+            return new Last10GamesHitting();
+        }
+
+    }
+
+    private async Task<Last10GamesPitching> GetLast10GamesPitchingStats(string teamid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/stats?stats=lastXGames&group=pitching&teamId={teamid}"
+        .GetJsonAsync<Last10GamesPitching>();
+
+        }
+        catch (Exception)
+        {
+            return new Last10GamesPitching();
         }
 
     }

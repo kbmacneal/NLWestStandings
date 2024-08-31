@@ -144,6 +144,7 @@
         public string lastName { get; set; }
         public Primaryposition primaryPosition { get; set; }
         public string useName { get; set; }
+        public string stats { get; set; }
     }
 
     public class Primaryposition
@@ -163,6 +164,7 @@
         public string lastName { get; set; }
         public Primaryposition1 primaryPosition { get; set; }
         public string useName { get; set; }
+        public string stats { get; set; }
     }
 
     public class Primaryposition1
