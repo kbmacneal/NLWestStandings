@@ -11,48 +11,51 @@
 
 <PageTitle>Standings</PageTitle>
 <MudGrid Class="d-flex justify-space-around flex-grow-0">
-    
+
 </MudGrid>
 <MudText Class="pa-6" Typo="Typo.subtitle2" Style="color:grey;">Click the team logo for that team's calendar.</MudText>
 @if (NLStandings is not null)
 {
-    @foreach (var item in NLStandings.Reverse())
-    {
-        <MudTable Striped="true" Class="pb-8" T="Teamrecord" Items="@item">
-            <ToolBarContent><MudText Typo="Typo.h4">@item.First().division_name</MudText></ToolBarContent>
-            <HeaderContent>
-                <MudTh>Rank</MudTh>
-                <MudTh>Team</MudTh>
-                <MudTh>Roster</MudTh>
-                <MudTh>Wins</MudTh>
-                <MudTh>Losses</MudTh>
-                <MudTh>Games Left</MudTh>
-                <MudTh>GB</MudTh>
-                <MudTh>WC GB</MudTh>
-                <MudTh>Winning %</MudTh>
-                <MudTh>Run Diff</MudTh>
-                <MudTh>Streak</MudTh>
-                <MudTh>Magic #</MudTh>
-            </HeaderContent>
-            <RowTemplate>
 
-                <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
-                <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name, dark_mode)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
-                <MudTd DataLabel="Roster"><MudLink Color="Color.Inherit" OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
-                <MudTd DataLabel="Wins">@context.wins</MudTd>
-                <MudTd DataLabel="Losses">@context.losses</MudTd>
-                <MudTd DataLabel="Games Left">@context.gamesleft</MudTd>
-                <MudTd DataLabel="GB">@context.gamesBack</MudTd>
-                <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
-                <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
-                <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>
-                <MudTd DataLabel="Streak">@context.streak.streakCode</MudTd>
-                <MudTd DataLabel="Magic Number">@context.magicNumber</MudTd>
-            </RowTemplate>
-        </MudTable>
-        <MudDivider DividerType="DividerType.Middle" Class="my-6" />
+    <MudTabs Rounded="true" PanelClass="pa-6">
+        @foreach (var item in NLStandings.Reverse())
+        {
+            <MudTabPanel Text="@item.First().division_name">
+                <MudTable Striped="true" Class="pb-8" T="Teamrecord" Items="@item">
+                    <HeaderContent>
+                        <MudTh>Rank</MudTh>
+                        <MudTh>Team</MudTh>
+                        <MudTh>Roster</MudTh>
+                        <MudTh>Wins</MudTh>
+                        <MudTh>Losses</MudTh>
+                        <MudTh>Games Left</MudTh>
+                        <MudTh>GB</MudTh>
+                        <MudTh>WC GB</MudTh>
+                        <MudTh>Winning %</MudTh>
+                        <MudTh>Run Diff</MudTh>
+                        <MudTh>Streak</MudTh>
+                        <MudTh>Magic #</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
 
-    }
+                        <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
+                        <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name, dark_mode)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
+                        <MudTd DataLabel="Roster"><MudLink Color="Color.Inherit" OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
+                        <MudTd DataLabel="Wins">@context.wins</MudTd>
+                        <MudTd DataLabel="Losses">@context.losses</MudTd>
+                        <MudTd DataLabel="Games Left">@context.gamesleft</MudTd>
+                        <MudTd DataLabel="GB">@context.gamesBack</MudTd>
+                        <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
+                        <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
+                        <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>
+                        <MudTd DataLabel="Streak">@context.streak.streakCode</MudTd>
+                        <MudTd DataLabel="Magic Number">@context.magicNumber</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudTabPanel>
+        }
+    </MudTabs>
+
 }
 else
 {
@@ -61,42 +64,44 @@ else
 
 @if (ALStandings is not null)
 {
-    @foreach (var item in ALStandings.Reverse())
-    {
-        <MudTable Striped="true" Class="pb-8" T="Teamrecord" Items="@item">
-            <ToolBarContent><MudText Typo="Typo.h4">@item.First().division_name</MudText></ToolBarContent>
-            <HeaderContent>
-                <MudTh>Rank</MudTh>
-                <MudTh>Team</MudTh>
-                <MudTh>Roster</MudTh>
-                <MudTh>Wins</MudTh>
-                <MudTh>Losses</MudTh>
-                <MudTh>Games Left</MudTh>
-                <MudTh>GB</MudTh>
-                <MudTh>WC GB</MudTh>
-                <MudTh>Winning %</MudTh>
-                <MudTh>Run Diff</MudTh>
-                <MudTh>Streak</MudTh>
-                <MudTh>Magic #</MudTh>
-            </HeaderContent>
-            <RowTemplate>
+    <MudTabs Rounded="true" PanelClass="pa-6">
+        @foreach (var item in ALStandings.Reverse())
+        {
+            <MudTabPanel Text="@item.First().division_name">
+                <MudTable Striped="true" Class="pb-8" T="Teamrecord" Items="@item">
+                    <HeaderContent>
+                        <MudTh>Rank</MudTh>
+                        <MudTh>Team</MudTh>
+                        <MudTh>Roster</MudTh>
+                        <MudTh>Wins</MudTh>
+                        <MudTh>Losses</MudTh>
+                        <MudTh>Games Left</MudTh>
+                        <MudTh>GB</MudTh>
+                        <MudTh>WC GB</MudTh>
+                        <MudTh>Winning %</MudTh>
+                        <MudTh>Run Diff</MudTh>
+                        <MudTh>Streak</MudTh>
+                        <MudTh>Magic #</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
 
-                <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
-                <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name, dark_mode)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
-                <MudTd DataLabel="Roster"><MudLink Color="Color.Inherit" OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
-                <MudTd DataLabel="Wins">@context.wins</MudTd>
-                <MudTd DataLabel="Losses">@context.losses</MudTd>
-                <MudTd DataLabel="Games Left">@context.gamesleft</MudTd>
-                <MudTd DataLabel="GB">@context.gamesBack</MudTd>
-                <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
-                <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
-                <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>
-                <MudTd DataLabel="Streak">@context.streak.streakCode</MudTd>
-                <MudTd DataLabel="Magic Number">@context.magicNumber</MudTd>
-            </RowTemplate>
-        </MudTable>
-        <MudDivider DividerType="DividerType.Middle" Class="my-6" />
-    }
+                        <MudTd DataLabel="Rank">@context.divisionRank</MudTd>
+                        <MudTd> <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team.name, dark_mode)" onclick="@(() => GoToCalendar(context.team.id))"></MudImage></MudTd>
+                        <MudTd DataLabel="Roster"><MudLink Color="Color.Inherit" OnClick="@(()=> GoToRoster(context.team.id))"><MudText>Roster</MudText></MudLink></MudTd>
+                        <MudTd DataLabel="Wins">@context.wins</MudTd>
+                        <MudTd DataLabel="Losses">@context.losses</MudTd>
+                        <MudTd DataLabel="Games Left">@context.gamesleft</MudTd>
+                        <MudTd DataLabel="GB">@context.gamesBack</MudTd>
+                        <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
+                        <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
+                        <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>
+                        <MudTd DataLabel="Streak">@context.streak.streakCode</MudTd>
+                        <MudTd DataLabel="Magic Number">@context.magicNumber</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudTabPanel>
+        }
+    </MudTabs>
 }
 
 
