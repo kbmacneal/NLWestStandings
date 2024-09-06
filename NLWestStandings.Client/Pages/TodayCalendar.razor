@@ -18,14 +18,18 @@
     <MudGrid>
         @foreach (var game in calendar_data)
         {
-            <MudItem lg="3" sm="12" Class="d-inline">
-                <MudIconButton Icon="@Icons.Material.Filled.PlayCircleFilled"
-                               OnClick="@(() => GoToGame(game.gamePk.ToString(), game.teams.home.team.name, game.teams.away.team.name))"></MudIconButton>
-                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(game.teams.away.team.name, dark_mode)"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(game.teams.home.team.name, dark_mode)"></MudImage>
-            </MudItem>
-            <MudItem lg="9" sm="12">
-                <MudText Class="object-center pt-3" Style="min-width:200px;">@DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("MM/dd/yyyy hh:mm tt")</MudText>
-                <ScoreBug liverefresh="false" gamepk="@game.gamePk.ToString()" showheader="false"></ScoreBug>
+            <MudItem lg="12" sm="12">
+                <MudPaper>
+                    <MudItem Class="d-inline-flex">
+                        <MudText Class="pr-4">@DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("MM/dd/yyyy hh:mm tt")</MudText>
+                        <MudText Class="pr-4">@game.status.detailedState</MudText>
+                        <MudIconButton Icon="@Icons.Material.Filled.PlayCircleFilled"
+                                       OnClick="@(() => GoToGame(game.gamePk.ToString(), game.teams.home.team.name, game.teams.away.team.name))"></MudIconButton>
+                    </MudItem>
+                </MudPaper>
+                <MudPaper>
+                    <ScoreBug liverefresh="true" gamepk="@game.gamePk.ToString()" showheader="false"></ScoreBug>
+                </MudPaper>
             </MudItem>
 
 
