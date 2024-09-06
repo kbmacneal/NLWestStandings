@@ -18,7 +18,7 @@
     <MudGrid>
         @foreach (var game in calendar_data)
         {
-            <MudItem lg="12" sm="12">
+            <MudItem lg="12" sm="12" xs="12">
                 <MudPaper>
                     <MudItem Class="d-inline-flex">
                         <MudText Class="pr-4">@DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("MM/dd/yyyy hh:mm tt")</MudText>
@@ -28,7 +28,7 @@
                     </MudItem>
                 </MudPaper>
                 <MudPaper>
-                    <ScoreBug liverefresh="true" gamepk="@game.gamePk.ToString()" showheader="false"></ScoreBug>
+                    <ScoreBug liverefresh="@(game.status.abstractGameCode == "L")" gamepk="@game.gamePk.ToString()" showheader="false"></ScoreBug>
                 </MudPaper>
             </MudItem>
 
