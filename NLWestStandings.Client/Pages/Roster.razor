@@ -95,7 +95,7 @@
             }
         </MudPaper>
     </MudItem>
-    @if(ShowTransactions)
+    @if (ShowTransactions)
     {
         <MudItem lg="3" sm="12">
             <MudPaper>
@@ -103,7 +103,7 @@
             </MudPaper>
         </MudItem>
     }
-    
+
 </MudGrid>
 
 
@@ -178,7 +178,7 @@
                         jersey_num = play.jerseyNumber,
                         positions = new() { play.position.name },
                         position_code = play.position.code,
-                        status = play.status.description,
+                        status = $"{play.status.description}{(play.note != null ? " - " : "")}{play.note}",
                         pitchingStats = pitcher_list.Contains(play.position.code) ? await GetPitchingStats(play.person.id) : new(),
                         hittingStats = !(pitcher_list.Contains(play.position.code)) ? await GetHittingStats(play.person.id) : new(),
 
@@ -193,7 +193,7 @@
     {
         try
         {
-            return await $"https://statsapi.mlb.com/api/v1/teams/{teamid}/roster/depthChart"
+            return await $"https://statsapi.mlb.com/api/v1/teams/{teamid}/roster/40Man"
         .GetJsonAsync<DepthChart>();
 
         }

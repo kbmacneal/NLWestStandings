@@ -16,6 +16,8 @@
         public string jerseyNumber { get; set; }
         public Position position { get; set; }
         public Status status { get; set; }
+        public int parentTeamId { get; set; }
+        public string note { get; set; }
     }
 
     public class Person
