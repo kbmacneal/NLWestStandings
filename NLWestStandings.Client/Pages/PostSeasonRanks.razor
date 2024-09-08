@@ -154,13 +154,24 @@
                 clinched = e.clinched
             }).ToList();
 
-        if (Decimal.Parse(ALRanks[0].win_perc) > Decimal.Parse(NLRanks[0].win_perc))
+        var max_winrate = ALRanks.Max(e => Decimal.Parse(e.win_perc));
+
+        max_winrate = Math.Max(max_winrate, NLRanks.Max(e => Decimal.Parse(e.win_perc)));
+
+        foreach (var item in NLRanks)
         {
-            ALRanks[0].best_record = true;
+            if(Decimal.Parse(item.win_perc) == max_winrate)
+            {
+                item.best_record = true;
+            }
         }
-        else
+        
+        foreach (var item in ALRanks)
         {
-            NLRanks[0].best_record = true;
+            if(Decimal.Parse(item.win_perc) == max_winrate)
+            {
+                item.best_record = true;
+            }
         }
 
         await InvokeAsync(StateHasChanged);
