@@ -23,9 +23,10 @@
     <MudItem lg="6" sm="12">
         @if (NLRanks is not null)
         {
-            <MudTable Class="pb-8" T="PSRank" Items="@NLRanks">
+            <MudTable Class="pb-8" T="PSRank" Items="@NLRanks.OrderBy(e=>int.Parse(e.league_rank))">
                 <ToolBarContent><MudText Typo="Typo.h4">National League</MudText></ToolBarContent>
                 <HeaderContent>
+                    <MudTh>Rank</MudTh>
                     <MudTh>Team</MudTh>
                     <MudTh>W/L</MudTh>
                     <MudTh>Elim Num</MudTh>
@@ -34,6 +35,7 @@
                     <MudTh>WC GB</MudTh>
                 </HeaderContent>
                 <RowTemplate>
+                    <MudTd DataLabel="Rank">@context.league_rank</MudTd>
                     <MudTd>
                         <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
                         {
@@ -60,9 +62,10 @@
     <MudItem lg="6" sm="12">
         @if (ALRanks is not null)
         {
-            <MudTable Class="pb-8" T="PSRank" Items="@ALRanks">
+            <MudTable Class="pb-8" T="PSRank" Items="@ALRanks.OrderBy(e=>int.Parse(e.league_rank))">
                 <ToolBarContent><MudText Typo="Typo.h4">American League</MudText></ToolBarContent>
                 <HeaderContent>
+                    <MudTh>Rank</MudTh>
                     <MudTh>Team</MudTh>
                     <MudTh>W/L</MudTh>
                     <MudTh>Elim Num</MudTh>
@@ -71,6 +74,7 @@
                     <MudTh>WC GB</MudTh>
                 </HeaderContent>
                 <RowTemplate>
+                    <MudTd DataLabel="Rank">@context.league_rank</MudTd>
                     <MudTd>
                         <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
                         {
@@ -136,8 +140,8 @@
                 win_perc = e.winningPercentage,
                 wins = e.wins.ToString(),
                 losses = e.losses.ToString(),
-                elim_num = e.eliminationNumber?.ToString() ?? "",
-                magic_num = e.magicNumber?.ToString() ?? "",
+                elim_num = e.eliminationNumber?.ToString() ?? "-",
+                magic_num = e.magicNumber?.ToString() ?? "-",
                 clinched = e.clinched
             }).ToList();
 
@@ -149,8 +153,8 @@
                 win_perc = e.winningPercentage,
                 wins = e.wins.ToString(),
                 losses = e.losses.ToString(),
-                elim_num = e.eliminationNumber?.ToString() ?? "",
-                magic_num = e.magicNumber?.ToString() ?? "",
+                elim_num = e.eliminationNumber?.ToString() ?? "-",
+                magic_num = e.magicNumber?.ToString() ?? "-",
                 clinched = e.clinched
             }).ToList();
 
