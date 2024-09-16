@@ -190,7 +190,10 @@
             <MudPaper>
                 <MudText Typo="Typo.h5">Game Feed</MudText>
                 <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
-                <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm">
+                <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm" Filter="new Func<Allplay,bool>(FilterFunc1)">
+                    <ToolBarContent>
+                        <MudTextField @bind-Value="pbpsearchstring" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    </ToolBarContent>
                     <HeaderContent>
                         <MudTh>Inning</MudTh>
                         <MudTh>Pitcher</MudTh>
@@ -290,6 +293,8 @@
     public string gamepk { get; set; }
     private string? hometeam { get; set; }
     private string? awayteam { get; set; }
+
+    private string pbpsearchstring = "";
 
     private bool dark_mode { get; set; }
 
@@ -578,6 +583,20 @@
         }
 
         await InvokeAsync(StateHasChanged);
+    }
+
+    private bool FilterFunc1(Allplay element) => FilterFunc(element, pbpsearchstring);
+
+    private bool FilterFunc(Allplay element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString)) return true;
+
+        if (element.about.inning.ToString() == searchString) return true;
+        if (element.matchup.pitcher.fullName.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        if (element.matchup.batter.fullName.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        if (element.result.description.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+
+        return false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
