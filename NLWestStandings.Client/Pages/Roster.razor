@@ -6,6 +6,8 @@
 @using NLWestStandings.Client.Classes.Calendar
 @using NLWestStandings.Client.Classes.DepthChart
 @using NLWestStandings.Client.Classes.HittingStats
+@using NLWestStandings.Client.Classes.Last10GamesHitting
+@using NLWestStandings.Client.Classes.Last10GamesPitching
 @using NLWestStandings.Client.Classes.PitchingStats
 @using NLWestStandings.MLB
 @using System.Web
@@ -35,6 +37,7 @@
                         <PropertyColumn Title="Name" Property="x => x.name" />
                         <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
                         <PropertyColumn Title="Status" Property="x => x.status" />
+                        <PropertyColumn Title="Last 10" Property="x => x.last_10" />
                     </Columns>
                     <ChildRowContent>
                         @if (pitcher_list.Contains(@context.Item.position_code))
@@ -132,6 +135,7 @@
         public string stats { get; set; } = "";
         public PitchingStats pitchingStats { get; set; }
         public HittingStats hittingStats { get; set; }
+        public string last_10 { get; set; }
     }
 
     private static string[] pitcher_list = new string[] { "1", "S", "C" };
@@ -163,6 +167,9 @@
     {
         var _temp = await GetDepthChart(teamid);
 
+        var last10pitcher = await GetLast10GamesPitchingStats(teamid.ToString() ?? "0");
+        var last10hitting = await GetLast10GamesHittingStats(teamid.ToString() ?? "0");
+
         foreach (var play in _temp.roster)
         {
             if (depthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
@@ -171,6 +178,28 @@
             }
             else
             {
+
+                bool is_hitter = !play.position.name.Contains("Pitch", StringComparison.InvariantCultureIgnoreCase);
+
+                string stats = "";
+
+                if (is_hitter)
+                {
+                    var hitting_stats = last10hitting.stats.SelectMany(e => e.splits).FirstOrDefault(e => e.player.id == play.person.id)?.stat ?? null;
+
+                    if (hitting_stats != null) stats = $"{hitting_stats.avg}, {hitting_stats.babip} BABIP, {hitting_stats.rbi} RBI, {hitting_stats.ops} OPS, {hitting_stats.homeRuns} HR";
+
+
+                }
+                else
+                {
+                    var pitching_stats = last10pitcher.stats.SelectMany(e => e.splits).FirstOrDefault(e => e.player.id == play.person.id)?.stat ?? null;
+
+                    if (pitching_stats != null) stats = $"{pitching_stats.era} ERA, {pitching_stats.hitsPer9Inn} H/9, {pitching_stats.homeRunsPer9} HR/9, {pitching_stats.inningsPitched} IP, {pitching_stats.strikeoutsPer9Inn} SO/9, {pitching_stats.whip} WHIP, {pitching_stats.wins}-{pitching_stats.losses} W/L";
+                }
+
+
+
                 depthChart?.Add(new DepthChartDTO()
                     {
                         id = play.person.id,
@@ -181,6 +210,7 @@
                         status = $"{play.status.description}{(play.note != null ? " - " : "")}{play.note}",
                         pitchingStats = pitcher_list.Contains(play.position.code) ? await GetPitchingStats(play.person.id) : new(),
                         hittingStats = !(pitcher_list.Contains(play.position.code)) ? await GetHittingStats(play.person.id) : new(),
+                        last_10 = stats
 
                     });
             }
@@ -249,6 +279,36 @@
         }
 
         return new PitchingStats();
+    }
+
+    private async Task<Last10GamesHitting> GetLast10GamesHittingStats(string teamid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/stats?stats=lastXGames&group=hitting&teamId={teamid}"
+        .GetJsonAsync<Last10GamesHitting>();
+
+        }
+        catch (Exception)
+        {
+            return new Last10GamesHitting();
+        }
+
+    }
+
+    private async Task<Last10GamesPitching> GetLast10GamesPitchingStats(string teamid)
+    {
+        try
+        {
+            return await $"https://statsapi.mlb.com/api/v1/stats?stats=lastXGames&group=pitching&teamId={teamid}"
+        .GetJsonAsync<Last10GamesPitching>();
+
+        }
+        catch (Exception)
+        {
+            return new Last10GamesPitching();
+        }
+
     }
 
 
