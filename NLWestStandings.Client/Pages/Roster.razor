@@ -18,19 +18,20 @@
 
 <MudGrid>
     <MudItem lg="@(ShowTransactions ? 9 : 12)" sm="12">
-        <MudPaper>
+        <MudPaper Class="overflow-auto">
             @if (depthChart is not null)
             {
 
-                <MudDataGrid hidden="@Hidden" T="DepthChartDTO" Items="@depthChart" Filterable="true" QuickFilter="@_quickFilter">
+                <MudDataGrid hidden="@Hidden" T="DepthChartDTO" Items="@depthChart" Filterable="true" QuickFilter="@_quickFilter" ColumnResizeMode="ResizeMode.Container">
                     <ToolBarContent>
                         <MudText Typo="Typo.h6">Depth Chart</MudText>
                         <MudSpacer />
                         <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
                     </ToolBarContent>
                     <Columns>
                         <HierarchyColumn T="DepthChartDTO" />
+                        <PropertyColumn Title="Num" Property="x => x.num" />
                         <PropertyColumn Title="ID" Property="x => x.id" />
                         <PropertyColumn Title="Name" Property="x => x.name" />
                         <PropertyColumn Title="Position(s)" Property="x => string.Join(',',x.positions)" />
@@ -124,6 +125,7 @@
     private class DepthChartDTO
     {
         public int id { get; set; } = 0;
+        public int num { get; set; } = 0;
         public string name { get; set; } = "";
         public string jersey_num { get; set; } = "";
         public List<string> positions { get; set; } = new();
@@ -163,6 +165,8 @@
     {
         var _temp = await GetDepthChart(teamid);
 
+        int num = 1;
+
         foreach (var play in _temp.roster)
         {
             if (depthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
@@ -174,6 +178,7 @@
                 depthChart?.Add(new DepthChartDTO()
                     {
                         id = play.person.id,
+                        num = num,
                         name = play.person.fullName,
                         jersey_num = play.jerseyNumber,
                         positions = new() { play.position.name },
@@ -184,6 +189,8 @@
 
                     });
             }
+
+            num++;
         }
 
         var t = "";
