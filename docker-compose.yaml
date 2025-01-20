@@ -1,6 +1,7 @@
 version: "3.3"
 services:
   nlweststandings:
+    restart: unless-stopped:0
     stdin_open: true
     tty: true
     ports:
