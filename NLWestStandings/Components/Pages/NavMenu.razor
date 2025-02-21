@@ -1,15 +1,17 @@
 ﻿@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
-@inject ISnackbar Snackbar
-
 
 <MudNavMenu>
-    <MudNavLink Href="" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit">Home</MudNavLink>
-    <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Outlined.CalendarToday" OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudNavLink>
-    <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.CalendarToday" OnClick="@(() => GoToDayGame("today"))">Today's Games</MudNavLink>
-    <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.TwoTone.CalendarToday" OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudNavLink>
-    <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.SportsBaseball" OnClick="@(() => GoToPostSeason())">Postseason Games</MudNavLink>
-    <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.List" OnClick="@(() => GoToPostSeasonRanks())">Postseason Ranks</MudNavLink>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit">Home</MudNavLink>
+    <MudNavGroup Title="Games" Expanded="true">
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Outlined.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("today"))">Today's Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.TwoTone.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudNavLink>
+    </MudNavGroup>
+    <MudNavGroup Title="Post Season" Expanded="true">
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.SportsBaseball" Match="NavLinkMatch.All" OnClick="@(() => GoToPostSeason())">Postseason Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.List" Match="NavLinkMatch.All" OnClick="@(() => GoToPostSeasonRanks())">Postseason Ranks</MudNavLink>
+    </MudNavGroup>
 </MudNavMenu>
 
 @code {
@@ -27,4 +29,4 @@
     {
         NavigationManager.NavigateTo($"/postseasonranks");
     }
-} 
+}
