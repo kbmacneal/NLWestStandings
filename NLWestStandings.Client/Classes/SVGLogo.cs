@@ -29,7 +29,7 @@
                         "Minnesota Twins" => "min_d.svg",
                         "New York Mets" => "nym_d.svg",
                         "New York Yankees" => "nyy_d.svg",
-                        "Oakland Athletics" => "oak_d.svg",
+                        "Athletics" => "oak_d.svg",
                         "Philadelphia Phillies" => "phi_d.svg",
                         "Pittsburgh Pirates" => "pit_d.svg",
                         "San Diego Padres" => "sd_d.svg",
