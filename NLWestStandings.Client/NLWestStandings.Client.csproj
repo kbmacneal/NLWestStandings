@@ -16,6 +16,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.2" />
 		<PackageReference Include="MudBlazor" Version="8.2.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="RestSharp" Version="112.1.0" />
 		<PackageReference Include="Websocket.Client" Version="5.1.2" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 	</ItemGroup>
@@ -30,6 +31,10 @@
 		<Content Update="Pages\Roster.razor">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Classes\StatsAPI\" />
 	</ItemGroup>
 
 </Project>

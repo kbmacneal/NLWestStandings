@@ -11,16 +11,16 @@
 
 <style>
     .table {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
     }
 
     .table_cell {
-        display: table-cell;
-        width: 5%;
-        border: solid black 1px;
-        text-align: center;
+    display: table-cell;
+    width: 5%;
+    border: solid black 1px;
+    text-align: center;
     }
 </style>
 
@@ -216,6 +216,13 @@ else
 
             return (await client.LiveGameVOneAsync(int.Parse(pk), null, null, null, null).ConfigureAwait(false)).Result;
 
+            // var c = new IO.Swagger.Api.GameApi(new IO.Swagger.Client.ApiClient());
+
+            // var t = c.LiveGameV1(int.Parse(pk), null, null, null, null);
+
+            // var temp = "";
+
+            // return new();
         }
         catch (Exception)
         {
