@@ -1,7 +1,6 @@
 ﻿using Flurl;
 using Flurl.Http;
 using Microsoft.AspNetCore.SignalR;
-using NLWestStandings.Client.Classes;
 using NLWestStandings.Client.Classes.Calendar;
 using NLWestStandings.Client.Classes.Divisions;
 using NLWestStandings.MLB;

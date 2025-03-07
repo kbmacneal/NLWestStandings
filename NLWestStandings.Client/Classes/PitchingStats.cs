@@ -1,6 +1,5 @@
 ﻿namespace NLWestStandings.Client.Classes.PitchingStats
 {
-
     public class PitchingStats
     {
         public string copyright { get; set; }
@@ -140,5 +139,4 @@
         public string link { get; set; }
         public string abbreviation { get; set; }
     }
-
 }

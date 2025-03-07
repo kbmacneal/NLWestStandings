@@ -3,10 +3,11 @@
 @using NLWestStandings.Client.Classes.PlayByPlay
 @using System.Globalization
 @using System.Net.WebSockets
+@using StatsAPI
 @using Websocket.Client
 @implements IAsyncDisposable;
 @inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
-
+@inject StatsAPI.Client client
 
 <style>
     .table {
@@ -23,36 +24,33 @@
     }
 </style>
 
-
-
-
 @if (playByPlay is not null)
 {
     @if (showheader)
     {
-        <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.gameData.datetime.officialDate.ToString()</MudText>
+        <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.GameData.Datetime.OfficialDate.ToString()</MudText>
 
-        @if (playByPlay.liveData.plays.currentPlay is not null)
+        @if (playByPlay.LiveData.Plays.CurrentPlay is not null)
         {
-            <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.liveData.plays.currentPlay.about.halfInning) @playByPlay.liveData.plays.currentPlay.about.inning</MudText>
+            <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.LiveData.Plays.CurrentPlay.About.HalfInning) @playByPlay.LiveData.Plays.CurrentPlay.About.Inning</MudText>
         }
         else
         {
             <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
         }
 
-        @if (playByPlay.gameData.probablePitchers.home is not null && playByPlay.gameData.probablePitchers.away is not null)
+        @if (playByPlay.GameData.ProbablePitchers.Home is not null && playByPlay.GameData.ProbablePitchers.Away is not null)
         {
-            <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
+            <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> @playByPlay.GameData.ProbablePitchers.Home.FullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> @playByPlay.GameData.ProbablePitchers.Away.FullName</MudText>
         }
         else
         {
             <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
         }
 
-        @if (playByPlay.gameData.weather is not null)
+        @if (playByPlay.GameData.Weather is not null)
         {
-            <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.gameData.weather.temp °F, @playByPlay.gameData.weather.condition, @playByPlay.gameData.weather.wind</MudText>
+            <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.GameData.Weather.Temp °F, @playByPlay.GameData.Weather.Condition, @playByPlay.GameData.Weather.Wind</MudText>
         }
         else
         {
@@ -62,9 +60,9 @@
 
     <table>
         <th class="table_cell">Inning</th>
-        @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+        @foreach (var inning in @playByPlay.LiveData.Linescore.Innings.OrderBy(e => e.Num))
         {
-            <th class="table_cell">@inning.num</th>
+            <th class="table_cell">@inning.Num</th>
         }
         <th class="table_cell">Runs</th>
         <th class="table_cell">Hits</th>
@@ -72,25 +70,25 @@
         <th class="table_cell">LoB</th>
         <tr>
             <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> </td>
-            @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+            @foreach (var inning in @playByPlay.LiveData.Linescore.Innings.OrderBy(e => e.Num))
             {
-                <td class="table_cell">@inning.away.runs</td>
+                <td class="table_cell">@inning.Away.Runs</td>
             }
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.runs</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.hits</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.errors</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
+            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Away.Runs</td>
+            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Away.Hits</td>
+            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Away.Errors</td>
+            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Away.LeftOnBase</td>
         </tr>
         <tr>
             <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> </td>
-            @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+            @foreach (var inning in @playByPlay.LiveData.Linescore.Innings.OrderBy(e => e.Num))
             {
-                <td class="table_cell">@inning.home.runs</td>
+                <td class="table_cell">@inning.Home.Runs</td>
             }
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.runs</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.hits</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.errors</td>
-            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.leftOnBase</td>
+            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Home.Runs</td>
+            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Home.Hits</td>
+            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Home.Errors</td>
+            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Home.LeftOnBase</td>
         </tr>
     </table>
 }
@@ -119,7 +117,7 @@ else
 
     private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
-    private PlayByPlay? playByPlay { get; set; }
+    private BaseballGameRestObject? playByPlay { get; set; }
 
     private WebsocketClient? _client { get; set; }
 
@@ -132,17 +130,17 @@ else
 
         playByPlay = await GetPlayByPlay(gamepk).ConfigureAwait(false);
 
-        if(playByPlay is null)
+        if (playByPlay is null)
         {
             return;
         }
 
-        hometeam = playByPlay.gameData.teams.home.name;
-        awayteam = playByPlay.gameData.teams.away.name;
+        hometeam = playByPlay.GameData.Teams["home"].Name;
+        awayteam = playByPlay.GameData.Teams["away"].Name;
 
         gamename = $"{awayteam} @ {hometeam}";
 
-        if (liverefresh && playByPlay?.gameData.status.abstractGameCode == "L")
+        if (liverefresh && playByPlay?.GameData.Status.AdditionalProperties["abstractGameCode"] == "L")
         {
             var url = new Uri($"wss://ws.statsapi.mlb.com/api/v1/game/push/subscribe/gameday/{gamepk}");
             _client = new WebsocketClient(url);
@@ -210,12 +208,13 @@ else
         _client.Dispose();
     }
 
-    private async Task<PlayByPlay> GetPlayByPlay(string pk)
+    private async Task<BaseballGameRestObject> GetPlayByPlay(string pk)
     {
         try
         {
-            return await $"https://statsapi.mlb.com/api/v1.1/game/{pk}/feed/live"
-        .GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
+            //     return await $"https:statsapi.mlb.com/api/v1.1/game/{pk}/feed/live".GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
+
+            return (await client.LiveGameVOneAsync(int.Parse(pk), null, null, null, null).ConfigureAwait(false)).Result;
 
         }
         catch (Exception)
@@ -225,13 +224,13 @@ else
 
     }
 
-    private async Task<PlayByPlay> GetUpdatePlayByPlay(string updateID)
+    private async Task<BaseballGameRestObject> GetUpdatePlayByPlay(string updateID)
     {
         try
         {
-            return await $"https://ws.statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?language=en&pushUpdateId={updateID}"
-        .GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
+            //return await $"https://ws.statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?language=en&pushUpdateId={updateID}".GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
 
+            return (await client.LiveGameVOneAsync(int.Parse(gamepk), updateID, null, null, null).ConfigureAwait(false)).Result;
         }
         catch (Exception)
         {

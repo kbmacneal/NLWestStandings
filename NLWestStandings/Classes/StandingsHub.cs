@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using MoreLinq;
 using NLWestStandings.Client.Classes.Calendar;
-using System.Linq;
 
 namespace NLWestStandings.Classes
 {

@@ -1,6 +1,5 @@
 ﻿namespace NLWestStandings.Client.Classes.Person
 {
-
     public class PersonRecord
     {
         public string copyright { get; set; }
@@ -65,5 +64,4 @@
         public string code { get; set; }
         public string description { get; set; }
     }
-
 }

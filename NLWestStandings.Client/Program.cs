@@ -16,6 +16,12 @@ builder.Services.AddMudServices(options =>
     options.PopoverOptions.ThrowOnDuplicateProvider = false;
 });
 
+builder.Services.AddSingleton(
+                    typeof(StatsAPI.Client), o =>
+                    {
+                        return new StatsAPI.Client(new HttpClient());
+                    });
+
 builder.Services.AddMudPopoverService();
 
 await builder.Build().RunAsync().ConfigureAwait(false);

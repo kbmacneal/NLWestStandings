@@ -1,6 +1,5 @@
 ﻿namespace NLWestStandings.Client.Classes.Last10GamesPitching
 {
-
     public class Last10GamesPitching
     {
         public string copyright { get; set; }
@@ -143,5 +142,4 @@
         public string type { get; set; }
         public string abbreviation { get; set; }
     }
-
 }

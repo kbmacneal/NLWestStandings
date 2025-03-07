@@ -1,6 +1,5 @@
 ﻿namespace NLWestStandings.Client.Classes.GameStats
 {
-
     public class GameStats
     {
         public string copyright { get; set; }
@@ -186,5 +185,4 @@
         public float coordX { get; set; }
         public float coordY { get; set; }
     }
-
 }

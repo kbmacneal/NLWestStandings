@@ -2,11 +2,8 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
 using NLWestStandings.Classes;
-using NLWestStandings.Client.Classes;
 using NLWestStandings.Components;
 using Serilog;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace NLWestStandings
 {
@@ -49,6 +46,12 @@ namespace NLWestStandings
                     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                         ["application/octet-stream"]);
                 });
+
+                builder.Services.AddSingleton(
+                    typeof(StatsAPI.Client), o =>
+                    {
+                        return new StatsAPI.Client(new HttpClient());
+                    });
 
                 builder.Services.AddSingleton<StandingsService>();
                 builder.Services.AddSingleton<IHostedService>(p => p.GetRequiredService<StandingsService>());

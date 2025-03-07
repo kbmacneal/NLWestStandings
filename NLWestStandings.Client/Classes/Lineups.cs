@@ -1,6 +1,5 @@
 ﻿namespace NLWestStandings.Client.Classes.Lineups
 {
-
     public class LineupObject
     {
         public string copyright { get; set; }
@@ -174,5 +173,4 @@
         public string type { get; set; }
         public string abbreviation { get; set; }
     }
-
 }
