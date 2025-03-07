@@ -16,4 +16,6 @@ builder.Services.AddMudServices(options =>
     options.PopoverOptions.ThrowOnDuplicateProvider = false;
 });
 
+builder.Services.AddMudPopoverService();
+
 await builder.Build().RunAsync().ConfigureAwait(false);

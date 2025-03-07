@@ -37,6 +37,8 @@ namespace NLWestStandings
                     options.PopoverOptions.ThrowOnDuplicateProvider = false;
                 });
 
+                builder.Services.AddMudPopoverService();
+
                 builder.Services.AddSignalR(options =>
                 {
                     options.EnableDetailedErrors = true;
