@@ -19,14 +19,14 @@ namespace NLWestStandings.Classes
         {
             //_logos = await GetLogoLinks();
 
-            calendar = await GetCalendar();
+            calendar = await GetCalendar().ConfigureAwait(false);
 
             using (var scope = services.CreateScope())
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var nl = await GetNLStandingsAsync();
-                    var al = await GetALStandingsAsync();
+                    var nl = await GetNLStandingsAsync().ConfigureAwait(false);
+                    var al = await GetALStandingsAsync().ConfigureAwait(false);
 
                     foreach (var item in nl.records)
                     {
@@ -36,7 +36,7 @@ namespace NLWestStandings.Classes
                         {
                             item2.division_name = (await "https://statsapi.mlb.com/api/v1/divisions/"
                             .AppendPathSegment(division_id.ToString())
-                            .GetJsonAsync<DivisionCall>(cancellationToken: stoppingToken))
+                            .GetJsonAsync<DivisionCall>(cancellationToken: stoppingToken).ConfigureAwait(false))
                             .divisions.First().name;
                         }
                     }
@@ -49,7 +49,7 @@ namespace NLWestStandings.Classes
                         {
                             item2.division_name = (await "https://statsapi.mlb.com/api/v1/divisions/"
                                 .AppendPathSegment(division_id.ToString())
-                                .GetJsonAsync<DivisionCall>(cancellationToken: stoppingToken))
+                                .GetJsonAsync<DivisionCall>(cancellationToken: stoppingToken).ConfigureAwait(false))
                                 .divisions.First().name;
                         }
                     }
@@ -58,13 +58,13 @@ namespace NLWestStandings.Classes
 
                     ALStandings = al.records.Select(e => e.teamRecords);
 
-                    await context.Clients.All.SendAsync("broadcastnl", System.Text.Json.JsonSerializer.Serialize(NLStandings), stoppingToken);
+                    await context.Clients.All.SendAsync("broadcastnl", System.Text.Json.JsonSerializer.Serialize(NLStandings), stoppingToken).ConfigureAwait(false);
 
-                    await context.Clients.All.SendAsync("broadcastal", System.Text.Json.JsonSerializer.Serialize(ALStandings), stoppingToken);
+                    await context.Clients.All.SendAsync("broadcastal", System.Text.Json.JsonSerializer.Serialize(ALStandings), stoppingToken).ConfigureAwait(false);
 
                     logger.LogInformation("Standings refreshed");
 
-                    await Task.Delay(TimeSpan.FromHours(6), stoppingToken);
+                    await Task.Delay(TimeSpan.FromHours(6), stoppingToken).ConfigureAwait(false);
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace NLWestStandings.Classes
         private static async Task<Standing> GetNLStandingsAsync()
         {
             var standings = await "https://statsapi.mlb.com/api/v1/standings?leagueId=104"
-                .GetJsonAsync<Standing>();
+                .GetJsonAsync<Standing>().ConfigureAwait(false);
 
             return standings;
         }
@@ -80,7 +80,7 @@ namespace NLWestStandings.Classes
         private static async Task<Standing> GetALStandingsAsync()
         {
             var standings = await "https://statsapi.mlb.com/api/v1/standings?leagueId=103"
-                .GetJsonAsync<Standing>();
+                .GetJsonAsync<Standing>().ConfigureAwait(false);
 
             return standings;
         }
@@ -101,7 +101,7 @@ namespace NLWestStandings.Classes
             var end_of_month = new DateOnly(DateTime.Now.Year, 12, 1);
 
             var calendar = await $"https://statsapi.mlb.com/api/v1/schedule?sportId=1&startDate={beginning_of_month}&endDate={end_of_month}"
-                .GetJsonAsync<TeamCalendar>();
+                .GetJsonAsync<TeamCalendar>().ConfigureAwait(false);
 
             return calendar;
         }

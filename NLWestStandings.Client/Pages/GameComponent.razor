@@ -22,16 +22,16 @@
 
 <style>
     .table {
-        display: table;
-        width: 100%;
-        table-layout: fixed;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
     }
 
     .table_cell {
-        display: table-cell;
-        width: 5%;
-        border: solid black 1px;
-        text-align: center;
+    display: table-cell;
+    width: 5%;
+    border: solid black 1px;
+    text-align: center;
     }
 </style>
 
@@ -366,11 +366,11 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
             .Build();
 
-        await hubConnection.StartAsync();
+        await hubConnection.StartAsync().ConfigureAwait(false);
 
-        playByPlay = await GetPlayByPlay();
+        playByPlay = await GetPlayByPlay().ConfigureAwait(false);
 
-        lineupObject = await GetLineups(gamepk);
+        lineupObject = await GetLineups(gamepk).ConfigureAwait(false);
 
         hometeam = playByPlay.gameData.teams.home.name;
         awayteam = playByPlay.gameData.teams.away.name;
@@ -378,16 +378,20 @@
         if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
             var home_temp = await GetDepthChart(playByPlay?.gameData.teams.home.id.ToString
-        () ?? "0");
+        () ?? "0").ConfigureAwait(false);
 
             var away_temp = await GetDepthChart(playByPlay?.gameData.teams.away.id.ToString
-            () ?? "0");
+            () ?? "0").ConfigureAwait(false);
 
-            var last10pitcherhome = await GetLast10GamesPitchingStats(playByPlay?.gameData.teams.home.id.ToString() ?? "0");
-            var last10hittinghome = await GetLast10GamesHittingStats(playByPlay?.gameData.teams.home.id.ToString() ?? "0");
+            var last10pitcherhome = await GetLast10GamesPitchingStats(playByPlay?.gameData.teams.home.id.ToString() ?? "0").ConfigureAwait(false);
 
-            var last10pitcheraway = await GetLast10GamesPitchingStats(playByPlay?.gameData.teams.away.id.ToString() ?? "0");
-            var last10hittingaway = await GetLast10GamesHittingStats(playByPlay?.gameData.teams.away.id.ToString() ?? "0");
+            var last10hittinghome = await GetLast10GamesHittingStats(playByPlay?.gameData.teams.home.id.ToString() ?? "0").ConfigureAwait(false);
+
+            var last10pitcheraway = await GetLast10GamesPitchingStats(playByPlay?.gameData.teams.away.id.ToString() ?? "0").ConfigureAwait(false);
+
+            var last10hittingaway = await GetLast10GamesHittingStats(playByPlay?.gameData.teams.away.id.ToString() ?? "0").ConfigureAwait(false);
+
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
             foreach (var play in home_temp.roster)
             {
@@ -403,20 +407,10 @@
 
                     if (hitting_stats != null) stats = $"{hitting_stats.avg}, {hitting_stats.babip} BABIP, {hitting_stats.rbi} RBI, {hitting_stats.ops} OPS, {hitting_stats.homeRuns} HR";
                 }
-                // else
-                // {
-                //     var pitching_stats = last10pitcherhome.stats.SelectMany(e => e.splits).FirstOrDefault(e => e.player.id == play.person.id)?.stat ?? null;
-
-                //     if (pitching_stats != null) stats = $"{pitching_stats.era} ERA, {pitching_stats.hitsPer9Inn} H/9, {pitching_stats.homeRunsPer9} HR/9, {pitching_stats.inningsPitched} IP, {pitching_stats.strikeoutsPer9Inn} SO/9, {pitching_stats.whip} WHIP, {pitching_stats.wins}/{pitching_stats.losses} W/L";
-                // }
 
                 if (lineupObject.dates[0].games[0].lineups.homePlayers.FirstOrDefault(e => e.id == play.person.id) != null)
                 {
                     lineupObject.dates[0].games[0].lineups.homePlayers.First(e => e.id == play.person.id).stats = stats;
-                }
-                else
-                {
-                    var t = "";
                 }
 
                 if (homedepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)
@@ -450,12 +444,6 @@
 
                     if (hitting_stats != null) stats = $"{hitting_stats.avg}, {hitting_stats.babip} BABIP, {hitting_stats.rbi} RBI, {hitting_stats.ops} OPS, {hitting_stats.homeRuns} HR";
                 }
-                // else
-                // {
-                //     var pitching_stats = last10pitcheraway.stats.SelectMany(e => e.splits).FirstOrDefault(e => e.player.id == play.person.id)?.stat ?? null;
-
-                //     if (pitching_stats != null) stats = $"{pitching_stats.era} ERA, {pitching_stats.hitsPer9Inn} H/9, {pitching_stats.homeRunsPer9} HR/9, {pitching_stats.inningsPitched} IP, {pitching_stats.strikeoutsPer9Inn} SO/9, {pitching_stats.whip} WHIP, {pitching_stats.wins}/{pitching_stats.losses} W/L";
-                // }
 
                 if (lineupObject.dates[0].games[0].lineups.awayPlayers.FirstOrDefault(e => e.id == play.person.id) != null)
                 {
@@ -483,6 +471,8 @@
                 }
             }
 
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+
             var url = new Uri($"wss://ws.statsapi.mlb.com/api/v1/game/push/subscribe/gameday/{gamepk}");
             _client = new WebsocketClient(url);
 
@@ -509,22 +499,23 @@
 
                 var jsonplay = System.Text.Json.JsonSerializer.Deserialize<PbPPushNotification>(msg.Text ?? "");
 
-                playByPlay = await GetPlayByPlay(jsonplay?.updateId ?? "");
+                playByPlay = await GetPlayByPlay(jsonplay?.updateId ?? "").ConfigureAwait(false);
 
                 // Log($"Received: '{msg.Text}'", LogSeverity.Info);
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             });
 
-            await _client.Start();
+            await _client.Start().ConfigureAwait(false);
         }
         else if (playByPlay?.gameData.status.abstractGameCode == "F")
         {
-            var bscore = await GetBoxscore(gamepk);
+            var bscore = await GetBoxscore(gamepk).ConfigureAwait(false);
 
             foreach (var batter in bscore.teams.home.batters)
             {
-                var stats = await GetPersonGameStats(batter.ToString(), gamepk);
-                var person = await GetPerson(batter.ToString());
+                var stats = await GetPersonGameStats(batter.ToString(), gamepk).ConfigureAwait(false);
+
+                var person = await GetPerson(batter.ToString()).ConfigureAwait(false);
 
                 if (person.people[0].primaryPosition.code == "1")
                 {
@@ -552,8 +543,9 @@
 
             foreach (var batter in bscore.teams.away.batters)
             {
-                var stats = await GetPersonGameStats(batter.ToString(), gamepk);
-                var person = await GetPerson(batter.ToString());
+                var stats = await GetPersonGameStats(batter.ToString(), gamepk).ConfigureAwait(false);
+
+                var person = await GetPerson(batter.ToString()).ConfigureAwait(false);
 
                 if (person.people[0].primaryPosition.code == "1")
                 {
@@ -578,9 +570,11 @@
                         });
                 }
             }
+
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private bool FilterFunc1(Allplay element) => FilterFunc(element, pbpsearchstring);
@@ -610,7 +604,7 @@
                 localStorage.SetItem("CurrentMode", false);
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
@@ -619,7 +613,8 @@
         if (_client == null)
             return;
 
-        await _client.Stop(WebSocketCloseStatus.NormalClosure, string.Empty);
+        await _client.Stop(WebSocketCloseStatus.NormalClosure, string.Empty).ConfigureAwait(false);
+
         _client.Dispose();
     }
 
@@ -628,7 +623,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live"
-        .GetJsonAsync<PlayByPlay>();
+        .GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -643,7 +638,7 @@
         try
         {
             return await $"https://ws.statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?language=en&pushUpdateId={updateID}"
-        .GetJsonAsync<PlayByPlay>();
+        .GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -658,7 +653,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/teams/{teamid}/roster/depthChart"
-        .GetJsonAsync<DepthChart>();
+        .GetJsonAsync<DepthChart>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -675,7 +670,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/people/{person_id}/stats/game/{gamepk}"
-        .GetJsonAsync<GameStats>();
+        .GetJsonAsync<GameStats>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -690,7 +685,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/game/{gamepk}/boxscore"
-        .GetJsonAsync<Boxscore>();
+        .GetJsonAsync<Boxscore>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -705,7 +700,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/people/{personid}/"
-        .GetJsonAsync<PersonRecord>();
+        .GetJsonAsync<PersonRecord>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -720,7 +715,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/schedule?gamePk={gamepk}&hydrate=lineups"
-        .GetJsonAsync<LineupObject>();
+        .GetJsonAsync<LineupObject>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -735,7 +730,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/stats?stats=lastXGames&group=hitting&teamId={teamid}"
-        .GetJsonAsync<Last10GamesHitting>();
+        .GetJsonAsync<Last10GamesHitting>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -750,7 +745,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/stats?stats=lastXGames&group=pitching&teamId={teamid}"
-        .GetJsonAsync<Last10GamesPitching>();
+        .GetJsonAsync<Last10GamesPitching>().ConfigureAwait(false);
 
         }
         catch (Exception)

@@ -124,22 +124,22 @@ else
         hubConnection.On<string>("broadcastnl", async (string message) =>
         {
             NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(message);
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         });
 
         hubConnection.On<string>("broadcastal", async (string message) =>
         {
             ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(message);
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         });
 
-        await hubConnection.StartAsync();
+        await hubConnection.StartAsync().ConfigureAwait(false);
 
-        NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastNLToConnection", hubConnection.ConnectionId));
+        NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastNLToConnection", hubConnection.ConnectionId).ConfigureAwait(false));
 
-        ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastALToConnection", hubConnection.ConnectionId));
+        ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastALToConnection", hubConnection.ConnectionId).ConfigureAwait(false));
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
     }
 
@@ -168,7 +168,7 @@ else
             }
 
             
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 

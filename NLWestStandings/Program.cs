@@ -91,7 +91,7 @@ namespace NLWestStandings
             }
             finally
             {
-                await Log.CloseAndFlushAsync();
+                await Log.CloseAndFlushAsync().ConfigureAwait(false);
             }
         }
     }

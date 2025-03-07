@@ -126,11 +126,11 @@
             .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
             .Build();
 
-        await hubConnection.StartAsync();
+        await hubConnection.StartAsync().ConfigureAwait(false);
 
-        var NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastNLToConnection", hubConnection.ConnectionId));
+        var NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastNLToConnection", hubConnection.ConnectionId).ConfigureAwait(false));
 
-        var ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastALToConnection", hubConnection.ConnectionId));
+        var ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastALToConnection", hubConnection.ConnectionId).ConfigureAwait(false));
 
         NLRanks = NLStandings.SelectMany(e => e).OrderBy(e => Int32.Parse(e.leagueRank)).Take(10).Select(e => new PSRank()
             {
@@ -178,7 +178,7 @@
             }
         }
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -194,7 +194,7 @@
                 localStorage.SetItem("CurrentMode", false);
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 

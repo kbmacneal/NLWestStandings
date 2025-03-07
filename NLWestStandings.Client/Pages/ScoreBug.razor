@@ -130,7 +130,7 @@ else
     protected override async Task OnInitializedAsync()
     {
 
-        playByPlay = await GetPlayByPlay(gamepk);
+        playByPlay = await GetPlayByPlay(gamepk).ConfigureAwait(false);
 
         if(playByPlay is null)
         {
@@ -170,17 +170,17 @@ else
 
                 var jsonplay = System.Text.Json.JsonSerializer.Deserialize<PbPPushNotification>(msg.Text ?? "");
 
-                playByPlay = await GetUpdatePlayByPlay(jsonplay?.updateId ?? "");
+                playByPlay = await GetUpdatePlayByPlay(jsonplay?.updateId ?? "").ConfigureAwait(false);
 
                 // Log($"Received: '{msg.Text}'", LogSeverity.Info);
-                await InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             });
 
-            await _client.Start();
+            await _client.Start().ConfigureAwait(false);
         }
 
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -196,7 +196,7 @@ else
                 localStorage.SetItem("CurrentMode", false);
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
@@ -205,7 +205,8 @@ else
         if (_client == null)
             return;
 
-        await _client.Stop(WebSocketCloseStatus.NormalClosure, string.Empty);
+        await _client.Stop(WebSocketCloseStatus.NormalClosure, string.Empty).ConfigureAwait(false);
+
         _client.Dispose();
     }
 
@@ -214,7 +215,7 @@ else
         try
         {
             return await $"https://statsapi.mlb.com/api/v1.1/game/{pk}/feed/live"
-        .GetJsonAsync<PlayByPlay>();
+        .GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -229,7 +230,7 @@ else
         try
         {
             return await $"https://ws.statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?language=en&pushUpdateId={updateID}"
-        .GetJsonAsync<PlayByPlay>();
+        .GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
 
         }
         catch (Exception)

@@ -167,10 +167,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var _temp = await GetDepthChart(teamid);
+        var _temp = await GetDepthChart(teamid).ConfigureAwait(false);
 
-        var last10pitcher = await GetLast10GamesPitchingStats(teamid.ToString() ?? "0");
-        var last10hitting = await GetLast10GamesHittingStats(teamid.ToString() ?? "0");
+        var last10pitcher = await GetLast10GamesPitchingStats(teamid.ToString() ?? "0").ConfigureAwait(false);
+
+        var last10hitting = await GetLast10GamesHittingStats(teamid.ToString() ?? "0").ConfigureAwait(false);
 
         int num = 1;
 
@@ -213,8 +214,8 @@
                         positions = new() { play.position.name },
                         position_code = play.position.code,
                         status = $"{play.status.description}{(play.note != null ? " - " : "")}{play.note}",
-                        pitchingStats = pitcher_list.Contains(play.position.code) ? await GetPitchingStats(play.person.id) : new(),
-                        hittingStats = !(pitcher_list.Contains(play.position.code)) ? await GetHittingStats(play.person.id) : new(),
+                        pitchingStats = pitcher_list.Contains(play.position.code) ? await GetPitchingStats(play.person.id).ConfigureAwait(false) : new(),
+                        hittingStats = !(pitcher_list.Contains(play.position.code)) ? await GetHittingStats(play.person.id).ConfigureAwait(false) : new(),
                         last_10 = stats
 
                     });
@@ -231,7 +232,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/teams/{teamid}/roster/40Man"
-        .GetJsonAsync<DepthChart>();
+        .GetJsonAsync<DepthChart>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -254,7 +255,7 @@
                 localStorage.SetItem("CurrentMode", false);
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
@@ -263,7 +264,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/people/{playerid}/stats?stats=season&stats=sabermetrics&group=hitting&season={DateTime.Now.Year}"
-        .GetJsonAsync<HittingStats>();
+        .GetJsonAsync<HittingStats>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -278,7 +279,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/people/{playerid}/stats?stats=season&stats=sabermetrics&group=pitching&season={DateTime.Now.Year}"
-        .GetJsonAsync<PitchingStats>();
+        .GetJsonAsync<PitchingStats>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -293,7 +294,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/stats?stats=lastXGames&group=hitting&teamId={teamid}"
-        .GetJsonAsync<Last10GamesHitting>();
+        .GetJsonAsync<Last10GamesHitting>().ConfigureAwait(false);
 
         }
         catch (Exception)
@@ -308,7 +309,7 @@
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/stats?stats=lastXGames&group=pitching&teamId={teamid}"
-        .GetJsonAsync<Last10GamesPitching>();
+        .GetJsonAsync<Last10GamesPitching>().ConfigureAwait(false);
 
         }
         catch (Exception)

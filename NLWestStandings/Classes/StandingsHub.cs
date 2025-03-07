@@ -9,7 +9,7 @@ namespace NLWestStandings.Classes
     {
         public async Task SendMessage(string message)
         {
-            await Clients.All.SendAsync("broadcast", message);
+            await Clients.All.SendAsync("broadcast", message).ConfigureAwait(false);
         }
 
         public async Task<string> BroadcastNLToConnection(string connectionId)

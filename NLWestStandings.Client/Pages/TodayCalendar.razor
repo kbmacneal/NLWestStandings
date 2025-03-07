@@ -56,7 +56,7 @@ else
             .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
             .Build();
 
-        await hubConnection.StartAsync();
+        await hubConnection.StartAsync().ConfigureAwait(false);
 
         // calendar_data = (System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetTodayCalendar", hubConnection.ConnectionId)) ?? new()).OrderBy(e => e.gameDate).ToList();
 
@@ -79,8 +79,8 @@ else
         }
 
 
-        var temp = (await $"https://statsapi.mlb.com/api/v1/schedule?date={date_parm}&sportId=1"
-            .GetJsonAsync<TeamCalendar>());
+        var temp = await $"https://statsapi.mlb.com/api/v1/schedule?date={date_parm}&sportId=1"
+            .GetJsonAsync<TeamCalendar>().ConfigureAwait(false);
 
         if(temp.dates.Count() > 0)
         {
@@ -94,7 +94,7 @@ else
         }
             
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
     }
 
@@ -111,7 +111,7 @@ else
                 localStorage.SetItem("CurrentMode", false);
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 

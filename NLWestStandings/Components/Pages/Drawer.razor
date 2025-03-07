@@ -50,23 +50,23 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            if (await localStorage.ContainKeyAsync("CurrentMode"))
+            if (await localStorage.ContainKeyAsync("CurrentMode").ConfigureAwait(false))
             {
-                is_dark_mode = await localStorage.GetItemAsync<bool>("CurrentMode");
+                is_dark_mode = await localStorage.GetItemAsync<bool>("CurrentMode").ConfigureAwait(false);
             }
             else
             {
-                await localStorage.SetItemAsync("CurrentMode", false);
+                await localStorage.SetItemAsync("CurrentMode", false).ConfigureAwait(false);
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
@@ -74,8 +74,8 @@
     {
         is_dark_mode = !is_dark_mode;
 
-        var test = await localStorage.GetItemAsync<bool>("CurrentMode");
+        // var test = await localStorage.GetItemAsync<bool>("CurrentMode");
 
-        await localStorage.SetItemAsync("CurrentMode", is_dark_mode);
+        await localStorage.SetItemAsync("CurrentMode", is_dark_mode).ConfigureAwait(false);
     }
 }

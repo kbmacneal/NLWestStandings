@@ -45,9 +45,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        transactions = await GetTransactions(teamid);
+        transactions = await GetTransactions(teamid).ConfigureAwait(false);
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -63,7 +63,7 @@ else
                 localStorage.SetItem("CurrentMode", false);
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
@@ -72,7 +72,7 @@ else
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/transactions?teamId={teamid}&startDate={DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")}&endDate={DateTime.Now.ToString("yyyy-MM-dd")}"
-        .GetJsonAsync<Transactions>();
+        .GetJsonAsync<Transactions>().ConfigureAwait(false);
 
         }
         catch (Exception)

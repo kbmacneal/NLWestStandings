@@ -68,9 +68,9 @@ else
             .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
             .Build();
 
-        await hubConnection.StartAsync();
+        await hubConnection.StartAsync().ConfigureAwait(false);
 
-        calendar_data = System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetCalendar", hubConnection.ConnectionId, teamid.ToString())) ?? new();
+        calendar_data = System.Text.Json.JsonSerializer.Deserialize<List<Game>>(await hubConnection.InvokeAsync<string>("GetCalendar", hubConnection.ConnectionId, teamid.ToString()).ConfigureAwait(false)) ?? new();
 
         var temp_events = new List<CustomItem>();
 
@@ -96,7 +96,7 @@ else
 
         _events = temp_events.DistinctBy(e => e.Text + e.Start).ToList();
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -112,7 +112,7 @@ else
                 localStorage.SetItem("CurrentMode", false);
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 

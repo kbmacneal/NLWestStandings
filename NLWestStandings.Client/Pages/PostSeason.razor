@@ -86,7 +86,7 @@ else
     {
         var temp_events = new List<CustomItem>();
 
-        var games = (await GetPostSeasonSchedule()).dates.SelectMany(e => e.games);
+        var games = (await GetPostSeasonSchedule().ConfigureAwait(false)).dates.SelectMany(e => e.games);
 
         foreach (var game in games)
         {
@@ -110,7 +110,7 @@ else
 
         _events = temp_events.DistinctBy(e => e.Text + e.Start).ToList();
 
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -126,7 +126,7 @@ else
                 localStorage.SetItem("CurrentMode", false);
             }
 
-            await InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
 
@@ -135,7 +135,7 @@ else
         try
         {
             return await $"https://statsapi.mlb.com/api/v1/schedule/postseason/"
-        .GetJsonAsync<NLWestStandings.Client.Classes.PostSeason.PostSeason>();
+        .GetJsonAsync<NLWestStandings.Client.Classes.PostSeason.PostSeason>().ConfigureAwait(false);
 
         }
         catch (Exception)
