@@ -86,7 +86,7 @@ else
                         End = local_start.AddHours(1),
                         Title = ToAmPm(local_start),
                         Text = $"{game.teams.away.team.name} @ {game.teams.home.team.name}",
-                        Color = game.teams.away.team.id == Int32.Parse(teamid) ? Color.Dark : Color.Primary,
+                        Color = (local_start.Day == DateTime.Now.Day && local_start.Month == DateTime.Now.Month) ? Color.Success : game.teams.away.team.id == Int32.Parse(teamid) ? Color.Dark : Color.Primary,
                         gamepk = game.gamePk.ToString(),
                         hometeam = $"{game.teams.home.team.name}",
                         awayteam = $"{game.teams.away.team.name}"

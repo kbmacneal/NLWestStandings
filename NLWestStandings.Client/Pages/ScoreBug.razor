@@ -212,17 +212,7 @@ else
     {
         try
         {
-            //     return await $"https:statsapi.mlb.com/api/v1.1/game/{pk}/feed/live".GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
-
             return (await client.LiveGameVOneAsync(int.Parse(pk), null, null, null, null).ConfigureAwait(false)).Result;
-
-            // var c = new IO.Swagger.Api.GameApi(new IO.Swagger.Client.ApiClient());
-
-            // var t = c.LiveGameV1(int.Parse(pk), null, null, null, null);
-
-            // var temp = "";
-
-            // return new();
         }
         catch (Exception)
         {
@@ -235,14 +225,11 @@ else
     {
         try
         {
-            //return await $"https://ws.statsapi.mlb.com/api/v1.1/game/{gamepk}/feed/live?language=en&pushUpdateId={updateID}".GetJsonAsync<PlayByPlay>().ConfigureAwait(false);
-
             return (await client.LiveGameVOneAsync(int.Parse(gamepk), updateID, null, null, null).ConfigureAwait(false)).Result;
         }
         catch (Exception)
         {
             return new();
         }
-
     }
 }
