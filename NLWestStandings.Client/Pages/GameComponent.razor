@@ -375,6 +375,8 @@
         hometeam = playByPlay.gameData.teams.home.name;
         awayteam = playByPlay.gameData.teams.away.name;
 
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+
         if (playByPlay?.gameData.status.abstractGameCode == "L")
         {
             var home_temp = await GetDepthChart(playByPlay?.gameData.teams.home.id.ToString
@@ -429,6 +431,8 @@
                         });
                 }
             }
+
+            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
 
             foreach (var play in away_temp.roster)
             {
@@ -492,7 +496,6 @@
                 // Log($"Disconnected, type: '{info.Type}', reason: '{info.CloseStatus}'", LogSeverity.Warning);
                 // StateHasChanged();
             });
-
             _client.MessageReceived.Subscribe(async msg =>
             {
                 Console.WriteLine($"Live update received");
