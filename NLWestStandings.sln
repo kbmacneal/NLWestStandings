@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLWestStandings.AppHost", "NLWestStandings.AppHost\NLWestStandings.AppHost.csproj", "{FA51E637-77BF-402C-BA95-6E1A52B388AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLWestStandings.ServiceDefaults", "NLWestStandings.ServiceDefaults\NLWestStandings.ServiceDefaults.csproj", "{B438B691-6391-9878-E88E-68A13F9052DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +32,14 @@ Global
 		{B64A6A3F-E269-4279-8BBD-070C7EB5FDA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B64A6A3F-E269-4279-8BBD-070C7EB5FDA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B64A6A3F-E269-4279-8BBD-070C7EB5FDA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA51E637-77BF-402C-BA95-6E1A52B388AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA51E637-77BF-402C-BA95-6E1A52B388AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA51E637-77BF-402C-BA95-6E1A52B388AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA51E637-77BF-402C-BA95-6E1A52B388AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B438B691-6391-9878-E88E-68A13F9052DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B438B691-6391-9878-E88E-68A13F9052DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B438B691-6391-9878-E88E-68A13F9052DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B438B691-6391-9878-E88E-68A13F9052DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

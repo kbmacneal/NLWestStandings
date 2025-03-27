@@ -14,6 +14,7 @@ namespace NLWestStandings
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
+                builder.AddServiceDefaults();
 
                 Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Debug()
@@ -59,6 +60,8 @@ namespace NLWestStandings
                 builder.Services.AddSerilog();
 
                 var app = builder.Build();
+
+                app.MapDefaultEndpoints();
 
                 app.UseSerilogRequestLogging();
 
