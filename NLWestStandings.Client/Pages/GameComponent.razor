@@ -70,6 +70,11 @@
             {
                 <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
             }
+            
+            @if (local_start != DateTime.MinValue)
+            {
+                <MudText Class="m-auto" Typo="Typo.h5">First Patch At @local_start</MudText>
+            }
 
             <table>
                 <th class="table_cell">Inning</th>
@@ -309,6 +314,8 @@
 
     private string _message = "Gameday5";
 
+    private DateTime local_start { get; set; } = DateTime.MinValue;
+
     private class DepthChartDTO
     {
         public string id { get; set; } = "";
@@ -369,6 +376,8 @@
         await hubConnection.StartAsync().ConfigureAwait(false);
 
         playByPlay = await GetPlayByPlay().ConfigureAwait(false);
+
+        local_start = DateTime.SpecifyKind(playByPlay.gameData.datetime.dateTime, DateTimeKind.Utc).ToLocalTime();
 
         lineupObject = await GetLineups(gamepk).ConfigureAwait(false);
 
