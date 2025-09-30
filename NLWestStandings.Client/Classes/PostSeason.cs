@@ -34,9 +34,12 @@
         public string officialDate { get; set; }
         public Status status { get; set; }
         public Teams teams { get; set; }
-        public Venue venue { get; set; }
+        public Linescore linescore { get; set; }
+        public Venue2 venue { get; set; }
+        public Broadcast[] broadcasts { get; set; }
         public Content content { get; set; }
         public bool isFeaturedGame { get; set; }
+        public Gameinfo gameInfo { get; set; }
         public int gameNumber { get; set; }
         public bool publicFacing { get; set; }
         public string doubleHeader { get; set; }
@@ -52,6 +55,7 @@
         public int gamesInSeries { get; set; }
         public int seriesGameNumber { get; set; }
         public string seriesDescription { get; set; }
+        public Flags flags { get; set; }
         public string recordSource { get; set; }
         public string ifNecessary { get; set; }
         public string ifNecessaryDescription { get; set; }
@@ -77,8 +81,10 @@
     {
         public Leaguerecord leagueRecord { get; set; }
         public Team team { get; set; }
+        public Probablepitcher probablePitcher { get; set; }
         public bool splitSquad { get; set; }
         public int seriesNumber { get; set; }
+        public Springleague1 springLeague { get; set; }
     }
 
     public class Leaguerecord
@@ -90,17 +96,97 @@
 
     public class Team
     {
+        public Springleague springLeague { get; set; }
+        public string allStarStatus { get; set; }
         public int id { get; set; }
         public string name { get; set; }
         public string link { get; set; }
+        public int season { get; set; }
+        public Venue venue { get; set; }
+        public Springvenue springVenue { get; set; }
+        public string teamCode { get; set; }
+        public string fileCode { get; set; }
+        public string abbreviation { get; set; }
+        public string teamName { get; set; }
+        public string locationName { get; set; }
+        public string firstYearOfPlay { get; set; }
+        public League league { get; set; }
+        public Division division { get; set; }
+        public Sport sport { get; set; }
+        public string shortName { get; set; }
+        public string franchiseName { get; set; }
+        public string clubName { get; set; }
+        public bool active { get; set; }
+        public string parentOrgName { get; set; }
+        public int parentOrgId { get; set; }
+        public bool placeholder { get; set; }
+    }
+
+    public class Springleague
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+        public string abbreviation { get; set; }
+    }
+
+    public class Venue
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+    }
+
+    public class Springvenue
+    {
+        public int id { get; set; }
+        public string link { get; set; }
+    }
+
+    public class League
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+    }
+
+    public class Division
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+    }
+
+    public class Sport
+    {
+        public int id { get; set; }
+        public string link { get; set; }
+        public string name { get; set; }
+    }
+
+    public class Probablepitcher
+    {
+        public int id { get; set; }
+        public string fullName { get; set; }
+        public string link { get; set; }
+    }
+
+    public class Springleague1
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+        public string abbreviation { get; set; }
     }
 
     public class Home
     {
         public Leaguerecord1 leagueRecord { get; set; }
         public Team1 team { get; set; }
+        public Probablepitcher1 probablePitcher { get; set; }
         public bool splitSquad { get; set; }
         public int seriesNumber { get; set; }
+        public Springleague3 springLeague { get; set; }
     }
 
     public class Leaguerecord1
@@ -112,12 +198,137 @@
 
     public class Team1
     {
+        public Springleague2 springLeague { get; set; }
+        public string allStarStatus { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+        public int season { get; set; }
+        public Venue1 venue { get; set; }
+        public Springvenue1 springVenue { get; set; }
+        public string teamCode { get; set; }
+        public string fileCode { get; set; }
+        public string abbreviation { get; set; }
+        public string teamName { get; set; }
+        public string locationName { get; set; }
+        public string firstYearOfPlay { get; set; }
+        public League1 league { get; set; }
+        public Division1 division { get; set; }
+        public Sport1 sport { get; set; }
+        public string shortName { get; set; }
+        public string franchiseName { get; set; }
+        public string clubName { get; set; }
+        public bool active { get; set; }
+        public string parentOrgName { get; set; }
+        public int parentOrgId { get; set; }
+        public bool placeholder { get; set; }
+    }
+
+    public class Springleague2
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+        public string abbreviation { get; set; }
+    }
+
+    public class Venue1
+    {
         public int id { get; set; }
         public string name { get; set; }
         public string link { get; set; }
     }
 
-    public class Venue
+    public class Springvenue1
+    {
+        public int id { get; set; }
+        public string link { get; set; }
+    }
+
+    public class League1
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+    }
+
+    public class Division1
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+    }
+
+    public class Sport1
+    {
+        public int id { get; set; }
+        public string link { get; set; }
+        public string name { get; set; }
+    }
+
+    public class Probablepitcher1
+    {
+        public int id { get; set; }
+        public string fullName { get; set; }
+        public string link { get; set; }
+    }
+
+    public class Springleague3
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+        public string abbreviation { get; set; }
+    }
+
+    public class Linescore
+    {
+        public int scheduledInnings { get; set; }
+        public object[] innings { get; set; }
+        public Teams1 teams { get; set; }
+        public Defense defense { get; set; }
+        public Offense offense { get; set; }
+    }
+
+    public class Teams1
+    {
+        public Home1 home { get; set; }
+        public Away1 away { get; set; }
+    }
+
+    public class Home1
+    {
+    }
+
+    public class Away1
+    {
+    }
+
+    public class Defense
+    {
+        public Team2 team { get; set; }
+    }
+
+    public class Team2
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+    }
+
+    public class Offense
+    {
+        public Team3 team { get; set; }
+    }
+
+    public class Team3
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string link { get; set; }
+    }
+
+    public class Venue2
     {
         public int id { get; set; }
         public string name { get; set; }
@@ -128,5 +339,70 @@
     {
         public string link { get; set; }
     }
+
+    public class Gameinfo
+    {
+    }
+
+    public class Flags
+    {
+        public bool noHitter { get; set; }
+        public bool perfectGame { get; set; }
+        public bool awayTeamNoHitter { get; set; }
+        public bool awayTeamPerfectGame { get; set; }
+        public bool homeTeamNoHitter { get; set; }
+        public bool homeTeamPerfectGame { get; set; }
+    }
+
+    public class Broadcast
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string type { get; set; }
+        public string language { get; set; }
+        public bool isNational { get; set; }
+        public string callSign { get; set; }
+        public Videoresolution videoResolution { get; set; }
+        public Availability availability { get; set; }
+        public Mediastate mediaState { get; set; }
+        public string broadcastDate { get; set; }
+        public string mediaId { get; set; }
+        public Colorspace colorSpace { get; set; }
+        public string gameDateBroadcastGuid { get; set; }
+        public string homeAway { get; set; }
+        public bool freeGame { get; set; }
+        public bool availableForStreaming { get; set; }
+        public bool postGameShow { get; set; }
+        public bool mvpdAuthRequired { get; set; }
+        public bool freeGameStatus { get; set; }
+    }
+
+    public class Videoresolution
+    {
+        public string code { get; set; }
+        public string resolutionShort { get; set; }
+        public string resolutionFull { get; set; }
+    }
+
+    public class Availability
+    {
+        public int availabilityId { get; set; }
+        public string availabilityCode { get; set; }
+        public string availabilityText { get; set; }
+    }
+
+    public class Mediastate
+    {
+        public int mediaStateId { get; set; }
+        public string mediaStateCode { get; set; }
+        public string mediaStateText { get; set; }
+    }
+
+    public class Colorspace
+    {
+        public string code { get; set; }
+        public string colorSpaceFull { get; set; }
+    }
+
 
 }

@@ -27,6 +27,14 @@
                              Align="Align.Center"
                              OnClick="@(() => GoToGame(((CustomItem)context).gamepk,((CustomItem)context).hometeam, ((CustomItem)context).awayteam))">
                         <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(((CustomItem)context).awayteam, dark_mode)"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(((CustomItem)context).hometeam, dark_mode)"></MudImage>
+                        <br />
+                        @if (((CustomItem)context).broadcasters != null)
+                        {
+                            @foreach (var item in ((CustomItem)context).broadcasters.Distinct())
+                            {
+                                <p>@item</p>
+                            }
+                        }
                     </MudLink>
                 </div>
             </div>
@@ -60,6 +68,7 @@ else
         public string? gamepk { get; set; }
         public string? hometeam { get; set; }
         public string? awayteam { get; set; }
+        public string[]? broadcasters { get; set; }
     }
 
     protected override async Task OnInitializedAsync()
@@ -89,7 +98,8 @@ else
                         Color = (local_start.Day == DateTime.Now.Day && local_start.Month == DateTime.Now.Month) ? Color.Success : game.teams.away.team.id == Int32.Parse(teamid) ? Color.Dark : Color.Primary,
                         gamepk = game.gamePk.ToString(),
                         hometeam = $"{game.teams.home.team.name}",
-                        awayteam = $"{game.teams.away.team.name}"
+                        awayteam = $"{game.teams.away.team.name}",
+                        broadcasters = game.broadcasts?.Where(e => e.type == "TV").Select(e => $"{e.name} ({e.type})").ToArray() ?? new string[]{"N/A"}
                     });
             }
         }

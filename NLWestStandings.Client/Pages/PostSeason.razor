@@ -49,6 +49,14 @@
                         {
                             <MudText>@(((CustomItem)context).hometeam)</MudText>
                         }
+                        <br />
+                        @if (((CustomItem)context).broadcasters != null)
+                        {
+                            @foreach(var item in ((CustomItem)context).broadcasters.Distinct())
+                            {
+                                <p>@item</p>
+                            }
+                        }
                     </MudLink>
                 </div>
             </div>
@@ -79,6 +87,7 @@ else
         public string? awayteam { get; set; }
         public string? homesvg { get; set; }
         public string? awaysvg { get; set; }
+        public string[]? broadcasters { get; set; }
 
     }
 
@@ -103,7 +112,8 @@ else
                     hometeam = $"{game.teams.home.team.name}",
                     awayteam = $"{game.teams.away.team.name}",
                     homesvg = SVGLogo.GetLogo(game.teams.home.team.name, dark_mode),
-                    awaysvg = SVGLogo.GetLogo(game.teams.away.team.name, dark_mode)
+                    awaysvg = SVGLogo.GetLogo(game.teams.away.team.name, dark_mode),
+                    broadcasters = game.broadcasts.Where(e=>e.type=="TV").Select(e => $"{e.name} ({e.type})").ToArray()
                 });
 
         }
@@ -134,7 +144,7 @@ else
     {
         try
         {
-            return await $"https://statsapi.mlb.com/api/v1/schedule/postseason/"
+            return await $"https://statsapi.mlb.com/api/v1/schedule/postseason?sportId=1&hydrate=broadcasts(all),probablePitcher,linescore,team,flags,gameInfo"
         .GetJsonAsync<NLWestStandings.Client.Classes.PostSeason.PostSeason>().ConfigureAwait(false);
 
         }
