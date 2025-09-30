@@ -97,7 +97,7 @@ else
                         <MudTd DataLabel="GB">@context.gamesBack</MudTd>
                         <MudTd DataLabel="WC GB">@context.wildCardGamesBack</MudTd>
                         <MudTd DataLabel="Winning%">@context.winningPercentage</MudTd>
-                        <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>5
+                        <MudTd DataLabel="Run Diff">@context.runDifferential</MudTd>
                         <MudTd DataLabel="Streak">@(context.streak?.streakCode ?? "0")</MudTd>
                         <MudTd DataLabel="L10">@(context.records?.splitRecords?.FirstOrDefault(e => e.type == "lastTen")?.wins ?? 0) - @(context.records?.splitRecords?.FirstOrDefault(e => e.type == "lastTen")?.losses ?? 0)</MudTd>
                         <MudTd DataLabel="Magic Number">@(context.magicNumber is null ? 0 : context.magicNumber)</MudTd>
