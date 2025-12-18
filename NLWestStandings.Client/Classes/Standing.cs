@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using Flurl.Http;
+using NLWestStandings.Client.Classes;
+using System.Text.Json.Serialization;
 
 namespace NLWestStandings.MLB
 {
@@ -83,9 +85,10 @@ namespace NLWestStandings.MLB
         public int id { get; set; }
         public string name { get; set; }
         public string link { get; set; }
-
-        [JsonIgnore]
-        public string logo_href { get; set; }
+        public string logo_href(int teamid, bool dark_mode)
+        {
+            return SVGLogo.GetLogo(($"https://statsapi.mlb.com/api/v1/teams/{teamid}".GetJsonAsync<TeamRequestObject>().GetAwaiter().GetResult().teams[0].name), dark_mode);
+        }
     }
 
     public class Streak
