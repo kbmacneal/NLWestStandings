@@ -7,7 +7,6 @@
 @using System.Web
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
-@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 
 <PageTitle>Team Calendar</PageTitle>
@@ -28,7 +27,7 @@
                              Typo="Typo.body1"
                              Class="d-flex flex-column align-center"
                              OnClick="@(() => GoToGame(((CustomItem)context).gamepk,((CustomItem)context).hometeam, ((CustomItem)context).awayteam))">
-                        <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(((CustomItem)context).awayteam, dark_mode)"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(((CustomItem)context).hometeam, dark_mode)"></MudImage>
+                        <ThemeLogo TeamName="@(((CustomItem)context).awayteam)" Class="rounded-lg" Height="25" Width="25" /> @@ <ThemeLogo TeamName="@(((CustomItem)context).hometeam)" Class="rounded-lg" Height="25" Width="25" />
                         <br />
                         @if (((CustomItem)context).broadcasters != null)
                         {
@@ -50,8 +49,6 @@ else
 
 @code {
     private HubConnection? hubConnection;
-
-    private bool dark_mode { get; set; }
 
     private string GetColor(Color color) => $"var(--mud-palette-{color.ToString().ToLowerInvariant()})";
 
@@ -114,23 +111,6 @@ else
         _events = temp_events.DistinctBy(e => e.Text + e.Start).ToList();
 
         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (localStorage.ContainKey("CurrentMode"))
-            {
-                dark_mode = localStorage.GetItem<bool>("CurrentMode");
-            }
-            else
-            {
-                localStorage.SetItem("CurrentMode", false);
-            }
-
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-        }
     }
 
     private string ToAmPm(DateTime dateTime)

@@ -1,5 +1,6 @@
 ﻿@rendermode InteractiveServer
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime JS
 
 
 <MudThemeProvider @bind-IsDarkMode="@is_dark_mode" Theme="MyCustomTheme" />
@@ -69,6 +70,7 @@
                 await localStorage.SetItemAsync("CurrentMode", false).ConfigureAwait(false);
             }
 
+            await JS.InvokeVoidAsync("nlwestTheme.setDarkMode", is_dark_mode).ConfigureAwait(false);
             await InvokeAsync(StateHasChanged).ConfigureAwait(false);
         }
     }
@@ -80,5 +82,6 @@
         // var test = await localStorage.GetItemAsync<bool>("CurrentMode");
 
         await localStorage.SetItemAsync("CurrentMode", is_dark_mode).ConfigureAwait(false);
+        await JS.InvokeVoidAsync("nlwestTheme.setDarkMode", is_dark_mode).ConfigureAwait(false);
     }
 }

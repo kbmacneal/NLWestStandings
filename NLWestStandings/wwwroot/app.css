@@ -101,6 +101,35 @@ body {
     cursor: pointer;
 }
 
+.theme-logo-wrap {
+    display: inline-flex;
+    align-items: center;
+}
+
+.theme-logo-wrap .theme-logo-dark {
+    display: none;
+}
+
+.app-dark-mode .theme-logo-wrap .theme-logo-light {
+    display: none;
+}
+
+.app-dark-mode .theme-logo-wrap .theme-logo-dark {
+    display: inline-flex;
+}
+
+.mud-theme-dark .theme-logo-wrap .theme-logo-light {
+    display: none;
+}
+
+.mud-theme-dark .theme-logo-wrap .theme-logo-dark {
+    display: inline-flex;
+}
+
+.theme-logo-clickable {
+    cursor: pointer;
+}
+
 .standings-mobile-metrics {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

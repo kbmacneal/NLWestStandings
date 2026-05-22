@@ -1,0 +1,49 @@
+@using NLWestStandings.Client.Classes
+
+@if (ShouldRenderLogo)
+{
+    <span class="@ContainerClass" @onclick="HandleClick">
+        <MudImage Alt="@ResolvedAlt" Class="@($"{Class} theme-logo-light")" Height="@Height" Width="@Width" Src="@LightSrc"></MudImage>
+        <MudImage Alt="@ResolvedAlt" Class="@($"{Class} theme-logo-dark")" Height="@Height" Width="@Width" Src="@DarkSrc"></MudImage>
+    </span>
+}
+
+@code {
+    [Parameter]
+    public string? TeamName { get; set; }
+
+    [Parameter]
+    public string? Alt { get; set; }
+
+    [Parameter]
+    public int? Height { get; set; } = 25;
+
+    [Parameter]
+    public int? Width { get; set; } = 25;
+
+    [Parameter]
+    public string Class { get; set; } = "rounded-lg";
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private string LightSrc => SVGLogo.GetLogo(TeamName, false);
+
+    private string DarkSrc => SVGLogo.GetLogo(TeamName, true);
+
+    private bool ShouldRenderLogo => !string.IsNullOrWhiteSpace(LightSrc) || !string.IsNullOrWhiteSpace(DarkSrc);
+
+    private string ResolvedAlt => string.IsNullOrWhiteSpace(Alt) ? $"{TeamName} logo" : Alt;
+
+    private string ContainerClass => OnClick.HasDelegate ? "theme-logo-wrap theme-logo-clickable" : "theme-logo-wrap";
+
+    private Task HandleClick()
+    {
+        if (!OnClick.HasDelegate)
+        {
+            return Task.CompletedTask;
+        }
+
+        return OnClick.InvokeAsync();
+    }
+}

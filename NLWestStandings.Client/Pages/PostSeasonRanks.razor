@@ -11,7 +11,6 @@
 @using System.Web
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
-@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 
 <PageTitle>PostSeason Ranks</PageTitle>
@@ -41,13 +40,12 @@
                         <RowTemplate>
                             <MudTd DataLabel="Rank">@context.league_rank</MudTd>
                             <MudTd>
-                                <MudImage Alt="@($"{context.team_name} logo")" Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
+                                <ThemeLogo Alt="@($"{context.team_name} logo")" TeamName="@context.team_name" Class="rounded-lg" Height="50" Width="50" />@if (context.best_record)
                                 {
-                                    <MudImage Alt="Best record indicator" Src="crown_l.svg" Height="25" Width="25"></MudImage>
-                                }
-                                else if (context.best_record && !dark_mode)
-                                {
-                                    <MudImage Alt="Best record indicator" Src="crown.svg" Height="25" Width="25"></MudImage>
+                                    <span class="theme-logo-wrap">
+                                        <MudImage Alt="Best record indicator" Class="theme-logo-light" Src="crown.svg" Height="25" Width="25"></MudImage>
+                                        <MudImage Alt="Best record indicator" Class="theme-logo-dark" Src="crown_l.svg" Height="25" Width="25"></MudImage>
+                                    </span>
                                 }
                             </MudTd>
                             <MudTd DataLabel="Win/Loss">@context.wins - @context.losses</MudTd>
@@ -84,13 +82,12 @@
                         <RowTemplate>
                             <MudTd DataLabel="Rank">@context.league_rank</MudTd>
                             <MudTd>
-                                <MudImage Alt="@($"{context.team_name} logo")" Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
+                                <ThemeLogo Alt="@($"{context.team_name} logo")" TeamName="@context.team_name" Class="rounded-lg" Height="50" Width="50" />@if (context.best_record)
                                 {
-                                    <MudImage Alt="Best record indicator" Src="crown_l.svg" Height="25" Width="25"></MudImage>
-                                }
-                                else if (context.best_record && !dark_mode)
-                                {
-                                    <MudImage Alt="Best record indicator" Src="crown.svg" Height="25" Width="25"></MudImage>
+                                    <span class="theme-logo-wrap">
+                                        <MudImage Alt="Best record indicator" Class="theme-logo-light" Src="crown.svg" Height="25" Width="25"></MudImage>
+                                        <MudImage Alt="Best record indicator" Class="theme-logo-dark" Src="crown_l.svg" Height="25" Width="25"></MudImage>
+                                    </span>
                                 }
                             </MudTd>
                             <MudTd DataLabel="Win/Loss">@context.wins - @context.losses</MudTd>
@@ -114,7 +111,6 @@
     private HubConnection? hubConnection;
     private List<PSRank>? NLRanks { get; set; }
     private List<PSRank>? ALRanks { get; set; }
-    private bool dark_mode { get; set; }
 
     private class PSRank
     {
@@ -194,23 +190,6 @@
         }
 
         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (localStorage.ContainKey("CurrentMode"))
-            {
-                dark_mode = localStorage.GetItem<bool>("CurrentMode");
-            }
-            else
-            {
-                localStorage.SetItem("CurrentMode", false);
-            }
-
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-        }
     }
 
     private string RowStyleFunc(PSRank arg1, int index)

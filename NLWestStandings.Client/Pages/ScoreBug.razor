@@ -6,7 +6,6 @@
 @using StatsAPI
 @using Websocket.Client
 @implements IAsyncDisposable;
-@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 @inject StatsAPI.Client client
 
 <style>
@@ -51,7 +50,7 @@
 
         @if (probableHome is not null && probableAway is not null)
         {
-            <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> @probableHome.FullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> @probableAway.FullName</MudText>
+            <MudText Class="m-auto" Typo="Typo.h5"><ThemeLogo TeamName="@hometeam" Class="rounded-lg" Height="25" Width="25" /> @probableHome.FullName vs. <ThemeLogo TeamName="@awayteam" Class="rounded-lg" Height="25" Width="25" /> @probableAway.FullName</MudText>
         }
         else
         {
@@ -86,7 +85,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <th scope="row" class="table_cell"><MudImage Alt="@($"{awayteam} logo")" Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage></th>
+                    <th scope="row" class="table_cell"><ThemeLogo Alt="@($"{awayteam} logo")" TeamName="@awayteam" Class="rounded-lg" Height="25" Width="25" /></th>
                     @foreach (var inning in innings)
                     {
                         <td class="table_cell">@(inning.Away?.Runs ?? 0)</td>
@@ -97,7 +96,7 @@
                     <td class="table_cell">@(awayTotals?.LeftOnBase ?? 0)</td>
                 </tr>
                 <tr>
-                    <th scope="row" class="table_cell"><MudImage Alt="@($"{hometeam} logo")" Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage></th>
+                    <th scope="row" class="table_cell"><ThemeLogo Alt="@($"{hometeam} logo")" TeamName="@hometeam" Class="rounded-lg" Height="25" Width="25" /></th>
                     @foreach (var inning in innings)
                     {
                         <td class="table_cell">@(inning.Home?.Runs ?? 0)</td>
@@ -141,8 +140,6 @@ else
     private WebsocketClient? _client { get; set; }
 
     private string _message = "Gameday5";
-
-    private bool dark_mode { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -204,23 +201,6 @@ else
 
 
         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (localStorage.ContainKey("CurrentMode"))
-            {
-                dark_mode = localStorage.GetItem<bool>("CurrentMode");
-            }
-            else
-            {
-                localStorage.SetItem("CurrentMode", false);
-            }
-
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-        }
     }
 
     public async ValueTask DisposeAsync()

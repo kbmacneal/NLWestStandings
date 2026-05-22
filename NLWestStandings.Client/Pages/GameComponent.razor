@@ -18,7 +18,6 @@
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
 @implements IAsyncDisposable;
-@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 <style>
     .table {
@@ -57,7 +56,7 @@
 
             @if (playByPlay.gameData.probablePitchers.home is not null && playByPlay.gameData.probablePitchers.away is not null)
             {
-                <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> @playByPlay.gameData.probablePitchers.home.fullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
+                <MudText Class="m-auto" Typo="Typo.h5"><ThemeLogo TeamName="@hometeam" Class="rounded-lg" Height="25" Width="25" /> @playByPlay.gameData.probablePitchers.home.fullName vs. <ThemeLogo TeamName="@awayteam" Class="rounded-lg" Height="25" Width="25" /> @playByPlay.gameData.probablePitchers.away.fullName</MudText>
             }
             else
             {
@@ -96,7 +95,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row" class="table_cell"><MudImage Alt="@($"{awayteam} logo")" Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage></th>
+                            <th scope="row" class="table_cell"><ThemeLogo Alt="@($"{awayteam} logo")" TeamName="@awayteam" Class="rounded-lg" Height="25" Width="25" /></th>
                             @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
                             {
                                 <td class="table_cell">@inning.away.runs</td>
@@ -107,7 +106,7 @@
                             <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
                         </tr>
                         <tr>
-                            <th scope="row" class="table_cell"><MudImage Alt="@($"{hometeam} logo")" Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage></th>
+                            <th scope="row" class="table_cell"><ThemeLogo Alt="@($"{hometeam} logo")" TeamName="@hometeam" Class="rounded-lg" Height="25" Width="25" /></th>
                             @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
                             {
                                 <td class="table_cell">@inning.home.runs</td>
@@ -235,7 +234,7 @@
                         @if (context.about.halfInning == "top")
                         {
                             <MudTd Class="align-content-center">
-                                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage>
+                                <ThemeLogo TeamName="@hometeam" Class="rounded-lg" Height="25" Width="25" />
 
                                 @context.matchup.pitcher.fullName
                             </MudTd>
@@ -243,7 +242,7 @@
                         else
                         {
                             <MudTd Class="align-content-center">
-                                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage>
+                                <ThemeLogo TeamName="@awayteam" Class="rounded-lg" Height="25" Width="25" />
 
                                 @context.matchup.pitcher.fullName
                             </MudTd>
@@ -252,7 +251,7 @@
                         @if (context.about.halfInning == "top")
                         {
                             <MudTd Class="align-content-center">
-                                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage>
+                                <ThemeLogo TeamName="@awayteam" Class="rounded-lg" Height="25" Width="25" />
 
                                 @context.matchup.batter.fullName
                             </MudTd>
@@ -260,7 +259,7 @@
                         else
                         {
                             <MudTd Class="align-content-center">
-                                <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage>
+                                <ThemeLogo TeamName="@hometeam" Class="rounded-lg" Height="25" Width="25" />
 
                                 @context.matchup.batter.fullName
                             </MudTd>
@@ -309,8 +308,6 @@
     private string? awayteam { get; set; }
 
     private string pbpsearchstring = "";
-
-    private bool dark_mode { get; set; }
 
     private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
@@ -621,23 +618,6 @@
         if (element.result.description.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
 
         return false;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (localStorage.ContainKey("CurrentMode"))
-            {
-                dark_mode = localStorage.GetItem<bool>("CurrentMode");
-            }
-            else
-            {
-                localStorage.SetItem("CurrentMode", false);
-            }
-
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-        }
     }
 
     public async ValueTask DisposeAsync()
