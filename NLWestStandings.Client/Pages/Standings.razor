@@ -17,7 +17,7 @@
 
 @if (NLStandings is not null && NLStandings.Count() != 0)
 {
-    <MudTabs Rounded="true" PanelClass="pa-6">
+    <MudTabs Rounded="true" Class="pa-6">
         @foreach (var item in NLStandings.Reverse())
         {
             <MudTabPanel Text="@item.First().division_name">
@@ -66,7 +66,7 @@ else
 
 @if (ALStandings is not null && ALStandings.Count() != 0)
 {
-    <MudTabs Rounded="true" PanelClass="pa-6">
+    <MudTabs Rounded="true" Class="pa-6">
         @foreach (var item in ALStandings.Reverse())
         {
             <MudTabPanel Text="@item.First().division_name">

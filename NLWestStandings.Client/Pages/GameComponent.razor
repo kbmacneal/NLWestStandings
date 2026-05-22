@@ -120,7 +120,7 @@
         {
             @if (lineupObject is not null)
             {
-                <MudTabs Rounded="true" PanelClass="pa-6">
+                <MudTabs Rounded="true" Class="pa-6">
                     <MudTabPanel Text="Home Lineups">
                         <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" T="Homeplayer" Items="@lineupObject.dates[0].games[0].lineups.homePlayers">
                             <ToolBarContent>
@@ -154,7 +154,7 @@
         }
         else
         {
-            <MudTabs Rounded="true" PanelClass="pa-6">
+            <MudTabs Rounded="true" Class="pa-6">
                 <MudTabPanel Text="Home Stats">
                     <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" T="DepthChartDTO" Items="homedepthChart">
                         <ToolBarContent>
@@ -274,7 +274,7 @@
     @if (playByPlay?.gameData.status.abstractGameCode == "L")
     {
         <MudItem lg="4" sm="12" Class="d-flex flex-column flex-grow-1">
-            <MudTabs Rounded="true" PanelClass="pa-6">
+            <MudTabs Rounded="true" Class="pa-6">
                 <MudTabPanel Text="Home Roster">
                     <Roster ShowTransactions="false" Hidden="false" teamid="@playByPlay.gameData.teams.home.id.ToString()"></Roster>
                 </MudTabPanel>

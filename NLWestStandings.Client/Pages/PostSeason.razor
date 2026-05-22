@@ -28,7 +28,7 @@
 
                     <MudLink Style="color: #ffffff;"
                              Typo="Typo.body1"
-                             Align="Align.Center"
+                             Class="d-flex flex-column align-center"
                              OnClick="@(() => GoToGame(((CustomItem)context).gamepk))">
 
                         <MudText>@(((CustomItem)context).Text)</MudText>
@@ -69,7 +69,7 @@ else
 }
 
 @code {
-    private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
+    private string GetColor(Color color) => $"var(--mud-palette-{color.ToString().ToLowerInvariant()})";
 
     List<Game>? calendar_data { get; set; }
 

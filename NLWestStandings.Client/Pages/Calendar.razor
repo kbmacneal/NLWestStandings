@@ -24,7 +24,7 @@
 
                     <MudLink Style="color: #ffffff;"
                              Typo="Typo.body1"
-                             Align="Align.Center"
+                             Class="d-flex flex-column align-center"
                              OnClick="@(() => GoToGame(((CustomItem)context).gamepk,((CustomItem)context).hometeam, ((CustomItem)context).awayteam))">
                         <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(((CustomItem)context).awayteam, dark_mode)"></MudImage> @@ <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(((CustomItem)context).hometeam, dark_mode)"></MudImage>
                         <br />
@@ -51,7 +51,7 @@ else
 
     private bool dark_mode { get; set; }
 
-    private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
+    private string GetColor(Color color) => $"var(--mud-palette-{color.ToString().ToLowerInvariant()})";
 
     [Parameter]
     public string teamid { get; set; }
