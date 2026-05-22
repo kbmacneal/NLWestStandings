@@ -51,8 +51,9 @@ namespace NLWestStandings.Classes
                 var standings = scope.ServiceProvider.GetRequiredService<StandingsService>();
 
                 var rtn = new List<Game>(); ;
+                var dates = standings.calendar?.dates ?? [];
 
-                foreach (var item in standings.calendar.dates)
+                foreach (var item in dates)
                 {
                     foreach (var game in item.games)
                     {

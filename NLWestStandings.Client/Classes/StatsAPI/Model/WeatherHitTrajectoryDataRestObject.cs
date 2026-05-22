@@ -15,7 +15,7 @@ namespace IO.Swagger.Model
         /// </summary>
         [DataMember(Name = "copyright", EmitDefaultValue = false)]
         [JsonProperty(PropertyName = "copyright")]
-        public string Copyright { get; set; }
+        public new string Copyright { get; set; }
 
         /// <summary>
         /// Polynomial describing x position of the ball's hit trajectory.
@@ -23,7 +23,7 @@ namespace IO.Swagger.Model
         /// <value>Polynomial describing x position of the ball's hit trajectory.</value>
         [DataMember(Name = "trajectoryPolynomialX", EmitDefaultValue = false)]
         [JsonProperty(PropertyName = "trajectoryPolynomialX")]
-        public List<double?> TrajectoryPolynomialX { get; set; }
+        public new List<double?> TrajectoryPolynomialX { get; set; }
 
         /// <summary>
         /// Polynomial describing y position of the ball's hit trajectory.
@@ -31,7 +31,7 @@ namespace IO.Swagger.Model
         /// <value>Polynomial describing y position of the ball's hit trajectory.</value>
         [DataMember(Name = "trajectoryPolynomialY", EmitDefaultValue = false)]
         [JsonProperty(PropertyName = "trajectoryPolynomialY")]
-        public List<double?> TrajectoryPolynomialY { get; set; }
+        public new List<double?> TrajectoryPolynomialY { get; set; }
 
         /// <summary>
         /// Polynomial describing z position of the ball's hit trajectory.
@@ -39,7 +39,7 @@ namespace IO.Swagger.Model
         /// <value>Polynomial describing z position of the ball's hit trajectory.</value>
         [DataMember(Name = "trajectoryPolynomialZ", EmitDefaultValue = false)]
         [JsonProperty(PropertyName = "trajectoryPolynomialZ")]
-        public List<double?> TrajectoryPolynomialZ { get; set; }
+        public new List<double?> TrajectoryPolynomialZ { get; set; }
 
         /// <summary>
         /// Gets or Sets WindSpeed

@@ -6,12 +6,12 @@
 <MudThemeProvider @bind-IsDarkMode="@is_dark_mode" Theme="MyCustomTheme" />
 
 <MudAppBar Color="Color.Primary" Elevation="0" Dense="true" Class="app-topbar">
-    <MudIconButton AriaLabel="Open navigation menu" Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+    <MudIconButton aria-label="Open navigation menu" Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
     <div class="ml-3">
         <MudText Typo="Typo.h6">NL West Dashboard</MudText>
         <MudText Typo="Typo.caption" Class="app-topbar-subtitle">Standings, schedules, and game-day context</MudText>
     </div>
-    <MudIconButton AriaLabel="Toggle dark mode" Class="ml-auto" Icon="@(is_dark_mode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" Color="Color.Inherit" OnClick="@((e) => ToggleLightMode())"></MudIconButton>
+    <MudIconButton aria-label="Toggle dark mode" Class="ml-auto" Icon="@(is_dark_mode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" Color="Color.Inherit" OnClick="@((e) => ToggleLightMode())"></MudIconButton>
 </MudAppBar>
 <MudDrawerContainer>
     <MudDrawer @bind-Open="@_drawerOpen" Elevation="0" Variant="@DrawerVariant.Temporary" Anchor="Anchor.Start" ClipMode="DrawerClipMode.Always" Overlay="true" Color="Color.Primary" Class="app-drawer">
