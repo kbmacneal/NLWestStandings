@@ -2,10 +2,12 @@
 
 <MudProviders></MudProviders>
 
-<MudLayout>
+<MudLayout Class="app-shell">
     <Drawer />
-    <MudMainContent Class="mt-16 pa-4">
-        @Body
+    <MudMainContent Class="app-main">
+        <div class="app-page-wrap">
+            @Body
+        </div>
     </MudMainContent>
 </MudLayout>
 

@@ -4,6 +4,7 @@ using MudBlazor.Services;
 using NLWestStandings.Classes;
 using NLWestStandings.Components;
 using Serilog;
+using Serilog.Context;
 
 namespace NLWestStandings
 {
@@ -17,9 +18,20 @@ namespace NLWestStandings
                 builder.AddServiceDefaults();
 
                 Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Debug()
-                    .WriteTo.Async(e => e.Console())
-                    .CreateLogger();
+                    .ReadFrom.Configuration(builder.Configuration)
+                    .Enrich.FromLogContext()
+                    .CreateBootstrapLogger();
+
+                builder.Host.UseSerilog((context, services, configuration) =>
+                {
+                    configuration
+                        .ReadFrom.Configuration(context.Configuration)
+                        .ReadFrom.Services(services)
+                        .Enrich.FromLogContext()
+                        .Enrich.WithProperty("Application", "NLWestStandings")
+                        .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
+                        .Enrich.WithProperty("CorrelationId", "-");
+                });
 
                 // Add services to the container.
                 builder.Services.AddRazorComponents()
@@ -51,19 +63,65 @@ namespace NLWestStandings
                 builder.Services.AddSingleton(
                     typeof(StatsAPI.Client), o =>
                     {
-                        return new StatsAPI.Client(new HttpClient());
+                        var statsClient = new StatsAPI.Client(new HttpClient())
+                        {
+                            ReadResponseAsString = true
+                        };
+
+                        return statsClient;
                     });
 
                 builder.Services.AddSingleton<StandingsService>();
                 builder.Services.AddSingleton<IHostedService>(p => p.GetRequiredService<StandingsService>());
 
-                builder.Services.AddSerilog();
-
                 var app = builder.Build();
 
                 app.MapDefaultEndpoints();
 
-                app.UseSerilogRequestLogging();
+                app.Use(async (httpContext, next) =>
+                {
+                    const string CorrelationHeaderName = "X-Correlation-ID";
+
+                    var correlationId = httpContext.Request.Headers.TryGetValue(CorrelationHeaderName, out var incomingCorrelation)
+                        && !string.IsNullOrWhiteSpace(incomingCorrelation)
+                        ? incomingCorrelation.ToString()
+                        : Guid.NewGuid().ToString("n");
+
+                    httpContext.TraceIdentifier = correlationId;
+                    httpContext.Response.Headers[CorrelationHeaderName] = correlationId;
+
+                    using (LogContext.PushProperty("CorrelationId", correlationId))
+                    {
+                        await next().ConfigureAwait(false);
+                    }
+                });
+
+                app.UseSerilogRequestLogging(options =>
+                {
+                    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+                    {
+                        diagnosticContext.Set("CorrelationId", httpContext.TraceIdentifier);
+                        diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value ?? string.Empty);
+                        diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
+                        diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent.ToString());
+                        diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty);
+                    };
+
+                    options.GetLevel = (httpContext, elapsed, ex) =>
+                    {
+                        if (ex is not null || httpContext.Response.StatusCode >= 500)
+                        {
+                            return Serilog.Events.LogEventLevel.Error;
+                        }
+
+                        if (httpContext.Response.StatusCode >= 400)
+                        {
+                            return Serilog.Events.LogEventLevel.Warning;
+                        }
+
+                        return Serilog.Events.LogEventLevel.Information;
+                    };
+                });
 
                 // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())
@@ -85,12 +143,17 @@ namespace NLWestStandings
 
                 app.UseStaticFiles();
                 app.UseAntiforgery();
+                app.MapStaticAssets();
+
+                app.MapGet("/", () => Results.Redirect("/standings", permanent: false));
+                app.MapGet("/home", () => Results.Redirect("/standings", permanent: false));
 
                 app.MapRazorComponents<App>()
                     .AddInteractiveServerRenderMode()
                     .AddInteractiveWebAssemblyRenderMode()
                     .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
 
+                Log.Information("Starting web application");
                 app.Run();
             }
             catch (Exception ex)

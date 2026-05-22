@@ -37,8 +37,10 @@
 
 
 <PageTitle>Line Score</PageTitle>
+<MudText Typo="Typo.h4" HtmlTag="h1" Class="app-page-header">Game Details</MudText>
+<MudText Typo="Typo.subtitle2" Class="app-page-subtitle">Live line score, matchup context, and play-by-play feed.</MudText>
 
-<MudGrid>
+<MudGrid Class="mobile-stack-gap">
     <MudItem lg="7" sm="12">
         @if (playByPlay is not null)
         {
@@ -76,39 +78,48 @@
                 <MudText Class="m-auto" Typo="Typo.h5">First Patch At @local_start</MudText>
             }
 
-            <table>
-                <th class="table_cell">Inning</th>
-                @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
-                {
-                    <th class="table_cell">@inning.num</th>
-                }
-                <th class="table_cell">Runs</th>
-                <th class="table_cell">Hits</th>
-                <th class="table_cell">Errors</th>
-                <th class="table_cell">LoB</th>
-                <tr>
-                    <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> </td>
-                    @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
-                    {
-                        <td class="table_cell">@inning.away.runs</td>
-                    }
-                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.runs</td>
-                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.hits</td>
-                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.errors</td>
-                    <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
-                </tr>
-                <tr>
-                    <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> </td>
-                    @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
-                    {
-                        <td class="table_cell">@inning.home.runs</td>
-                    }
-                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.runs</td>
-                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.hits</td>
-                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.errors</td>
-                    <td class="table_cell">@playByPlay.liveData.linescore.teams.home.leftOnBase</td>
-                </tr>
-            </table>
+            <div class="responsive-table-wrap app-card pa-2">
+                <table>
+                    <caption class="sr-only">Line score by inning</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="table_cell">Inning</th>
+                            @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+                            {
+                                <th scope="col" class="table_cell">@inning.num</th>
+                            }
+                            <th scope="col" class="table_cell">Runs</th>
+                            <th scope="col" class="table_cell">Hits</th>
+                            <th scope="col" class="table_cell">Errors</th>
+                            <th scope="col" class="table_cell">LoB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row" class="table_cell"><MudImage Alt="@($"{awayteam} logo")" Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage></th>
+                            @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+                            {
+                                <td class="table_cell">@inning.away.runs</td>
+                            }
+                            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.runs</td>
+                            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.hits</td>
+                            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.errors</td>
+                            <td class="table_cell">@playByPlay.liveData.linescore.teams.away.leftOnBase</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="table_cell"><MudImage Alt="@($"{hometeam} logo")" Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage></th>
+                            @foreach (var inning in @playByPlay.liveData.linescore.innings.OrderBy(e => e.num))
+                            {
+                                <td class="table_cell">@inning.home.runs</td>
+                            }
+                            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.runs</td>
+                            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.hits</td>
+                            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.errors</td>
+                            <td class="table_cell">@playByPlay.liveData.linescore.teams.home.leftOnBase</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         }
         else
         {
@@ -120,7 +131,7 @@
         {
             @if (lineupObject is not null)
             {
-                <MudTabs Rounded="true" Class="pa-6">
+                <MudTabs Rounded="true" Class="pa-4 app-card">
                     <MudTabPanel Text="Home Lineups">
                         <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" T="Homeplayer" Items="@lineupObject.dates[0].games[0].lineups.homePlayers">
                             <ToolBarContent>
@@ -154,7 +165,7 @@
         }
         else
         {
-            <MudTabs Rounded="true" Class="pa-6">
+            <MudTabs Rounded="true" Class="pa-4 app-card">
                 <MudTabPanel Text="Home Stats">
                     <MudDataGrid SortMode="@SortMode.None" Striped="true" Dense="true" T="DepthChartDTO" Items="homedepthChart">
                         <ToolBarContent>
@@ -186,11 +197,11 @@
 
 <MudDivider DividerType="DividerType.Middle" Class="my-6" />
 
-<MudGrid>
+<MudGrid Class="mobile-stack-gap">
     @if (playByPlay is not null)
     {
-        <MudItem lg="@(playByPlay?.gameData.status.abstractGameCode == "L" ? 8 : 12)" sm="12">
-            <MudPaper>
+        <MudItem lg="@(IsLiveGame() ? 8 : 12)" sm="12">
+            <MudPaper Class="app-card pa-2">
                 <MudText Typo="Typo.h5">Game Feed</MudText>
                 <MudDivider DividerType="DividerType.FullWidth"></MudDivider>
                 <MudTable Virtualize="true" Items="@playByPlay.liveData.plays.allPlays.OrderByDescending(e=>e.about.startTime)" Hover="true" Breakpoint="Breakpoint.Sm" Filter="new Func<Allplay,bool>(FilterFunc1)">
@@ -293,7 +304,7 @@
 
     [Parameter]
     [SupplyParameterFromQuery(Name = "gamepk")]
-    public string gamepk { get; set; }
+    public string gamepk { get; set; } = string.Empty;
     private string? hometeam { get; set; }
     private string? awayteam { get; set; }
 
@@ -328,8 +339,8 @@
 
     private LineupObject? lineupObject { get; set; }
 
-    private string _homesearchString;
-    private string _awaysearchString;
+    private string _homesearchString = string.Empty;
+    private string _awaysearchString = string.Empty;
     private List<string> _events = new();
     // custom sort by name length
     private Func<DepthChartDTO, object> _sortBy => x =>
@@ -367,8 +378,18 @@
         return false;
     };
 
+    private bool IsLiveGame()
+    {
+        return string.Equals(playByPlay?.gameData?.status?.abstractGameCode?.ToString(), "L", StringComparison.OrdinalIgnoreCase);
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        if (!OperatingSystem.IsBrowser())
+        {
+            return;
+        }
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
             .Build();
@@ -464,7 +485,6 @@
                 }
                 else
                 {
-                    var t = "";
                 }
 
                 if (awaydepthChart?.Where(e => e.name == play.person.fullName).Count() > 0)

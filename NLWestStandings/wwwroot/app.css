@@ -18,3 +18,179 @@
     --bs-nav-link-color: var(--mud-palette-primary) !important;
     --bs-nav-link-hover-color: var(--mud-palette-primary-darken) !important;
 }
+
+:root {
+    --app-surface-glass: color-mix(in srgb, var(--mud-palette-surface) 88%, transparent);
+    --app-shadow-soft: 0 10px 30px rgba(3, 24, 39, 0.12);
+    --app-radius-lg: 16px;
+}
+
+body {
+    background:
+        radial-gradient(circle at 0% 0%, rgba(0, 90, 156, 0.18) 0%, rgba(0, 90, 156, 0) 45%),
+        radial-gradient(circle at 100% 0%, rgba(0, 140, 255, 0.12) 0%, rgba(0, 140, 255, 0) 35%),
+        var(--mud-palette-background);
+}
+
+.app-main {
+    margin-top: 72px;
+    padding: 1rem;
+}
+
+.app-page-wrap {
+    width: min(1280px, 100%);
+    margin: 0 auto;
+}
+
+.app-topbar {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(20, 34, 52, 0.12);
+}
+
+.app-topbar-subtitle {
+    opacity: 0.82;
+}
+
+.app-drawer {
+    border-right: 1px solid rgba(20, 34, 52, 0.16);
+}
+
+.app-page-header {
+    margin: 0 0 1rem 0;
+    letter-spacing: 0.2px;
+}
+
+.app-page-subtitle {
+    margin: 0 0 1.5rem 0;
+    color: var(--mud-palette-text-secondary);
+}
+
+.app-card {
+    border-radius: var(--app-radius-lg);
+    box-shadow: var(--app-shadow-soft);
+    background: var(--app-surface-glass);
+}
+
+.standings-tabs {
+    margin-bottom: 1.25rem;
+}
+
+.standings-mobile-list {
+    display: grid;
+    gap: 0.625rem;
+}
+
+.standings-mobile-card {
+    border-radius: 14px;
+    border: 1px solid rgba(20, 34, 52, 0.2);
+    background: rgba(255, 255, 255, 0.24);
+}
+
+.standings-mobile-top {
+    margin-bottom: 0.5rem;
+}
+
+.standings-rank-chip {
+    min-width: 2.25rem;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.standings-team-logo {
+    cursor: pointer;
+}
+
+.standings-mobile-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem 0.75rem;
+}
+
+.standings-mobile-metrics .metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.2rem 0;
+    border-bottom: 1px dashed rgba(20, 34, 52, 0.16);
+}
+
+.standings-mobile-metrics .metric span {
+    color: var(--mud-palette-text-secondary);
+    font-size: 0.78rem;
+}
+
+.standings-mobile-metrics .metric strong {
+    font-size: 0.88rem;
+    font-weight: 650;
+}
+
+.responsive-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.responsive-table-wrap table {
+    min-width: 760px;
+}
+
+.mobile-stack-gap {
+    row-gap: 1rem;
+}
+
+.not-found-shell {
+    min-height: 60vh;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.not-found-shell p {
+    max-width: 46ch;
+    color: var(--mud-palette-text-secondary);
+    margin: 0;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (max-width: 960px) {
+    .app-main {
+        margin-top: 64px;
+        padding: 0.75rem;
+    }
+
+    .app-page-header {
+        font-size: 1.5rem;
+    }
+
+    .app-page-subtitle {
+        margin-bottom: 1rem;
+    }
+
+    .responsive-table-wrap table {
+        min-width: 680px;
+    }
+
+    .standings-mobile-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 600px) and (max-width: 959.98px) {
+    .standings-mobile-metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

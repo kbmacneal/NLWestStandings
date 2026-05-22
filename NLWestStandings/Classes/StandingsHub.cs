@@ -8,26 +8,29 @@ namespace NLWestStandings.Classes
     {
         public async Task SendMessage(string message)
         {
+            logger.LogDebug("Broadcasting message to all clients. Length: {MessageLength}", message?.Length ?? 0);
             await Clients.All.SendAsync("broadcast", message).ConfigureAwait(false);
         }
 
-        public async Task<string> BroadcastNLToConnection(string connectionId)
+        public Task<string> BroadcastNLToConnection(string connectionId)
         {
             using (var scope = services.CreateScope())
             {
                 var standings = scope.ServiceProvider.GetRequiredService<StandingsService>();
+                logger.LogDebug("NL standings requested by connection {ConnectionId}", connectionId);
 
-                return System.Text.Json.JsonSerializer.Serialize(standings.NLStandings);
+                return Task.FromResult(System.Text.Json.JsonSerializer.Serialize(standings.NLStandings));
             }
         }
 
-        public async Task<string> BroadcastALToConnection(string connectionId)
+        public Task<string> BroadcastALToConnection(string connectionId)
         {
             using (var scope = services.CreateScope())
             {
                 var standings = scope.ServiceProvider.GetRequiredService<StandingsService>();
+                logger.LogDebug("AL standings requested by connection {ConnectionId}", connectionId);
 
-                return System.Text.Json.JsonSerializer.Serialize(standings.ALStandings);
+                return Task.FromResult(System.Text.Json.JsonSerializer.Serialize(standings.ALStandings));
             }
         }
 
@@ -41,7 +44,7 @@ namespace NLWestStandings.Classes
         //    }
         //}
 
-        public async Task<string> GetCalendar(string connectionId, string teamid)
+        public Task<string> GetCalendar(string connectionId, string teamid)
         {
             using (var scope = services.CreateScope())
             {
@@ -60,11 +63,12 @@ namespace NLWestStandings.Classes
                     }
                 }
 
-                return System.Text.Json.JsonSerializer.Serialize(rtn);
+                logger.LogDebug("Calendar requested by connection {ConnectionId} for team {TeamId}. Returned {GameCount} games", connectionId, teamid, rtn.Count);
+                return Task.FromResult(System.Text.Json.JsonSerializer.Serialize(rtn));
             }
         }
 
-        public async Task<string> GetTodayCalendar(string connectionId)
+        public Task<string> GetTodayCalendar(string connectionId)
         {
             using (var scope = services.CreateScope())
             {
@@ -76,8 +80,29 @@ namespace NLWestStandings.Classes
                     .OrderBy(e => e.gameDate)
                     .ToList();
 
-                return System.Text.Json.JsonSerializer.Serialize(rtn);
+                logger.LogDebug("Today calendar requested by connection {ConnectionId}. Returned {GameCount} games", connectionId, rtn.Count);
+                return Task.FromResult(System.Text.Json.JsonSerializer.Serialize(rtn));
             }
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            logger.LogInformation("Client connected to standings hub: {ConnectionId}", Context.ConnectionId);
+            await base.OnConnectedAsync().ConfigureAwait(false);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            if (exception is null)
+            {
+                logger.LogInformation("Client disconnected from standings hub: {ConnectionId}", Context.ConnectionId);
+            }
+            else
+            {
+                logger.LogWarning(exception, "Client disconnected from standings hub with error: {ConnectionId}", Context.ConnectionId);
+            }
+
+            await base.OnDisconnectedAsync(exception).ConfigureAwait(false);
         }
     }
 }

@@ -19,7 +19,12 @@ builder.Services.AddMudServices(options =>
 builder.Services.AddSingleton(
                     typeof(StatsAPI.Client), o =>
                     {
-                        return new StatsAPI.Client(new HttpClient());
+                        var statsClient = new StatsAPI.Client(new HttpClient())
+                        {
+                            ReadResponseAsString = true
+                        };
+
+                        return statsClient;
                     });
 
 builder.Services.AddMudPopoverService();

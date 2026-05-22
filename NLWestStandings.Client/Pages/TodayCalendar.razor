@@ -6,11 +6,14 @@
 @using NLWestStandings.Client.Classes.Calendar
 @using NLWestStandings.MLB
 @using System.Web
-@rendermode InteractiveWebAssembly
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 <PageTitle>Today's Games</PageTitle>
+<MudPopoverProvider />
+<MudText Typo="Typo.h4" HtmlTag="h1" Class="app-page-header">Daily Game Schedule</MudText>
+<MudText Typo="Typo.subtitle2" Class="app-page-subtitle">Live statuses and quick access to each game feed.</MudText>
 
 @if (calendar_data is not null)
 {
@@ -21,7 +24,7 @@
             <MudItem lg="12" sm="12" xs="12">
                 <MudPaper>
                     <MudItem Class="d-inline-flex">
-                        <MudIconButton Class="pr-4 align-self-center" Icon="@Icons.Material.Filled.PlayCircleFilled"
+                        <MudIconButton AriaLabel="Open game details" Class="pr-4 align-self-center" Icon="@Icons.Material.Filled.PlayCircleFilled"
                                        OnClick="@(() => GoToGame(game.gamePk.ToString(), game.teams.home.team.name, game.teams.away.team.name))"></MudIconButton>
                         <MudText Class="pr-4 align-self-center">@DateTime.SpecifyKind(game.gameDate, DateTimeKind.Utc).ToLocalTime().ToString("MM/dd/yyyy hh:mm tt")</MudText>
                         <MudText Class="pr-4 align-self-center">@game.status.detailedState</MudText>
@@ -52,6 +55,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (!OperatingSystem.IsBrowser())
+        {
+            return;
+        }
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
             .Build();

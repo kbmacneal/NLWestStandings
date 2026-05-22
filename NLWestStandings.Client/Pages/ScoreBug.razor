@@ -24,33 +24,43 @@
     }
 </style>
 
+@{
+    var currentPlay = playByPlay?.LiveData?.Plays?.CurrentPlay;
+    var innings = playByPlay?.LiveData?.Linescore?.Innings?.OrderBy(e => e.Num) ?? Enumerable.Empty<InningRestObject>();
+    var awayTotals = playByPlay?.LiveData?.Linescore?.Teams?.Away;
+    var homeTotals = playByPlay?.LiveData?.Linescore?.Teams?.Home;
+    var probableHome = playByPlay?.GameData?.ProbablePitchers?.Home;
+    var probableAway = playByPlay?.GameData?.ProbablePitchers?.Away;
+    var weather = playByPlay?.GameData?.Weather;
+}
+
 @if (playByPlay is not null)
 {
     @if (showheader)
     {
-        <MudText Class="m-auto" Typo="Typo.h3">@gamename - @playByPlay.GameData.Datetime.OfficialDate.ToString()</MudText>
+        <MudText Class="m-auto" Typo="Typo.h3">@gamename - @(playByPlay.GameData?.Datetime?.OfficialDate.ToString() ?? "N/A")</MudText>
 
-        @if (playByPlay.LiveData.Plays.CurrentPlay is not null)
+        @if (currentPlay is not null)
         {
-            <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(playByPlay.LiveData.Plays.CurrentPlay.About.HalfInning) @playByPlay.LiveData.Plays.CurrentPlay.About.Inning</MudText>
+            <MudText Class="m-auto" Typo="Typo.h5">Current: @myTI.ToTitleCase(currentPlay.About?.HalfInning ?? "") @(currentPlay.About?.Inning ?? 0)</MudText>
         }
         else
         {
             <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
         }
 
-        @if (playByPlay.GameData.ProbablePitchers.Home is not null && playByPlay.GameData.ProbablePitchers.Away is not null)
+        @if (probableHome is not null && probableAway is not null)
         {
-            <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> @playByPlay.GameData.ProbablePitchers.Home.FullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> @playByPlay.GameData.ProbablePitchers.Away.FullName</MudText>
+            <MudText Class="m-auto" Typo="Typo.h5"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> @probableHome.FullName vs. <MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> @probableAway.FullName</MudText>
         }
         else
         {
             <MudText Class="m-auto" Typo="Typo.h5">N/A</MudText>
         }
 
-        @if (playByPlay.GameData.Weather is not null)
+        @if (weather is not null)
         {
-            <MudText Class="m-auto" Typo="Typo.h5">@playByPlay.GameData.Weather.Temp °F, @playByPlay.GameData.Weather.Condition, @playByPlay.GameData.Weather.Wind</MudText>
+            <MudText Class="m-auto" Typo="Typo.h5">@weather.Temp °F, @weather.Condition, @weather.Wind</MudText>
         }
         else
         {
@@ -58,39 +68,48 @@
         }
     }
 
-    <table>
-        <th class="table_cell">Inning</th>
-        @foreach (var inning in @playByPlay.LiveData.Linescore.Innings.OrderBy(e => e.Num))
-        {
-            <th class="table_cell">@inning.Num</th>
-        }
-        <th class="table_cell">Runs</th>
-        <th class="table_cell">Hits</th>
-        <th class="table_cell">Errors</th>
-        <th class="table_cell">LoB</th>
-        <tr>
-            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage> </td>
-            @foreach (var inning in @playByPlay.LiveData.Linescore.Innings.OrderBy(e => e.Num))
-            {
-                <td class="table_cell">@inning.Away.Runs</td>
-            }
-            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Away.Runs</td>
-            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Away.Hits</td>
-            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Away.Errors</td>
-            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Away.LeftOnBase</td>
-        </tr>
-        <tr>
-            <td class="table_cell"><MudImage Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage> </td>
-            @foreach (var inning in @playByPlay.LiveData.Linescore.Innings.OrderBy(e => e.Num))
-            {
-                <td class="table_cell">@inning.Home.Runs</td>
-            }
-            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Home.Runs</td>
-            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Home.Hits</td>
-            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Home.Errors</td>
-            <td class="table_cell">@playByPlay.LiveData.Linescore.Teams.Home.LeftOnBase</td>
-        </tr>
-    </table>
+    <div class="responsive-table-wrap app-card pa-2">
+        <table>
+            <caption class="sr-only">Line score by inning</caption>
+            <thead>
+                <tr>
+                    <th scope="col" class="table_cell">Inning</th>
+                    @foreach (var inning in innings)
+                    {
+                        <th scope="col" class="table_cell">@inning.Num</th>
+                    }
+                    <th scope="col" class="table_cell">Runs</th>
+                    <th scope="col" class="table_cell">Hits</th>
+                    <th scope="col" class="table_cell">Errors</th>
+                    <th scope="col" class="table_cell">LoB</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row" class="table_cell"><MudImage Alt="@($"{awayteam} logo")" Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(awayteam, dark_mode)"></MudImage></th>
+                    @foreach (var inning in innings)
+                    {
+                        <td class="table_cell">@(inning.Away?.Runs ?? 0)</td>
+                    }
+                    <td class="table_cell">@(awayTotals?.Runs ?? 0)</td>
+                    <td class="table_cell">@(awayTotals?.Hits ?? 0)</td>
+                    <td class="table_cell">@(awayTotals?.Errors ?? 0)</td>
+                    <td class="table_cell">@(awayTotals?.LeftOnBase ?? 0)</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="table_cell"><MudImage Alt="@($"{hometeam} logo")" Class="rounded-lg" Height="25" Width="25" Src="@SVGLogo.GetLogo(hometeam, dark_mode)"></MudImage></th>
+                    @foreach (var inning in innings)
+                    {
+                        <td class="table_cell">@(inning.Home?.Runs ?? 0)</td>
+                    }
+                    <td class="table_cell">@(homeTotals?.Runs ?? 0)</td>
+                    <td class="table_cell">@(homeTotals?.Hits ?? 0)</td>
+                    <td class="table_cell">@(homeTotals?.Errors ?? 0)</td>
+                    <td class="table_cell">@(homeTotals?.LeftOnBase ?? 0)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
@@ -103,7 +122,7 @@ else
 
 @code {
     [Parameter]
-    public string gamepk { get; set; }
+    public string gamepk { get; set; } = string.Empty;
     [Parameter]
     public bool showheader { get; set; } = true;
     [Parameter]
@@ -113,7 +132,7 @@ else
 
     public string awayteam { get; set; } = "N/A";
 
-    private string gamename { get; set; }
+    private string gamename { get; set; } = string.Empty;
 
     private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
@@ -135,34 +154,40 @@ else
             return;
         }
 
-        hometeam = playByPlay.GameData.Teams["home"].Name;
-        awayteam = playByPlay.GameData.Teams["away"].Name;
+        var teams = playByPlay.GameData?.Teams;
+        hometeam = teams is not null && teams.TryGetValue("home", out var homeTeam) ? homeTeam?.Name ?? "N/A" : "N/A";
+        awayteam = teams is not null && teams.TryGetValue("away", out var awayTeam) ? awayTeam?.Name ?? "N/A" : "N/A";
 
         gamename = $"{awayteam} @ {hometeam}";
+        var abstractCode = playByPlay?.GameData?.Status?.AdditionalProperties is not null &&
+            playByPlay.GameData.Status.AdditionalProperties.TryGetValue("abstractGameCode", out var abstractCodeValue)
+            ? Convert.ToString(abstractCodeValue)
+            : null;
 
-        if (liverefresh && playByPlay?.GameData.Status.AdditionalProperties["abstractGameCode"] == "L")
+        if (liverefresh && string.Equals(abstractCode, "L", StringComparison.OrdinalIgnoreCase))
         {
             var url = new Uri($"wss://ws.statsapi.mlb.com/api/v1/game/push/subscribe/gameday/{gamepk}");
             _client = new WebsocketClient(url);
+            var socketClient = _client;
 
-            _client.Name = "MLB Gameday";
-            _client.ReconnectTimeout = TimeSpan.FromSeconds(60);
-            _client.ErrorReconnectTimeout = TimeSpan.FromSeconds(30);
-            _client.ReconnectionHappened.Subscribe(info =>
+            socketClient.Name = "MLB Gameday";
+            socketClient.ReconnectTimeout = TimeSpan.FromSeconds(60);
+            socketClient.ErrorReconnectTimeout = TimeSpan.FromSeconds(30);
+            socketClient.ReconnectionHappened.Subscribe(info =>
             {
-                Console.WriteLine($"Reconnection happened, type: {info.Type}, url: {_client.Url}");
-                _client.Send(_message);
+                Console.WriteLine($"Reconnection happened, type: {info.Type}, url: {socketClient.Url}");
+                socketClient.Send(_message);
                 // Log($"Reconnected, type: '{info.Type}'", LogSeverity.Warning);
                 // StateHasChanged();
             });
-            _client.DisconnectionHappened.Subscribe(info =>
+            socketClient.DisconnectionHappened.Subscribe(info =>
             {
                 Console.WriteLine($"Disconnection happened, type: {info.Type}");
                 // Log($"Disconnected, type: '{info.Type}', reason: '{info.CloseStatus}'", LogSeverity.Warning);
                 // StateHasChanged();
             });
 
-            _client.MessageReceived.Subscribe(async msg =>
+            socketClient.MessageReceived.Subscribe(async msg =>
             {
                 Console.WriteLine($"Live update received");
 
@@ -174,7 +199,7 @@ else
                 await InvokeAsync(StateHasChanged).ConfigureAwait(false);
             });
 
-            await _client.Start().ConfigureAwait(false);
+            await socketClient.Start().ConfigureAwait(false);
         }
 
 

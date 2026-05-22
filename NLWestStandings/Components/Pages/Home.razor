@@ -1,13 +1,13 @@
-﻿@page "/"
-@page "/home"
+﻿@page "/legacy-home"
 @inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
 
-@code {
+<p class="sr-only">Redirecting to standings...</p>
 
-    protected override async Task OnInitializedAsync()
+@code {
+    protected override void OnInitialized()
     {
-        NavigationManager.NavigateTo("/standings");
+        NavigationManager.NavigateTo("/standings", replace: true);
     }
 }

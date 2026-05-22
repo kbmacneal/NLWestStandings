@@ -15,13 +15,16 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
+<MudText Typo="Typo.h4" HtmlTag="h1" Class="app-page-header">Team Roster</MudText>
+<MudText Typo="Typo.subtitle2" Class="app-page-subtitle">Depth chart, recent performance, and player availability.</MudText>
+
 <MudGrid>
     <MudItem lg="@(ShowTransactions ? 9 : 12)" sm="12">
-        <MudPaper Class="overflow-auto">
+        <MudPaper Class="overflow-auto app-card pa-2">
             @if (depthChart is not null)
             {
 
-                <MudDataGrid hidden="@Hidden" T="DepthChartDTO" Items="@depthChart" Filterable="true" QuickFilter="@_quickFilter" ColumnResizeMode="ResizeMode.Container">
+                <MudDataGrid hidden="@Hidden" T="DepthChartDTO" Items="@depthChart" Dense="true" Filterable="true" QuickFilter="@_quickFilter" ColumnResizeMode="ResizeMode.Container">
                     <ToolBarContent>
                         <MudText Typo="Typo.h6">Depth Chart</MudText>
                         <MudSpacer />
@@ -99,7 +102,7 @@
     @if (ShowTransactions)
     {
         <MudItem lg="3" sm="12">
-            <MudPaper>
+            <MudPaper Class="app-card pa-2">
                 <TeamTransactions teamid="@teamid"></TeamTransactions>
             </MudPaper>
         </MudItem>
@@ -115,7 +118,7 @@
     private List<DepthChartDTO> depthChart { get; set; } = new();
 
     [Parameter]
-    public string teamid { get; set; }
+    public string teamid { get; set; } = string.Empty;
     [Parameter]
     public bool Hidden { get; set; } = false;
     [Parameter]
@@ -132,14 +135,14 @@
         public string position_code { get; set; } = "";
         public string status { get; set; } = "";
         public string stats { get; set; } = "";
-        public PitchingStats pitchingStats { get; set; }
-        public HittingStats hittingStats { get; set; }
-        public string last_10 { get; set; }
+        public PitchingStats pitchingStats { get; set; } = new();
+        public HittingStats hittingStats { get; set; } = new();
+        public string last_10 { get; set; } = string.Empty;
     }
 
     private static string[] pitcher_list = new string[] { "1", "S", "C" };
 
-    private string _searchString;
+    private string _searchString = string.Empty;
 
     private Func<DepthChartDTO, object> _sortBy => x =>
     {
@@ -221,7 +224,6 @@
             num++;
         }
 
-        var t = "";
     }
 
     private async Task<DepthChart> GetDepthChart(string teamid)

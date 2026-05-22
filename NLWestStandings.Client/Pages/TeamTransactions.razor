@@ -16,20 +16,26 @@
 
 
 <PageTitle>Transactions</PageTitle>
+<MudText Typo="Typo.h4" HtmlTag="h1" Class="app-page-header">Team Transactions</MudText>
+<MudText Typo="Typo.subtitle2" Class="app-page-subtitle">Recent roster moves and transaction notes.</MudText>
 
 @if (transactions is not null)
 {
     <MudText Typo="Typo.h6">Last 20 Transactions</MudText>
-    <MudTable T="Transaction" Items="@transactions.transactions.OrderByDescending(e=>e.date).Take(20)">
-        <HeaderContent>
-            <MudTh>Date</MudTh>
-            <MudTh>Transaction</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Date">@context.date</MudTd>
-            <MudTd DataLabel="Rank">@context.description</MudTd>
-        </RowTemplate>
-    </MudTable>
+    <MudPaper Class="app-card pa-2">
+        <div class="responsive-table-wrap">
+            <MudTable Dense="true" Hover="true" T="Transaction" Items="@transactions.transactions.OrderByDescending(e=>e.date).Take(20)">
+                <HeaderContent>
+                    <MudTh>Date</MudTh>
+                    <MudTh>Transaction</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Date">@context.date</MudTd>
+                    <MudTd DataLabel="Rank">@context.description</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+    </MudPaper>
 }
 else
 {
@@ -38,7 +44,7 @@ else
 
 @code {
     [Parameter]
-    public string teamid { get; set; }
+    public string teamid { get; set; } = string.Empty;
 
     private Transactions? transactions { get; set; }
     private bool dark_mode { get; set; }

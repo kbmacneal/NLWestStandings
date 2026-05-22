@@ -2,15 +2,15 @@
 @rendermode InteractiveServer
 
 <MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit">Home</MudNavLink>
+    <MudNavLink Href="/standings" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit">Home</MudNavLink>
     <MudNavGroup Title="Games" Expanded="true">
-        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Outlined.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("yesterday"))">Yesterday's Games</MudNavLink>
-        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("today"))">Today's Games</MudNavLink>
-        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.TwoTone.CalendarToday" Match="NavLinkMatch.All" OnClick="@(() => GoToDayGame("tomorrow"))">Tomorrow's Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Outlined.CalendarToday" Href="/todaycalendar/yesterday" Match="NavLinkMatch.All">Yesterday's Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.CalendarToday" Href="/todaycalendar/today" Match="NavLinkMatch.All">Today's Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.TwoTone.CalendarToday" Href="/todaycalendar/tomorrow" Match="NavLinkMatch.All">Tomorrow's Games</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="Post Season" Expanded="true">
-        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.SportsBaseball" Match="NavLinkMatch.All" OnClick="@(() => GoToPostSeason())">Postseason Games</MudNavLink>
-        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.List" Match="NavLinkMatch.All" OnClick="@(() => GoToPostSeasonRanks())">Postseason Ranks</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.SportsBaseball" Href="/postseason" Match="NavLinkMatch.All">Postseason Games</MudNavLink>
+        <MudNavLink IconColor="Color.Inherit" Icon="@Icons.Material.Filled.List" Href="/postseasonranks" Match="NavLinkMatch.All">Postseason Ranks</MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
 

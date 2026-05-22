@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using NLWestStandings.Client.Classes.Calendar;
 using NLWestStandings.Client.Classes.Divisions;
 using NLWestStandings.MLB;
+using System.Diagnostics;
 
 namespace NLWestStandings.Classes
 {
@@ -19,49 +20,70 @@ namespace NLWestStandings.Classes
             //_logos = await GetLogoLinks();
 
             calendar = await GetCalendar().ConfigureAwait(false);
+            logger.LogInformation("Initial calendar loaded with {DateCount} dates", calendar?.dates?.Length ?? 0);
 
             using (var scope = services.CreateScope())
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var nl = await GetNLStandingsAsync().ConfigureAwait(false);
-                    var al = await GetALStandingsAsync().ConfigureAwait(false);
+                    var refreshStopwatch = Stopwatch.StartNew();
 
-                    foreach (var item in nl.records)
+                    try
                     {
-                        var division_id = item.division.id;
+                        var nl = await GetNLStandingsAsync().ConfigureAwait(false);
+                        var al = await GetALStandingsAsync().ConfigureAwait(false);
 
-                        foreach (var item2 in item.teamRecords)
+                        foreach (var item in nl.records)
                         {
-                            item2.division_name = (await "https://statsapi.mlb.com/api/v1/divisions/"
-                            .AppendPathSegment(division_id.ToString())
-                            .GetJsonAsync<DivisionCall>(cancellationToken: stoppingToken).ConfigureAwait(false))
-                            .divisions.First().name;
-                        }
-                    }
+                            var division_id = item.division.id;
 
-                    foreach (var item in al.records)
-                    {
-                        var division_id = item.division.id;
-
-                        foreach (var item2 in item.teamRecords)
-                        {
-                            item2.division_name = (await "https://statsapi.mlb.com/api/v1/divisions/"
+                            foreach (var item2 in item.teamRecords)
+                            {
+                                item2.division_name = (await "https://statsapi.mlb.com/api/v1/divisions/"
                                 .AppendPathSegment(division_id.ToString())
                                 .GetJsonAsync<DivisionCall>(cancellationToken: stoppingToken).ConfigureAwait(false))
                                 .divisions.First().name;
+                            }
                         }
+
+                        foreach (var item in al.records)
+                        {
+                            var division_id = item.division.id;
+
+                            foreach (var item2 in item.teamRecords)
+                            {
+                                item2.division_name = (await "https://statsapi.mlb.com/api/v1/divisions/"
+                                    .AppendPathSegment(division_id.ToString())
+                                    .GetJsonAsync<DivisionCall>(cancellationToken: stoppingToken).ConfigureAwait(false))
+                                    .divisions.First().name;
+                            }
+                        }
+
+                        NLStandings = nl.records.Select(e => e.teamRecords);
+
+                        ALStandings = al.records.Select(e => e.teamRecords);
+
+                        await context.Clients.All.SendAsync("broadcastnl", System.Text.Json.JsonSerializer.Serialize(NLStandings), stoppingToken).ConfigureAwait(false);
+
+                        await context.Clients.All.SendAsync("broadcastal", System.Text.Json.JsonSerializer.Serialize(ALStandings), stoppingToken).ConfigureAwait(false);
+
+                        refreshStopwatch.Stop();
+                        logger.LogInformation(
+                            "Standings refreshed in {ElapsedMs} ms. NL divisions: {NlDivisionCount}, AL divisions: {AlDivisionCount}",
+                            refreshStopwatch.ElapsedMilliseconds,
+                            nl.records.Length,
+                            al.records.Length);
                     }
-
-                    NLStandings = nl.records.Select(e => e.teamRecords);
-
-                    ALStandings = al.records.Select(e => e.teamRecords);
-
-                    await context.Clients.All.SendAsync("broadcastnl", System.Text.Json.JsonSerializer.Serialize(NLStandings), stoppingToken).ConfigureAwait(false);
-
-                    await context.Clients.All.SendAsync("broadcastal", System.Text.Json.JsonSerializer.Serialize(ALStandings), stoppingToken).ConfigureAwait(false);
-
-                    logger.LogInformation("Standings refreshed");
+                    catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                    {
+                        logger.LogInformation("Standings refresh loop cancellation requested");
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        refreshStopwatch.Stop();
+                        logger.LogError(ex, "Failed to refresh standings after {ElapsedMs} ms", refreshStopwatch.ElapsedMilliseconds);
+                    }
 
                     await Task.Delay(TimeSpan.FromHours(6), stoppingToken).ConfigureAwait(false);
                 }

@@ -15,6 +15,8 @@
 
 
 <PageTitle>PostSeason Ranks</PageTitle>
+<MudText Typo="Typo.h4" HtmlTag="h1" Class="app-page-header">Postseason Rankings</MudText>
+<MudText Typo="Typo.subtitle2" Class="app-page-subtitle">League rank, elimination pressure, and clinch status at a glance.</MudText>
 
 
 
@@ -23,36 +25,40 @@
     <MudItem lg="6" sm="12">
         @if (NLRanks is not null)
         {
-            <MudTable Class="pb-8" T="PSRank" Items="@NLRanks.OrderBy(e=>int.Parse(e.league_rank))">
-                <ToolBarContent><MudText Typo="Typo.h4">National League</MudText></ToolBarContent>
-                <HeaderContent>
-                    <MudTh>Rank</MudTh>
-                    <MudTh>Team</MudTh>
-                    <MudTh>W/L</MudTh>
-                    <MudTh>Elim Num</MudTh>
-                    <MudTh>Magic Num</MudTh>
-                    <MudTh>Clinched</MudTh>
-                    <MudTh>WC GB</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="Rank">@context.league_rank</MudTd>
-                    <MudTd>
-                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
-                        {
-                            <MudImage Src="crown_l.svg" Height="25" Width="25"></MudImage>
-                        }
-                        else if (context.best_record && !dark_mode)
-                        {
-                            <MudImage Src="crown.svg" Height="25" Width="25"></MudImage>
-                        }
-                    </MudTd>
-                    <MudTd DataLabel="Win/Loss">@context.wins - @context.losses</MudTd>
-                    <MudTd DataLabel="Elimination Number">@context.elim_num</MudTd>
-                    <MudTd DataLabel="Magic Number">@context.magic_num</MudTd>
-                    <MudTd DataLabel="Clinched"><MudCheckBox Disabled="true" @bind-Value="context.clinched"></MudCheckBox></MudTd>
-                    <MudTd DataLabel="WC Games Back">@context.WCGamesBack</MudTd>
-                </RowTemplate>
-            </MudTable>
+            <MudPaper Class="app-card pa-2">
+                <div class="responsive-table-wrap">
+                    <MudTable Dense="true" Hover="true" Class="pb-8" T="PSRank" Items="@NLRanks.OrderBy(e=>int.Parse(e.league_rank))">
+                        <ToolBarContent><MudText Typo="Typo.h4">National League</MudText></ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>Rank</MudTh>
+                            <MudTh>Team</MudTh>
+                            <MudTh>W/L</MudTh>
+                            <MudTh>Elim Num</MudTh>
+                            <MudTh>Magic Num</MudTh>
+                            <MudTh>Clinched</MudTh>
+                            <MudTh>WC GB</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Rank">@context.league_rank</MudTd>
+                            <MudTd>
+                                <MudImage Alt="@($"{context.team_name} logo")" Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
+                                {
+                                    <MudImage Alt="Best record indicator" Src="crown_l.svg" Height="25" Width="25"></MudImage>
+                                }
+                                else if (context.best_record && !dark_mode)
+                                {
+                                    <MudImage Alt="Best record indicator" Src="crown.svg" Height="25" Width="25"></MudImage>
+                                }
+                            </MudTd>
+                            <MudTd DataLabel="Win/Loss">@context.wins - @context.losses</MudTd>
+                            <MudTd DataLabel="Elimination Number">@context.elim_num</MudTd>
+                            <MudTd DataLabel="Magic Number">@context.magic_num</MudTd>
+                            <MudTd DataLabel="Clinched"><MudCheckBox Disabled="true" @bind-Value="context.clinched"></MudCheckBox></MudTd>
+                            <MudTd DataLabel="WC Games Back">@context.WCGamesBack</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </div>
+            </MudPaper>
         }
         else
         {
@@ -62,36 +68,40 @@
     <MudItem lg="6" sm="12">
         @if (ALRanks is not null)
         {
-            <MudTable Class="pb-8" T="PSRank" Items="@ALRanks.OrderBy(e=>int.Parse(e.league_rank))">
-                <ToolBarContent><MudText Typo="Typo.h4">American League</MudText></ToolBarContent>
-                <HeaderContent>
-                    <MudTh>Rank</MudTh>
-                    <MudTh>Team</MudTh>
-                    <MudTh>W/L</MudTh>
-                    <MudTh>Elim Num</MudTh>
-                    <MudTh>Magic Num</MudTh>
-                    <MudTh>Clinched</MudTh>
-                    <MudTh>WC GB</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="Rank">@context.league_rank</MudTd>
-                    <MudTd>
-                        <MudImage Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
-                        {
-                            <MudImage Src="crown_l.svg" Height="25" Width="25"></MudImage>
-                        }
-                        else if (context.best_record && !dark_mode)
-                        {
-                            <MudImage Src="crown.svg" Height="25" Width="25"></MudImage>
-                        }
-                    </MudTd>
-                    <MudTd DataLabel="Win/Loss">@context.wins - @context.losses</MudTd>
-                    <MudTd DataLabel="Elimination Number">@context.elim_num</MudTd>
-                    <MudTd DataLabel="Magic Number">@context.magic_num</MudTd>
-                    <MudTd DataLabel="Clinched"><MudCheckBox Disabled="true" @bind-Value="context.clinched"></MudCheckBox></MudTd>
-                    <MudTd DataLabel="WC Games Back">@context.WCGamesBack</MudTd>
-                </RowTemplate>
-            </MudTable>
+            <MudPaper Class="app-card pa-2">
+                <div class="responsive-table-wrap">
+                    <MudTable Dense="true" Hover="true" Class="pb-8" T="PSRank" Items="@ALRanks.OrderBy(e=>int.Parse(e.league_rank))">
+                        <ToolBarContent><MudText Typo="Typo.h4">American League</MudText></ToolBarContent>
+                        <HeaderContent>
+                            <MudTh>Rank</MudTh>
+                            <MudTh>Team</MudTh>
+                            <MudTh>W/L</MudTh>
+                            <MudTh>Elim Num</MudTh>
+                            <MudTh>Magic Num</MudTh>
+                            <MudTh>Clinched</MudTh>
+                            <MudTh>WC GB</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Rank">@context.league_rank</MudTd>
+                            <MudTd>
+                                <MudImage Alt="@($"{context.team_name} logo")" Class="rounded-lg" Height="50" Width="50" Src="@SVGLogo.GetLogo(context.team_name, dark_mode)"></MudImage>@if (context.best_record && dark_mode)
+                                {
+                                    <MudImage Alt="Best record indicator" Src="crown_l.svg" Height="25" Width="25"></MudImage>
+                                }
+                                else if (context.best_record && !dark_mode)
+                                {
+                                    <MudImage Alt="Best record indicator" Src="crown.svg" Height="25" Width="25"></MudImage>
+                                }
+                            </MudTd>
+                            <MudTd DataLabel="Win/Loss">@context.wins - @context.losses</MudTd>
+                            <MudTd DataLabel="Elimination Number">@context.elim_num</MudTd>
+                            <MudTd DataLabel="Magic Number">@context.magic_num</MudTd>
+                            <MudTd DataLabel="Clinched"><MudCheckBox Disabled="true" @bind-Value="context.clinched"></MudCheckBox></MudTd>
+                            <MudTd DataLabel="WC Games Back">@context.WCGamesBack</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </div>
+            </MudPaper>
         }
         else
         {
@@ -108,29 +118,34 @@
 
     private class PSRank
     {
-        public string team_name { get; set; }
-        public string league_rank { get; set; }
-        public string WCGamesBack { get; set; }
-        public string win_perc { get; set; }
-        public string wins { get; set; }
-        public string losses { get; set; }
-        public string elim_num { get; set; }
-        public string magic_num { get; set; }
+        public string team_name { get; set; } = string.Empty;
+        public string league_rank { get; set; } = string.Empty;
+        public string WCGamesBack { get; set; } = string.Empty;
+        public string win_perc { get; set; } = string.Empty;
+        public string wins { get; set; } = string.Empty;
+        public string losses { get; set; } = string.Empty;
+        public string elim_num { get; set; } = string.Empty;
+        public string magic_num { get; set; } = string.Empty;
         public bool clinched { get; set; }
         public bool best_record { get; set; } = false;
     }
 
     protected override async Task OnInitializedAsync()
     {
+        if (!OperatingSystem.IsBrowser())
+        {
+            return;
+        }
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/broadcaststandings"))
             .Build();
 
         await hubConnection.StartAsync().ConfigureAwait(false);
 
-        var NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastNLToConnection", hubConnection.ConnectionId).ConfigureAwait(false));
+        var NLStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastNLToConnection", hubConnection.ConnectionId).ConfigureAwait(false)) ?? Enumerable.Empty<Teamrecord[]>();
 
-        var ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastALToConnection", hubConnection.ConnectionId).ConfigureAwait(false));
+        var ALStandings = System.Text.Json.JsonSerializer.Deserialize<IEnumerable<Teamrecord[]>>(await hubConnection.InvokeAsync<string>("BroadcastALToConnection", hubConnection.ConnectionId).ConfigureAwait(false)) ?? Enumerable.Empty<Teamrecord[]>();
 
         NLRanks = NLStandings.SelectMany(e => e).OrderBy(e => Int32.Parse(e.leagueRank)).Take(10).Select(e => new PSRank()
             {
