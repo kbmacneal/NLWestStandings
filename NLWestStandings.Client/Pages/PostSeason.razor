@@ -69,7 +69,7 @@ else
 }
 
 @code {
-    private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
+    private string GetColor(Color color) => $"var(--mud-palette-{color.ToString().ToLowerInvariant()})";
 
     List<Game>? calendar_data { get; set; }
 

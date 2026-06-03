@@ -51,7 +51,7 @@ else
 
     private bool dark_mode { get; set; }
 
-    private string GetColor(Color color) => $"var(--mud-palette-{color.ToDescriptionString()})";
+    private string GetColor(Color color) => $"var(--mud-palette-{color.ToString().ToLowerInvariant()})";
 
     [Parameter]
     public string teamid { get; set; }
