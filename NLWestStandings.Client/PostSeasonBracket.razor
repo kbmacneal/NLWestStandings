@@ -1,0 +1,241 @@
+@using Flurl.Http
+@using NLWestStandings.Client.Classes.PostSeasonSeries
+
+<div class="postseason-bracket-wrap app-card pa-3 mb-4">
+    <MudText Typo="Typo.h5" Class="mb-2">@(_season) Postseason Bracket</MudText>
+
+    @if (_loading)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else if (_rounds.Count == 0)
+    {
+        <MudText Typo="Typo.body2" Class="app-page-subtitle">The postseason field hasn't been set yet — check back once the regular season wraps up.</MudText>
+    }
+    else
+    {
+        <div class="postseason-bracket">
+            @foreach (var round in _rounds)
+            {
+                <div class="postseason-bracket-column">
+                    <MudText Typo="Typo.subtitle1" Class="postseason-bracket-round-title">@round.Title</MudText>
+
+                    @if (round.IsWorldSeries)
+                    {
+                        <div class="postseason-bracket-league-group postseason-bracket-worldseries-group">
+                            @foreach (var matchup in round.AllMatchups)
+                            {
+                                <PostSeasonBracketMatchup Matchup="@matchup" />
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="postseason-bracket-league-group">
+                            <MudText Typo="Typo.caption" Class="postseason-bracket-league-label">AL</MudText>
+                            @foreach (var matchup in round.AlMatchups)
+                            {
+                                <PostSeasonBracketMatchup Matchup="@matchup" />
+                            }
+                        </div>
+                        <div class="postseason-bracket-league-group">
+                            <MudText Typo="Typo.caption" Class="postseason-bracket-league-label">NL</MudText>
+                            @foreach (var matchup in round.NlMatchups)
+                            {
+                                <PostSeasonBracketMatchup Matchup="@matchup" />
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private const int AmericanLeagueId = 103;
+
+    private static readonly Dictionary<string, (string Title, int Order)> RoundsByGameType = new()
+    {
+        ["F"] = ("Wild Card Series", 0),
+        ["D"] = ("Division Series", 1),
+        ["L"] = ("Championship Series", 2),
+        ["W"] = ("World Series", 3),
+    };
+
+    private bool _loading = true;
+    private int _season;
+    private List<BracketRound> _rounds = [];
+
+    /// <summary>
+    /// Season to display. Defaults to the current year, matching MLB.com's postseason page.
+    /// </summary>
+    [Parameter]
+    public int? Season { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _season = Season ?? DateTime.Now.Year;
+
+        try
+        {
+            var response = await $"https://statsapi.mlb.com/api/v1/schedule/postseason/series?sportId=1&season={_season}&language=en&hydrate=team,seriesStatus(useOverride=true)"
+                .GetJsonAsync<SeriesResponse>().ConfigureAwait(false);
+
+            _rounds = BuildRounds(response);
+        }
+        catch (Exception)
+        {
+            _rounds = [];
+        }
+
+        _loading = false;
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+    }
+
+    private static List<BracketRound> BuildRounds(SeriesResponse response)
+    {
+        var roundsByKey = new Dictionary<string, BracketRound>();
+
+        foreach (var entry in response.series)
+        {
+            if (!RoundsByGameType.TryGetValue(entry.series.gameType, out var roundMeta))
+            {
+                continue;
+            }
+
+            var matchup = BuildMatchup(entry);
+            if (matchup is null)
+            {
+                continue;
+            }
+
+            var isWorldSeries = entry.series.gameType == "W";
+
+            if (!roundsByKey.TryGetValue(entry.series.gameType, out var round))
+            {
+                round = new BracketRound
+                {
+                    Title = roundMeta.Title,
+                    Order = roundMeta.Order,
+                    IsWorldSeries = isWorldSeries,
+                };
+                roundsByKey[entry.series.gameType] = round;
+            }
+
+            if (isWorldSeries)
+            {
+                round.AllMatchups.Add(matchup);
+            }
+            else
+            {
+                var leagueId = entry.games.FirstOrDefault()?.teams.away.team.league?.id;
+                if (leagueId == AmericanLeagueId)
+                {
+                    round.AlMatchups.Add(matchup);
+                }
+                else
+                {
+                    round.NlMatchups.Add(matchup);
+                }
+            }
+        }
+
+        foreach (var round in roundsByKey.Values)
+        {
+            round.AlMatchups = round.AlMatchups.OrderBy(m => m.SortNumber).ToList();
+            round.NlMatchups = round.NlMatchups.OrderBy(m => m.SortNumber).ToList();
+            round.AllMatchups = round.AllMatchups.OrderBy(m => m.SortNumber).ToList();
+        }
+
+        return roundsByKey.Values.OrderBy(r => r.Order).ToList();
+    }
+
+    private static BracketMatchup? BuildMatchup(SeriesEntry entry)
+    {
+        var firstGame = entry.games.FirstOrDefault();
+        if (firstGame is null)
+        {
+            return null;
+        }
+
+        var teamA = firstGame.teams.away.team;
+        var teamB = firstGame.teams.home.team;
+
+        var lastGame = entry.games.OrderByDescending(g => g.seriesGameNumber).FirstOrDefault();
+        var status = lastGame?.seriesStatus;
+
+        var winsA = 0;
+        var winsB = 0;
+        var isOver = false;
+
+        if (status is not null)
+        {
+            if (status.isTied || status.winningTeam is null)
+            {
+                winsA = winsB = status.wins;
+            }
+            else
+            {
+                if (status.winningTeam.id == teamA.id)
+                {
+                    winsA = status.wins;
+                    winsB = status.losses;
+                }
+                else
+                {
+                    winsB = status.wins;
+                    winsA = status.losses;
+                }
+            }
+
+            isOver = status.isOver;
+        }
+
+        return new BracketMatchup
+        {
+            TeamAName = teamA.name,
+            TeamAId = teamA.id,
+            TeamAWins = winsA,
+            TeamAIsSeriesWinner = isOver && status?.winningTeam?.id == teamA.id,
+
+            TeamBName = teamB.name,
+            TeamBId = teamB.id,
+            TeamBWins = winsB,
+            TeamBIsSeriesWinner = isOver && status?.winningTeam?.id == teamB.id,
+
+            StatusText = BuildStatusText(status),
+            SortNumber = entry.series.sortNumber,
+        };
+    }
+
+    private static string BuildStatusText(SeriesStatus? status)
+    {
+        if (status is null)
+        {
+            return "Matchup TBD";
+        }
+
+        if (status.isOver && status.winningTeam is not null)
+        {
+            return $"{status.winningTeam.name} wins {status.wins}-{status.losses}";
+        }
+
+        if (status.wins == 0 && status.losses == 0)
+        {
+            return "Series not yet started";
+        }
+
+        if (status.isTied)
+        {
+            return $"Series tied {status.wins}-{status.losses}";
+        }
+
+        if (status.winningTeam is not null)
+        {
+            return $"{status.winningTeam.name} leads {status.wins}-{status.losses}";
+        }
+
+        return status.result ?? "In progress";
+    }
+}

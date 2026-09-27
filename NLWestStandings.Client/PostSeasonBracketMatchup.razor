@@ -1,0 +1,20 @@
+@using NLWestStandings.Client.Classes.PostSeasonSeries
+
+<div class="postseason-bracket-matchup">
+    <div class="postseason-bracket-team @(Matchup.TeamAIsSeriesWinner ? "postseason-bracket-winner" : "")">
+        <ThemeLogo TeamName="@Matchup.TeamAName" Height="24" Width="24" Class="rounded-lg" />
+        <span class="postseason-bracket-team-name">@Matchup.TeamAName</span>
+        <span class="postseason-bracket-score">@Matchup.TeamAWins</span>
+    </div>
+    <div class="postseason-bracket-team @(Matchup.TeamBIsSeriesWinner ? "postseason-bracket-winner" : "")">
+        <ThemeLogo TeamName="@Matchup.TeamBName" Height="24" Width="24" Class="rounded-lg" />
+        <span class="postseason-bracket-team-name">@Matchup.TeamBName</span>
+        <span class="postseason-bracket-score">@Matchup.TeamBWins</span>
+    </div>
+    <div class="postseason-bracket-status">@Matchup.StatusText</div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public BracketMatchup Matchup { get; set; } = new();
+}

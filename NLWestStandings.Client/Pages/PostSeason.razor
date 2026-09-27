@@ -11,7 +11,6 @@
 @using System.Web
 @rendermode InteractiveWebAssembly
 @inject NavigationManager NavigationManager
-@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
 
 <PageTitle>Postseason</PageTitle>
@@ -34,23 +33,9 @@
                              OnClick="@(() => GoToGame(((CustomItem)context).gamepk))">
 
                         <MudText>@(((CustomItem)context).Text)</MudText>
-                        @if (((CustomItem)context).awaysvg != "")
-                        {
-                            <MudImage Class="rounded-lg" Height="25" Width="25" Src="@(((CustomItem)context).awaysvg)"></MudImage>
-                        }
-                        else
-                        {
-                            <MudText>@(((CustomItem)context).awayteam)</MudText>
-                        }
+                        <ThemeLogo Alt="@($"{((CustomItem)context).awayteam} logo")" TeamName="@(((CustomItem)context).awayteam)" Class="rounded-lg" Height="25" Width="25" />
                         @@
-                        @if (((CustomItem)context).homesvg != "")
-                        {
-                            <MudImage Class="rounded-lg" Height="25" Width="25" Src="@(((CustomItem)context).homesvg)"></MudImage>
-                        }
-                        else
-                        {
-                            <MudText>@(((CustomItem)context).hometeam)</MudText>
-                        }
+                        <ThemeLogo Alt="@($"{((CustomItem)context).hometeam} logo")" TeamName="@(((CustomItem)context).hometeam)" Class="rounded-lg" Height="25" Width="25" />
                         <br />
                         @if (((CustomItem)context).broadcasters != null)
                         {
@@ -76,7 +61,6 @@ else
     List<Game>? calendar_data { get; set; }
 
     private List<CustomItem> _events = new();
-    private bool dark_mode { get; set; }
 
 
     private class CustomItem : CalendarItem
@@ -87,8 +71,6 @@ else
         public string? gamepk { get; set; }
         public string? hometeam { get; set; }
         public string? awayteam { get; set; }
-        public string? homesvg { get; set; }
-        public string? awaysvg { get; set; }
         public string[]? broadcasters { get; set; }
 
     }
@@ -113,8 +95,6 @@ else
                     gamepk = game.gamePk.ToString(),
                     hometeam = $"{game.teams.home.team.name}",
                     awayteam = $"{game.teams.away.team.name}",
-                    homesvg = SVGLogo.GetLogo(game.teams.home.team.name, dark_mode),
-                    awaysvg = SVGLogo.GetLogo(game.teams.away.team.name, dark_mode),
                     broadcasters = game.broadcasts.Where(e=>e.type=="TV").Select(e => $"{e.name} ({e.type})").ToArray()
                 });
 
@@ -123,23 +103,6 @@ else
         _events = temp_events.DistinctBy(e => e.Text + e.Start).ToList();
 
         await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (localStorage.ContainKey("CurrentMode"))
-            {
-                dark_mode = localStorage.GetItem<bool>("CurrentMode");
-            }
-            else
-            {
-                localStorage.SetItem("CurrentMode", false);
-            }
-
-            await InvokeAsync(StateHasChanged).ConfigureAwait(false);
-        }
     }
 
     private async Task<NLWestStandings.Client.Classes.PostSeason.PostSeason> GetPostSeasonSchedule()
