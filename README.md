@@ -62,6 +62,16 @@ dotnet run --project NLWestStandings/NLWestStandings.csproj
 docker-compose -f docker-compose.yaml up
 ```
 
+Pre-built images are published to Docker Hub at [`kbmacneal/nlweststandings`](https://hub.docker.com/r/kbmacneal/nlweststandings):
+
+```powershell
+docker run -p 8089:8080 -p 8090:8081 kbmacneal/nlweststandings:latest
+```
+
+### Releasing a new Docker image
+
+Pushing a tag matching `v*.*.*` (e.g. `v1.1.0`) triggers `.github/workflows/docker-release.yml`, which builds the image from `Dockerfile` and pushes `latest`, `<major>.<minor>`, and the full version tag to Docker Hub. The workflow requires the repository secrets `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`. You can also trigger it manually via `workflow_dispatch`.
+
 ## Deployment
 
 This repo is set up for deployment to Azure Container Apps via the Azure Developer CLI:
