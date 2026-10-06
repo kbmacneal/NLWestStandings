@@ -4746,8 +4746,18 @@
         public Ondeck1 onDeck { get; set; }
         public Inhole1 inHole { get; set; }
         public Pitcher5 pitcher { get; set; }
+        public BaseRunner first { get; set; }
+        public BaseRunner second { get; set; }
+        public BaseRunner third { get; set; }
         public int battingOrder { get; set; }
         public Team3 team { get; set; }
+    }
+
+    public class BaseRunner
+    {
+        public int id { get; set; }
+        public string fullName { get; set; }
+        public string link { get; set; }
     }
 
     public class Batter5

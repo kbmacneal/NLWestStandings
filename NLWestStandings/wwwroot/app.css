@@ -308,3 +308,16 @@ body {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
+/* Live baseball diamond */
+.diamond-svg { width: 100%; max-width: 480px; display: block; margin: 0 auto; }
+.diamond-grass { fill: #2e7d32; }
+.diamond-infield { fill: #3b8f3f; }
+.diamond-dirt { fill: #c19a6b; }
+.diamond-line { stroke: #fff; stroke-width: 2; }
+.diamond-base { fill: #fff; stroke: #555; stroke-width: 1; }
+.diamond-base-occupied { fill: #ffd600; }
+.diamond-defender { fill: #1565c0; stroke: #fff; stroke-width: 2; }
+.diamond-runner { fill: #ef6c00; stroke: #fff; stroke-width: 2; }
+.diamond-batter { fill: #c62828; stroke: #fff; stroke-width: 2; }
+.diamond-label { fill: #fff; font-size: 10px; font-weight: bold; }
+.diamond-name { fill: #fff; font-size: 11px; paint-order: stroke; stroke: #000; stroke-width: 2px; }

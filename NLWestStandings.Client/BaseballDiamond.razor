@@ -1,0 +1,58 @@
+@using NLWestStandings.Client.Classes.PlayByPlay
+
+@if (Linescore?.defense is not null)
+{
+    var d = Linescore.defense;
+    var o = Linescore.offense;
+    <svg class="diamond-svg" viewBox="0 0 400 380" role="img" aria-label="Live baseball diamond">
+        <rect x="0" y="0" width="400" height="380" rx="8" class="diamond-grass" />
+        <polygon points="200,330 340,190 200,50 60,190" class="diamond-infield" />
+        <polygon points="200,310 320,190 200,70 80,190" class="diamond-dirt" />
+        <line x1="200" y1="330" x2="20" y2="150" class="diamond-line" />
+        <line x1="200" y1="330" x2="380" y2="150" class="diamond-line" />
+
+        @* bases *@
+        <rect x="190" y="60" width="20" height="20" class="@BaseClass(o?.second)" transform="rotate(45 200 70)" />
+        <rect x="310" y="180" width="20" height="20" class="@BaseClass(o?.first)" transform="rotate(45 320 190)" />
+        <rect x="70" y="180" width="20" height="20" class="@BaseClass(o?.third)" transform="rotate(45 80 190)" />
+        <polygon points="190,320 210,320 210,330 200,340 190,330" class="diamond-base" />
+
+        @* defenders *@
+        @Player(200, 190, d.pitcher?.fullName, "P", "diamond-defender")
+        @Player(200, 355, d.catcher?.fullName, "C", "diamond-defender")
+        @Player(320, 160, d.first?.fullName, "1B", "diamond-defender")
+        @Player(255, 100, d.second?.fullName, "2B", "diamond-defender")
+        @Player(145, 100, d.shortstop?.fullName, "SS", "diamond-defender")
+        @Player(80, 160, d.third?.fullName, "3B", "diamond-defender")
+        @Player(70, 35, d.left?.fullName, "LF", "diamond-defender")
+        @Player(200, 20, d.center?.fullName, "CF", "diamond-defender")
+        @Player(330, 35, d.right?.fullName, "RF", "diamond-defender")
+
+        @* runners and batter *@
+        @if (o?.first is not null) { @Player(335, 215, o.first.fullName, "R", "diamond-runner") }
+        @if (o?.second is not null) { @Player(200, 90, o.second.fullName, "R", "diamond-runner") }
+        @if (o?.third is not null) { @Player(65, 215, o.third.fullName, "R", "diamond-runner") }
+        @if (o?.batter is not null) { @Player(250, 335, o.batter.fullName, "B", "diamond-batter") }
+    </svg>
+}
+
+@code {
+    [Parameter]
+    public Linescore? Linescore { get; set; }
+
+    private static string BaseClass(object? runner) => runner is null ? "diamond-base" : "diamond-base diamond-base-occupied";
+
+    private RenderFragment Player(int x, int y, string? name, string label, string cssClass) => @<g>
+        <title>@name</title>
+        <circle cx="@x" cy="@y" r="13" class="@cssClass" />
+        <text x="@x" y="@(y + 4)" text-anchor="middle" class="diamond-label">@label</text>
+        <text x="@x" y="@(y + 27)" text-anchor="middle" class="diamond-name">@Short(name)</text>
+    </g>;
+
+    private static string Short(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length > 1 ? parts[^1] : name;
+    }
+}
