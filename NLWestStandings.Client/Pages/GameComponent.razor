@@ -131,6 +131,7 @@
                         <MudTh>Pitcher</MudTh>
                         <MudTh>Batter</MudTh>
                         <MudTh>Count</MudTh>
+                        <MudTh>Score</MudTh>
                         <MudTh>Result</MudTh>
                     </HeaderContent>
                     <RowTemplate>
@@ -185,6 +186,7 @@
                         }
 
                         <MudTd Style="min-width:100px;" DataLabel="Count">@context.count.balls - @context.count.strikes <br /> @($"{context.count.outs} Out(s)")</MudTd>
+                        <MudTd DataLabel="Score" Style="white-space:nowrap;" title="@($"{awayteam} {context.result.awayScore} - {hometeam} {context.result.homeScore}")">@context.result.awayScore - @context.result.homeScore</MudTd>
                         <MudTd DataLabel="Result">@context.result.description</MudTd>
                     </RowTemplate>
                     <PagerContent>
