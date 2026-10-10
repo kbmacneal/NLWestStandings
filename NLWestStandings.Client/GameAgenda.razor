@@ -1,0 +1,35 @@
+@inject NavigationManager NavigationManager
+
+<div class="game-agenda" role="list">
+    @foreach (var day in Items.OrderBy(e => e.Start).GroupBy(e => e.Start.Date))
+    {
+        <section class="game-agenda-day" aria-label="@day.Key.ToString("dddd, MMMM d")">
+            <MudText Typo="Typo.subtitle1" HtmlTag="h2" Class="game-agenda-date">@day.Key.ToString("ddd, MMM d")</MudText>
+            @foreach (var game in day)
+            {
+                <a role="listitem" class="game-agenda-item @(game.IsToday ? "game-agenda-today" : "")" href="@($"gamecomponent?gamepk={game.GamePk}")">
+                    <span class="game-agenda-time">@game.Start.ToString("t")</span>
+                    <span class="game-agenda-teams">
+                        <ThemeLogo Alt="@($"{game.AwayTeam} logo")" TeamName="@game.AwayTeam" Class="rounded-lg" Height="28" Width="28" />
+                        <span aria-hidden="true">@@</span>
+                        <ThemeLogo Alt="@($"{game.HomeTeam} logo")" TeamName="@game.HomeTeam" Class="rounded-lg" Height="28" Width="28" />
+                    </span>
+                    <span class="game-agenda-detail">
+                        <span class="game-agenda-matchup">@game.Label</span>
+                        @if (game.Broadcasters.Length > 0)
+                        {
+                            <span class="game-agenda-tv">@string.Join(", ", game.Broadcasters.Distinct())</span>
+                        }
+                    </span>
+                </a>
+            }
+        </section>
+    }
+</div>
+
+@code {
+    public record AgendaGame(DateTime Start, string GamePk, string HomeTeam, string AwayTeam, string Label, string[] Broadcasters, bool IsToday);
+
+    [Parameter, EditorRequired]
+    public IEnumerable<AgendaGame> Items { get; set; } = Enumerable.Empty<AgendaGame>();
+}

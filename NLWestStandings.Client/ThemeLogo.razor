@@ -2,7 +2,7 @@
 
 @if (ShouldRenderLogo)
 {
-    <span class="@ContainerClass" @onclick="HandleClick">
+    <span class="@ContainerClass" @onclick="HandleClick" @onkeydown="HandleKey" role="@(OnClick.HasDelegate ? "button" : null)" tabindex="@(OnClick.HasDelegate ? 0 : (int?)null)" aria-label="@(OnClick.HasDelegate ? ResolvedAlt : null)">
         <MudImage Alt="@ResolvedAlt" Class="@($"{Class} theme-logo-light")" Height="@Height" Width="@Width" Src="@LightSrc"></MudImage>
         <MudImage Alt="@ResolvedAlt" Class="@($"{Class} theme-logo-dark")" Height="@Height" Width="@Width" Src="@DarkSrc"></MudImage>
     </span>
@@ -36,6 +36,11 @@
     private string ResolvedAlt => string.IsNullOrWhiteSpace(Alt) ? $"{TeamName} logo" : Alt;
 
     private string ContainerClass => OnClick.HasDelegate ? "theme-logo-wrap theme-logo-clickable" : "theme-logo-wrap";
+
+    private Task HandleKey(KeyboardEventArgs e)
+    {
+        return OnClick.HasDelegate && (e.Key == "Enter" || e.Key == " ") ? OnClick.InvokeAsync() : Task.CompletedTask;
+    }
 
     private Task HandleClick()
     {

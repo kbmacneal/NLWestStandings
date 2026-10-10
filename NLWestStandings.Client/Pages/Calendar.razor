@@ -15,6 +15,7 @@
 
 @if (_events.Count > 0)
 {
+    <div class="d-none d-md-block">
     <MudCalendar Items="_events" MonthCellMinHeight="100">
         <CellTemplate>
             <div style="width: 100%; height: 100%; border: 2px solid @GetColor(((CustomItem)context).Color)">
@@ -41,6 +42,10 @@
             </div>
         </CellTemplate>
     </MudCalendar>
+    </div>
+    <div class="d-md-none">
+        <GameAgenda Items="@_events.Select(e => new GameAgenda.AgendaGame(e.Start, e.gamepk ?? "", e.hometeam ?? "", e.awayteam ?? "", e.Text ?? "", e.broadcasters ?? Array.Empty<string>(), e.Start.Date == DateTime.Today))" />
+    </div>
 }
 else
 {

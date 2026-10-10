@@ -1,9 +1,11 @@
 @using NLWestStandings.Client.Classes.PlayByPlay
+@implements IDisposable
 
 @if (Linescore?.defense is not null)
 {
     var d = Linescore.defense;
     var o = Linescore.offense;
+    var replayMode = ReplayPlay is not null;
     <svg class="diamond-svg" viewBox="0 0 400 380" role="img" aria-label="Live baseball diamond">
         <rect x="0" y="0" width="400" height="380" rx="8" class="diamond-grass" />
         <polygon points="200,330 340,190 200,50 60,190" class="diamond-infield" />
@@ -12,13 +14,13 @@
         <line x1="200" y1="330" x2="380" y2="150" class="diamond-line" />
 
         @* bases *@
-        <rect x="190" y="60" width="20" height="20" class="@BaseClass(o?.second)" transform="rotate(45 200 70)" />
-        <rect x="310" y="180" width="20" height="20" class="@BaseClass(o?.first)" transform="rotate(45 320 190)" />
-        <rect x="70" y="180" width="20" height="20" class="@BaseClass(o?.third)" transform="rotate(45 80 190)" />
+        <rect x="190" y="60" width="20" height="20" class="@(replayMode ? ReplayBaseClass("2B") : BaseClass(o?.second))" transform="rotate(45 200 70)" />
+        <rect x="310" y="180" width="20" height="20" class="@(replayMode ? ReplayBaseClass("1B") : BaseClass(o?.first))" transform="rotate(45 320 190)" />
+        <rect x="70" y="180" width="20" height="20" class="@(replayMode ? ReplayBaseClass("3B") : BaseClass(o?.third))" transform="rotate(45 80 190)" />
         <polygon points="190,320 210,320 210,330 200,340 190,330" class="diamond-base" />
 
         @* defenders *@
-        @Player(200, 190, d.pitcher?.fullName, "P", "diamond-defender")
+        @Player(200, 190, replayMode ? ReplayPlay!.matchup?.pitcher?.fullName : d.pitcher?.fullName, "P", "diamond-defender")
         @Player(200, 355, d.catcher?.fullName, "C", "diamond-defender")
         @Player(320, 160, d.first?.fullName, "1B", "diamond-defender")
         @Player(255, 100, d.second?.fullName, "2B", "diamond-defender")
@@ -29,22 +31,184 @@
         @Player(330, 35, d.right?.fullName, "RF", "diamond-defender")
 
         @* runners and batter *@
-        @if (o?.first is not null) { @Player(335, 215, o.first.fullName, "R", "diamond-runner") }
-        @if (o?.second is not null) { @Player(200, 90, o.second.fullName, "R", "diamond-runner") }
-        @if (o?.third is not null) { @Player(65, 215, o.third.fullName, "R", "diamond-runner") }
-        @if (o?.batter is not null) { @Player(250, 335, o.batter.fullName, "B", "diamond-batter") }
+        @if (!replayMode)
+        {
+            @if (o?.first is not null) { @Player(335, 215, o.first.fullName, "R", "diamond-runner") }
+            @if (o?.second is not null) { @Player(200, 90, o.second.fullName, "R", "diamond-runner") }
+            @if (o?.third is not null) { @Player(65, 215, o.third.fullName, "R", "diamond-runner") }
+            @if (o?.batter is not null) { @Player(250, 335, o.batter.fullName, "B", "diamond-batter") }
+        }
+        else
+        {
+            @foreach (var runner in ReplayRunners)
+            {
+                @ReplayRunner(runner)
+            }
+            @if (!ReplayComplete && !ReplayRunners.Any(runner => runner.Id == ReplayPlay!.matchup?.batter?.id))
+            {
+                @Player(250, 335, ReplayPlay!.matchup?.batter?.fullName, "B", "diamond-batter")
+            }
+            @if (ReplayTickIndex >= 0 && !ReplayComplete)
+            {
+                <circle @key="ReplayTickIndex" cx="200" cy="190" r="6" class="diamond-replay-ball" style="@($"animation-duration:{Math.Clamp(TickIntervalMs, 250, 5000)}ms")" />
+            }
+        }
     </svg>
+    @if (replayMode)
+    {
+        <MudText Typo="Typo.body2" Align="Align.Center" Class="mt-2">
+            @if (ReplayTickIndex >= 0 && ReplayTickIndex < ReplayPitches.Length)
+            {
+                <span>Pitch @(ReplayTickIndex + 1) of @ReplayPitches.Length: @ReplayPitches[ReplayTickIndex].details?.description</span>
+            }
+            else if (ReplayComplete)
+            {
+                <span>At-bat complete: @ReplayPlay!.result?.description</span>
+            }
+            else
+            {
+                <span>Ready to replay: @ReplayPlay!.result?.description</span>
+            }
+        </MudText>
+    }
 }
 
 @code {
     [Parameter]
     public Linescore? Linescore { get; set; }
 
+    [Parameter]
+    public Allplay? ReplayPlay { get; set; }
+
+    [Parameter]
+    public int ReplayRequest { get; set; }
+
+    [Parameter]
+    public int TickIntervalMs { get; set; } = 1000;
+
+    private CancellationTokenSource? _replayCancellation;
+    private int _lastReplayRequest;
+    private int ReplayTickIndex { get; set; } = -1;
+    private bool ReplayComplete { get; set; }
+    private Playevent1[] ReplayPitches => ReplayPlay?.playEvents?.Where(playEvent => playEvent.isPitch).ToArray() ?? Array.Empty<Playevent1>();
+    private ReplayRunnerState[] ReplayRunners => BuildReplayRunners();
+
+    protected override void OnParametersSet()
+    {
+        if (_lastReplayRequest == ReplayRequest)
+        {
+            return;
+        }
+
+        _lastReplayRequest = ReplayRequest;
+        _replayCancellation?.Cancel();
+        _replayCancellation?.Dispose();
+        _replayCancellation = new CancellationTokenSource();
+        ReplayTickIndex = -1;
+        ReplayComplete = false;
+        _ = RunReplayAsync(_replayCancellation.Token);
+    }
+
     private static string BaseClass(object? runner) => runner is null ? "diamond-base" : "diamond-base diamond-base-occupied";
+
+    private string ReplayBaseClass(string baseName)
+    {
+        var isOccupied = ReplayRunners.Any(runner =>
+        {
+            var runnerBase = ReplayComplete ? runner.EndBase ?? runner.StartBase : runner.StartBase;
+            return string.Equals(runnerBase, baseName, StringComparison.OrdinalIgnoreCase) &&
+                   (!ReplayComplete || !runner.IsOut);
+        });
+        return isOccupied ? "diamond-base diamond-base-occupied" : "diamond-base";
+    }
+
+    private ReplayRunnerState[] BuildReplayRunners()
+    {
+        if (ReplayPlay is null)
+        {
+            return Array.Empty<ReplayRunnerState>();
+        }
+
+        var states = (ReplayPlay.runners ?? Array.Empty<Runner2>())
+            .Where(runner => runner.details?.runner is not null)
+            .GroupBy(runner => runner.details!.runner!.id)
+            .Select(group =>
+            {
+                var runner = group.First().details!.runner!;
+                var startBase = group.Select(item => item.movement?.originBase).FirstOrDefault(baseName => !string.IsNullOrWhiteSpace(baseName));
+                var endBase = group.Select(item => item.movement?.end).LastOrDefault(baseName => !string.IsNullOrWhiteSpace(baseName));
+                return new ReplayRunnerState(runner.id, runner.fullName, startBase, endBase, group.Any(item => item.movement?.isOut == true));
+            })
+            .ToList();
+
+        AddStartingRunner(states, ReplayPlay.matchup?.postOnFirst?.id, ReplayPlay.matchup?.postOnFirst?.fullName, "1B");
+        AddStartingRunner(states, ReplayPlay.matchup?.postOnSecond?.id, ReplayPlay.matchup?.postOnSecond?.fullName, "2B");
+        AddStartingRunner(states, ReplayPlay.matchup?.postOnThird?.id, ReplayPlay.matchup?.postOnThird?.fullName, "3B");
+        return states.ToArray();
+    }
+
+    private static void AddStartingRunner(List<ReplayRunnerState> runners, int? id, string? name, string baseName)
+    {
+        if (id is not null && !runners.Any(runner => runner.Id == id))
+        {
+            runners.Add(new ReplayRunnerState(id.Value, name, baseName, baseName, false));
+        }
+    }
+
+    private RenderFragment ReplayRunner(ReplayRunnerState runner)
+    {
+        var isBatter = runner.Id == ReplayPlay?.matchup?.batter?.id;
+        var baseName = ReplayComplete ? runner.EndBase ?? runner.StartBase : runner.StartBase ?? (isBatter ? "HOME" : null);
+        if (ReplayComplete && runner.IsOut || string.IsNullOrWhiteSpace(baseName) ||
+            baseName.Equals("score", StringComparison.OrdinalIgnoreCase) ||
+            baseName.Equals("home", StringComparison.OrdinalIgnoreCase))
+        {
+            return builder => { };
+        }
+
+        var (x, y) = BasePoint(baseName);
+        if (x < 0)
+        {
+            return builder => { };
+        }
+        return Player(x, y, runner.FullName, isBatter && !ReplayComplete ? "B" : "R", isBatter && !ReplayComplete ? "diamond-batter" : "diamond-runner");
+    }
+
+    private static (int X, int Y) BasePoint(string baseName) => baseName.ToUpperInvariant() switch
+    {
+        "1B" or "FIRST" => (335, 215),
+        "2B" or "SECOND" => (200, 90),
+        "3B" or "THIRD" => (65, 215),
+        "HOME" => (250, 335),
+        _ => (-100, -100)
+    };
+
+    private async Task RunReplayAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var pitches = ReplayPitches;
+            var interval = Math.Clamp(TickIntervalMs, 250, 5000);
+            for (var i = 0; i < pitches.Length; i++)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                ReplayTickIndex = i;
+                await InvokeAsync(StateHasChanged);
+                await Task.Delay(interval, cancellationToken);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            ReplayComplete = true;
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+        }
+    }
 
     private RenderFragment Player(int x, int y, string? name, string label, string cssClass) => @<g>
         <title>@name</title>
-        <circle cx="@x" cy="@y" r="13" class="@cssClass" />
+        <circle cx="@x" cy="@y" r="13" class="@cssClass" style="@($"transition:cx {Math.Clamp(TickIntervalMs, 250, 5000)}ms ease,cy {Math.Clamp(TickIntervalMs, 250, 5000)}ms ease")" />
         <text x="@x" y="@(y + 4)" text-anchor="middle" class="diamond-label">@label</text>
         <text x="@x" y="@(y + 27)" text-anchor="middle" class="diamond-name">@Short(name)</text>
     </g>;
@@ -62,4 +226,11 @@
     }
 
     private static readonly HashSet<string> Suffixes = new(StringComparer.OrdinalIgnoreCase) { "Jr", "Sr", "II", "III", "IV", "V" };
+    private sealed record ReplayRunnerState(int Id, string? FullName, string? StartBase, string? EndBase, bool IsOut);
+
+    public void Dispose()
+    {
+        _replayCancellation?.Cancel();
+        _replayCancellation?.Dispose();
+    }
 }

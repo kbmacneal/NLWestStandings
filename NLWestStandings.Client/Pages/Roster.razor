@@ -15,16 +15,16 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 
-<MudText Typo="Typo.h4" HtmlTag="h1" Class="app-page-header">Team Roster</MudText>
+<MudText Typo="@(ShowTransactions ? Typo.h4 : Typo.h5)" HtmlTag="@(ShowTransactions ? "h1" : "h2")" Class="app-page-header">Team Roster</MudText>
 <MudText Typo="Typo.subtitle2" Class="app-page-subtitle">Depth chart, recent performance, and player availability.</MudText>
 
 <MudGrid>
-    <MudItem lg="@(ShowTransactions ? 9 : 12)" sm="12">
+    <MudItem lg="@(ShowTransactions ? 8 : 12)" sm="12" xs="12">
         <MudPaper Class="overflow-auto app-card pa-2">
             @if (depthChart is not null)
             {
 
-                <MudDataGrid hidden="@Hidden" T="DepthChartDTO" Items="@depthChart" Dense="true" Filterable="true" QuickFilter="@_quickFilter" ColumnResizeMode="ResizeMode.Container">
+                <MudDataGrid hidden="@Hidden" T="DepthChartDTO" Items="@depthChart" Dense="true" Filterable="false" QuickFilter="@_quickFilter">
                     <ToolBarContent>
                         <MudText Typo="Typo.h6">Depth Chart</MudText>
                         <MudSpacer />
@@ -101,9 +101,9 @@
     </MudItem>
     @if (ShowTransactions)
     {
-        <MudItem lg="3" sm="12">
+        <MudItem lg="4" sm="12" xs="12">
             <MudPaper Class="app-card pa-2">
-                <TeamTransactions teamid="@teamid"></TeamTransactions>
+                <TeamTransactions teamid="@teamid" Embedded="true"></TeamTransactions>
             </MudPaper>
         </MudItem>
     }
