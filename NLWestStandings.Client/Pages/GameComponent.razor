@@ -115,15 +115,18 @@
                 <MudPaper Class="app-card pa-2">
                     <div class="d-flex align-center justify-space-between flex-wrap">
                         <MudText Typo="Typo.h6">On the Field</MudText>
-                        <MudSelect T="int" Label="Replay speed" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Style="max-width:180px" @bind-Value="replayTickIntervalMs">
-                            <MudSelectItem T="int" Value="500">0.5 sec / pitch</MudSelectItem>
-                            <MudSelectItem T="int" Value="1000">1 sec / pitch</MudSelectItem>
-                            <MudSelectItem T="int" Value="1500">1.5 sec / pitch</MudSelectItem>
-                            <MudSelectItem T="int" Value="2000">2 sec / pitch</MudSelectItem>
-                        </MudSelect>
+                        <label class="replay-speed">
+                            <span>Replay speed</span>
+                            <select @onchange="ReplaySpeedChanged">
+                                @foreach (var ms in new[] { 500, 1000, 1500, 2000 })
+                                {
+                                    <option value="@ms" selected="@(ms == replayTickIntervalMs)">@(ms / 1000.0) sec / play</option>
+                                }
+                            </select>
+                        </label>
                     </div>
                     <BaseballDiamond Linescore="playByPlay.liveData.linescore"
-                                    ReplayPlay="selectedReplayPlay"
+                                    ReplayPlays="selectedReplayPlays"
                                     ReplayRequest="replayRequest"
                                     TickIntervalMs="replayTickIntervalMs" />
                 </MudPaper>
@@ -157,8 +160,8 @@
                                 <MudIconButton Icon="@Icons.Material.Filled.PlayArrow"
                                                Color="Color.Primary"
                                                Size="Size.Small"
-                                               aria-label="@($"Replay {context.matchup.batter.fullName}'s at-bat")"
-                                               title="@($"Replay {context.matchup.batter.fullName}'s at-bat on the diamond")"
+                                               aria-label="@($"Replay from {context.matchup.batter.fullName}'s play through the current play")"
+                                               title="@($"Replay the plays from {context.matchup.batter.fullName}'s result through the current play")"
                                                OnClick="@(() => ReplayAtBat(context))" />
                             </MudTd>
                         }
@@ -306,7 +309,7 @@ else
     private TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
 
     private PlayByPlay? playByPlay { get; set; }
-    private Allplay? selectedReplayPlay { get; set; }
+    private Allplay[] selectedReplayPlays { get; set; } = Array.Empty<Allplay>();
     private int replayRequest;
     private int replayTickIntervalMs = 1000;
 
@@ -377,10 +380,21 @@ else
         return string.Equals(playByPlay?.gameData?.status?.abstractGameCode?.ToString(), "L", StringComparison.OrdinalIgnoreCase);
     }
 
-    private void ReplayAtBat(Allplay atBat)
+    private void ReplayAtBat(Allplay selectedPlay)
     {
-        selectedReplayPlay = atBat;
+        selectedReplayPlays = (playByPlay?.liveData?.plays?.allPlays ?? new List<Allplay>())
+            .Where(play => play.atBatIndex >= selectedPlay.atBatIndex)
+            .OrderBy(play => play.atBatIndex)
+            .ToArray();
         replayRequest++;
+    }
+
+    private void ReplaySpeedChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var intervalMs))
+        {
+            replayTickIntervalMs = intervalMs;
+        }
     }
 
     protected override async Task OnInitializedAsync()

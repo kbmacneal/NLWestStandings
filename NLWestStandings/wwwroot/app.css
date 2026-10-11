@@ -409,11 +409,17 @@ body {
 .diamond-batter { fill: #c62828; stroke: #fff; stroke-width: 2; }
 .diamond-label { fill: #fff; font-size: 10px; font-weight: bold; }
 .diamond-name { fill: #fff; font-size: 11px; paint-order: stroke; stroke: #000; stroke-width: 2px; }
-.diamond-replay-ball { fill: #fff; stroke: #333; stroke-width: 1; animation: diamond-pitch 1s ease-in forwards; }
-@keyframes diamond-pitch {
-    from { transform: translate(0, 0) scale(1); }
-    to { transform: translate(50px, 140px) scale(.65); }
+.replay-speed { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--mud-palette-text-primary); }
+.replay-speed select {
+    min-height: 44px;
+    padding: 0 0.75rem;
+    font: inherit;
+    color: var(--mud-palette-text-primary);
+    background: var(--mud-palette-surface);
+    border: 1px solid var(--mud-palette-lines-inputs);
+    border-radius: 4px;
 }
+.replay-speed select:focus-visible { outline: 2px solid var(--mud-palette-primary); outline-offset: 2px; }
 
 .mud-data-grid .mud-sort-index.invisible { display: none; }
 .mud-data-grid .mud-table-cell { padding-left: 8px !important; padding-right: 8px !important; }
