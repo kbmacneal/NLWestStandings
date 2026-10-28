@@ -8,7 +8,13 @@
     }
     else
     {
-        <MudText Typo="Typo.body2" Class="mb-2">@Play.matchup?.batter?.fullName vs. @Play.matchup?.pitcher?.fullName</MudText>
+        <MudText Typo="Typo.body2" Class="mb-2 pitch-zone-matchup">
+            <span class="pitch-zone-hand-tag" aria-label="@($"Batter bats {HandednessText(Play.matchup?.batSide?.description)}")">@HandednessCode(Play.matchup?.batSide?.description)</span>
+            @Play.matchup?.batter?.fullName
+            <span class="pitch-zone-vs">vs.</span>
+            <span class="pitch-zone-hand-tag" aria-label="@($"Pitcher throws {HandednessText(Play.matchup?.pitchHand?.description)}")">@HandednessCode(Play.matchup?.pitchHand?.description)</span>
+            @Play.matchup?.pitcher?.fullName
+        </MudText>
 
         <div class="pitch-zone-count" role="group" aria-label="@($"Count {Play.count?.balls} balls, {Play.count?.strikes} strikes, {Play.count?.outs} outs")">
             @CountDots("B", Play.count?.balls ?? 0, 3, "pitch-dot-ball")
@@ -61,7 +67,7 @@
     private const float PlateHalfWidthFt = 17f / 24f;
     private static float ZoneLeft => 160 - PlateHalfWidthFt * Scale;
     private static float ZoneWidth => PlateHalfWidthFt * 2 * Scale;
-    private const string PlatePoints = "122,392 198,392 198,382 160,372 122,382";
+    private const string PlatePoints = "122,372 198,372 198,382 160,392 122,382";
 
     private Playevent1[] Pitches => Play?.playEvents?.Where(e => e.isPitch).ToArray() ?? Array.Empty<Playevent1>();
     private IEnumerable<Playevent1> LocatedPitches => Pitches.Where(e => e.pitchData?.coordinates is not null);
@@ -78,6 +84,22 @@
         pitch.details?.isInPlay == true ? "pitch-dot pitch-dot-inplay"
         : pitch.details?.isStrike == true ? "pitch-dot pitch-dot-strike"
         : "pitch-dot pitch-dot-ball";
+
+    private static string HandednessCode(string? description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return "–";
+        }
+
+        var value = description.Trim();
+        if (value.StartsWith("Left", StringComparison.OrdinalIgnoreCase)) return "L";
+        if (value.StartsWith("Right", StringComparison.OrdinalIgnoreCase)) return "R";
+        if (value.StartsWith("Switch", StringComparison.OrdinalIgnoreCase)) return "S";
+        return value[..1].ToUpperInvariant();
+    }
+
+    private static string HandednessText(string? description) => string.IsNullOrWhiteSpace(description) ? "unknown" : description.Trim();
 
     private static string PitchSummary(Playevent1 pitch)
     {
