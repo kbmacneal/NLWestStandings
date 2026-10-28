@@ -410,6 +410,33 @@ body {
 .diamond-label { fill: #fff; font-size: 10px; font-weight: bold; }
 .diamond-name { fill: #fff; font-size: 11px; paint-order: stroke; stroke: #000; stroke-width: 2px; }
 .replay-speed { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--mud-palette-text-primary); }
+.responsive-table-wrap > table { width: 100%; }
+.game-diamond-box { order: 1; }
+.game-pitch-box { order: 2; }
+@media (min-width: 960px) {
+    .game-pitch-box { order: 1; }
+    .game-diamond-box { order: 2; }
+}
+.pitch-zone-count { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.pitch-count-row { display: inline-flex; align-items: center; gap: 0.35rem; }
+.pitch-count-label { font-weight: bold; font-size: 0.875rem; }
+.pitch-count-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--mud-palette-text-secondary); display: inline-block; }
+.pitch-count-dot.pitch-dot-ball { background: #2e7d32; border-color: #2e7d32; }
+.pitch-count-dot.pitch-dot-strike { background: #f9a825; border-color: #f9a825; }
+.pitch-count-dot.pitch-dot-out { background: #d32f2f; border-color: #d32f2f; }
+.pitch-zone-svg { width: 100%; max-width: 320px; height: auto; display: block; margin: 0 auto; }
+.pitch-zone-bg { fill: var(--mud-palette-background-gray, #eee); }
+.pitch-zone-box { fill: rgba(128,128,128,0.12); stroke: var(--mud-palette-text-primary); stroke-width: 2; }
+.pitch-zone-grid { stroke: var(--mud-palette-text-secondary); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.6; }
+.pitch-zone-plate { fill: #fff; stroke: var(--mud-palette-text-secondary); stroke-width: 1.5; }
+.pitch-dot { stroke: #fff; stroke-width: 1.5; }
+.pitch-dot.pitch-dot-ball { fill: #2e7d32; }
+.pitch-dot.pitch-dot-strike { fill: #c62828; }
+.pitch-dot.pitch-dot-inplay { fill: #1565c0; }
+.pitch-dot.pitch-last { stroke: var(--mud-palette-text-primary); stroke-width: 3; }
+.pitch-number { fill: #fff; font-size: 12px; font-weight: bold; pointer-events: none; }
+.pitch-list { margin: 0.5rem 0 0; padding-left: 0; list-style: none; font-size: 0.875rem; max-height: 9rem; overflow: auto; }
+.pitch-list-latest { font-weight: bold; }
 .replay-speed select {
     min-height: 44px;
     padding: 0 0.75rem;

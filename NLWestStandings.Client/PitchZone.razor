@@ -1,0 +1,106 @@
+@using NLWestStandings.Client.Classes.PlayByPlay
+
+<MudPaper Class="app-card pa-2 pitch-zone">
+    <MudText Typo="Typo.h6" HtmlTag="h2">Current At-Bat</MudText>
+    @if (Play is null)
+    {
+        <MudText Typo="Typo.body2" Class="mt-2">Waiting for the next at-bat.</MudText>
+    }
+    else
+    {
+        <MudText Typo="Typo.body2" Class="mb-2">@Play.matchup?.batter?.fullName vs. @Play.matchup?.pitcher?.fullName</MudText>
+
+        <div class="pitch-zone-count" role="group" aria-label="@($"Count {Play.count?.balls} balls, {Play.count?.strikes} strikes, {Play.count?.outs} outs")">
+            @CountDots("B", Play.count?.balls ?? 0, 3, "pitch-dot-ball")
+            @CountDots("S", Play.count?.strikes ?? 0, 2, "pitch-dot-strike")
+            @CountDots("O", Play.count?.outs ?? 0, 2, "pitch-dot-out")
+        </div>
+
+        <svg class="pitch-zone-svg" viewBox="0 0 320 400" role="img" aria-label="Pitch locations from the catcher's view">
+            <rect x="0" y="0" width="320" height="400" rx="8" class="pitch-zone-bg" />
+            <rect x="@ZoneLeft" y="@ZoneTopPx" width="@ZoneWidth" height="@(ZoneBottomPx - ZoneTopPx)" class="pitch-zone-box" />
+            @for (var i = 1; i < 3; i++)
+            {
+                <line x1="@(ZoneLeft + ZoneWidth * i / 3)" y1="@ZoneTopPx" x2="@(ZoneLeft + ZoneWidth * i / 3)" y2="@ZoneBottomPx" class="pitch-zone-grid" />
+                <line x1="@ZoneLeft" y1="@(ZoneTopPx + (ZoneBottomPx - ZoneTopPx) * i / 3)" x2="@(ZoneLeft + ZoneWidth)" y2="@(ZoneTopPx + (ZoneBottomPx - ZoneTopPx) * i / 3)" class="pitch-zone-grid" />
+            }
+            <polygon points="@PlatePoints" class="pitch-zone-plate" />
+            @foreach (var pitch in LocatedPitches)
+            {
+                var isLast = pitch == Pitches[^1];
+                <g @key="pitch.index">
+                    <title>@PitchSummary(pitch)</title>
+                    <circle cx="@PitchX(pitch)" cy="@PitchY(pitch)" r="@(isLast ? 13 : 11)" class="@PitchClass(pitch) @(isLast ? "pitch-last" : "")" />
+                    <text x="@PitchX(pitch)" y="@(PitchY(pitch) + 4)" text-anchor="middle" class="pitch-number">@pitch.pitchNumber</text>
+                </g>
+            }
+        </svg>
+
+        @if (Pitches.Length == 0)
+        {
+            <MudText Typo="Typo.body2" Align="Align.Center">Waiting for first pitch</MudText>
+        }
+        else
+        {
+            <ol class="pitch-list" aria-label="Pitches this at-bat">
+                @foreach (var pitch in Pitches.Reverse())
+                {
+                    <li class="@(pitch == Pitches[^1] ? "pitch-list-latest" : "")">@PitchSummary(pitch)</li>
+                }
+            </ol>
+        }
+    }
+</MudPaper>
+
+@code {
+    [Parameter]
+    public Allplay? Play { get; set; }
+
+    // Catcher's view: 1 ft = 80px, x centered at 160, ground at y = 400.
+    private const float Scale = 80f;
+    private const float PlateHalfWidthFt = 17f / 24f;
+    private static float ZoneLeft => 160 - PlateHalfWidthFt * Scale;
+    private static float ZoneWidth => PlateHalfWidthFt * 2 * Scale;
+    private const string PlatePoints = "122,392 198,392 198,382 160,372 122,382";
+
+    private Playevent1[] Pitches => Play?.playEvents?.Where(e => e.isPitch).ToArray() ?? Array.Empty<Playevent1>();
+    private IEnumerable<Playevent1> LocatedPitches => Pitches.Where(e => e.pitchData?.coordinates is not null);
+
+    private float ZoneTopFt => Pitches.LastOrDefault(e => e.pitchData?.strikeZoneTop > 0)?.pitchData.strikeZoneTop ?? 3.5f;
+    private float ZoneBottomFt => Pitches.LastOrDefault(e => e.pitchData?.strikeZoneBottom > 0)?.pitchData.strikeZoneBottom ?? 1.5f;
+    private float ZoneTopPx => 400 - ZoneTopFt * Scale;
+    private float ZoneBottomPx => 400 - ZoneBottomFt * Scale;
+
+    private static float PitchX(Playevent1 pitch) => Math.Clamp(160 + pitch.pitchData.coordinates.pX * Scale, 12, 308);
+    private static float PitchY(Playevent1 pitch) => Math.Clamp(400 - pitch.pitchData.coordinates.pZ * Scale, 12, 388);
+
+    private static string PitchClass(Playevent1 pitch) =>
+        pitch.details?.isInPlay == true ? "pitch-dot pitch-dot-inplay"
+        : pitch.details?.isStrike == true ? "pitch-dot pitch-dot-strike"
+        : "pitch-dot pitch-dot-ball";
+
+    private static string PitchSummary(Playevent1 pitch)
+    {
+        var parts = new List<string> { $"#{pitch.pitchNumber}" };
+        if (pitch.pitchData?.startSpeed > 0)
+        {
+            parts.Add($"{pitch.pitchData.startSpeed:0.#} mph");
+        }
+
+        if (!string.IsNullOrWhiteSpace(pitch.details?.type?.description))
+        {
+            parts.Add(pitch.details.type.description);
+        }
+
+        var call = pitch.details?.call?.description ?? pitch.details?.description;
+        return string.Join(" · ", parts) + (string.IsNullOrWhiteSpace(call) ? "" : $" – {call}");
+    }
+
+    private static RenderFragment CountDots(string label, int filled, int total, string cssClass) => @<div class="pitch-count-row">
+        <span class="pitch-count-label">@label</span>
+        @for (var i = 0; i < total; i++)
+        {
+            <span class="@($"pitch-count-dot {(i < filled ? cssClass : "")}")"></span>
+        }
+    </div>;
+}

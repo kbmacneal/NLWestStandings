@@ -65,7 +65,7 @@
     </MudPaper>
 
     <MudGrid Class="mobile-stack-gap mb-4">
-        <MudItem lg="@(IsLiveGame() ? 7 : 12)" sm="12" xs="12">
+        <MudItem xs="12">
             <div class="responsive-table-wrap app-card pa-2">
                 <table>
                     <caption class="sr-only">Line score by inning</caption>
@@ -111,7 +111,10 @@
         </MudItem>
         @if (IsLiveGame() && playByPlay.liveData?.linescore is not null)
         {
-            <MudItem lg="5" sm="12" xs="12">
+            <MudItem xs="12" md="6" Class="game-pitch-box">
+                <PitchZone Play="@playByPlay.liveData.plays.allPlays?.LastOrDefault()" />
+            </MudItem>
+            <MudItem xs="12" md="6" Class="game-diamond-box">
                 <MudPaper Class="app-card pa-2">
                     <div class="d-flex align-center justify-space-between flex-wrap">
                         <MudText Typo="Typo.h6">On the Field</MudText>
